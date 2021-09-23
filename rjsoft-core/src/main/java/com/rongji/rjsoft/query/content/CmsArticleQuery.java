@@ -27,8 +27,8 @@ public class CmsArticleQuery {
     private String keywords;
 
     /**
-     * 状态0 草稿 1 待审核 2 审核不通过 3 已发布 4 禁用
+     * 状态0 草稿 1 待审核 2 审核不通过 3 已发布 4 取消发布
      */
-    @ApiModelProperty(value = "文章状态", notes = "2 审核不通过 3 已发布 4 禁用")
-    private int state;
+    @ApiModelProperty(value = "文章状态", notes = "2 审核不通过 3 已发布 4 取消发布")
+    private Integer state;
 }
