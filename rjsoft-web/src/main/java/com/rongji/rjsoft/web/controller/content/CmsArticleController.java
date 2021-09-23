@@ -97,8 +97,8 @@ public class CmsArticleController {
      * @param cmsArticleAuditAo 文章状态信息
      * @return 审核结果
      */
-    @PreAuthorize("@permissionIdentify.hasPermi('cms:article:update')")
-    @ApiOperation(value = "编辑文章")
+    @PreAuthorize("@permissionIdentify.hasPermi('cms:article:audit')")
+    @ApiOperation(value = "审核文章")
     @PutMapping(value = "audit")
     @LogAction(module = "文章管理", method = "审核文章", logType = LogTypeEnum.UPDATE, operatorType = OperatorTypeEnum.WEB)
     public Object audit(@Valid @RequestBody CmsArticleAuditAo cmsArticleAuditAo) {
