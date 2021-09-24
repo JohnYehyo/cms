@@ -94,7 +94,7 @@ public class SysPersonController {
     @LogAction(module = "个人信息", method = "上传头像", logType = LogTypeEnum.UPLOAD, operatorType = OperatorTypeEnum.WEB)
     public Object avatar(@RequestParam("file") MultipartFile file) throws IOException {
         if (!file.isEmpty()) {
-            String avatar = FileUploadUtils.upload(path + avator, file);
+            String avatar = FileUploadUtils.upload(path + avator, file).getFileUrl();
             return ResponseVo.response(ResponseEnum.SUCCESS, avatar);
         }
         return ResponseVo.error("请选择要上传图片");

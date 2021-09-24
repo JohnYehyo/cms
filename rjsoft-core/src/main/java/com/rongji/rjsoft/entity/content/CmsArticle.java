@@ -58,9 +58,9 @@ public class CmsArticle implements Serializable {
     private String qrcodePath;
 
     /**
-     * 附件地址
+     * 附件
      */
-    private String fileUrl;
+    private String files;
 
     /**
      * 是否置顶 0 否 1 是

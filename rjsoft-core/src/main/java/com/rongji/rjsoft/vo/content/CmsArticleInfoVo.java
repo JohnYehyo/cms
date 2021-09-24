@@ -23,7 +23,7 @@ public class CmsArticleInfoVo extends CmsArticleVo implements Serializable {
     /**
      * 附件地址
      */
-    private String fileUrl;
+    private String files;
 
     /**
      * 轮播图地址

@@ -1,6 +1,7 @@
 package com.rongji.rjsoft.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -78,6 +79,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         cmsArticleAo.setAuthorId(SecurityUtils.getLoginUser().getUser().getUserId());
         cmsArticleAo.setAuthorName(SecurityUtils.getLoginUser().getUser().getUserName());
         BeanUtil.copyProperties(cmsArticleAo, cmsArticle);
+        cmsArticle.setFiles(JSON.toJSONString(cmsArticleAo.getFiles()));
         //判断是否需要审核
         if (SecurityUtils.getLoginUser().getRoles().contains(Constants.CMS_ADMIN)) {
             cmsArticle.setState(3);
@@ -159,6 +161,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         cmsArticleAo.setAuthorName(SecurityUtils.getLoginUser().getUser().getUserName());
         CmsArticle cmsArticle = new CmsArticle();
         BeanUtil.copyProperties(cmsArticleAo, cmsArticle);
+        cmsArticle.setFiles(JSON.toJSONString(cmsArticleAo.getFiles()));
         return cmsArticleMapper.updateById(cmsArticle) > 0;
     }
 

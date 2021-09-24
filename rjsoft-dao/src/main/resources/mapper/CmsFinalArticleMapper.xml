@@ -10,7 +10,7 @@
     </resultMap>
 
     <insert id="batchInsert">
-        insert into cms_final_article (site_id, column _id, article_id) values
+        insert into cms_final_article (site_id, column_id, article_id) values
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.siteId}, #{item.columnId}, #{item.articleId})
         </foreach>

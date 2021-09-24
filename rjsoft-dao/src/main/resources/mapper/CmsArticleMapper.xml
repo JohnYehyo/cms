@@ -10,7 +10,7 @@
         <result column="author_name" property="authorName"/>
         <result column="cover_image" property="coverImage"/>
         <result column="qrcode_path" property="qrcodePath"/>
-        <result column="file_url" property="fileUrl"/>
+        <result column="files" property="files"/>
         <result column="top" property="top"/>
         <result column="category_id" property="categoryId"/>
         <result column="slider" property="slider"/>
@@ -43,7 +43,7 @@
         t1.cover_image,
         t2.category_name as categoryName,
         t1.top,
-        t1.slider
+        t1.slider,
         t1.create_time,
         t1.publish_time
         FROM
@@ -72,7 +72,7 @@
                t1.top,
                t1.slider,
                t1.qrcode_path,
-               t1.file_url,
+               t1.files,
                t1.slider_img,
                t1.description,
                t3.content

@@ -3,6 +3,7 @@ package com.rongji.rjsoft.common.util.file;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.UUID;
 import com.rongji.rjsoft.common.config.FileConfig;
+import com.rongji.rjsoft.common.util.file.entity.FileVo;
 import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.exception.BusinessException;
@@ -51,7 +52,7 @@ public class FileUploadUtils {
      * @return 文件名称
      * @throws Exception
      */
-    public static final String upload(MultipartFile file) throws IOException {
+    public static final FileVo upload(MultipartFile file) throws IOException {
         return upload(FileConfig.getPath() + Constants.DEFAULT_PATH, file);
     }
 
@@ -63,7 +64,7 @@ public class FileUploadUtils {
      * @return 文件名称
      * @throws IOException
      */
-    public static final String upload(String baseDir, MultipartFile file) throws IOException {
+    public static final FileVo upload(String baseDir, MultipartFile file) throws IOException {
         int fileNamelength = file.getOriginalFilename().length();
         if (fileNamelength > FileUploadUtils.DEFAULT_FILE_NAME_LENGTH) {
             throw new BusinessException(ResponseEnum.SUPER_LONG_FILE);
@@ -73,11 +74,12 @@ public class FileUploadUtils {
         assertAllowed(file);
 
         String fileName = extractFilename(file);
+        String originFileName = file.getOriginalFilename();
 
         File desc = getAbsoluteFile(baseDir, fileName);
         file.transferTo(desc);
         String pathFileName = getPathFileName(baseDir, fileName);
-        return pathFileName;
+        return new FileVo(originFileName, pathFileName);
     }
 
     /**

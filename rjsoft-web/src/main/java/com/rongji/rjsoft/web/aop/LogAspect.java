@@ -159,12 +159,11 @@ public class LogAspect {
         Object[] args = joinPoint.getArgs();
         List<Object> argList = new ArrayList<>();
         for (Object arg : args) {
-            if (arg instanceof MultipartFile) {
+            if (arg instanceof MultipartFile || arg instanceof MultipartFile[]) {
                 continue;
             }
             argList.add(arg);
         }
-        System.out.println(JSON.toJSONString(argList));
         return JSON.toJSONString(argList);
     }
 

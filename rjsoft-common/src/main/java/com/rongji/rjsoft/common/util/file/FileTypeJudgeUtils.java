@@ -1,6 +1,6 @@
 package com.rongji.rjsoft.common.util.file;
 
-import com.rongji.rjsoft.common.enums.FileTypeEnum;
+import com.rongji.rjsoft.common.util.file.enums.FileTypeEnum;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;

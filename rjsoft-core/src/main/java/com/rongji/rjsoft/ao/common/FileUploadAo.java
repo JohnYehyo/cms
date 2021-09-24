@@ -22,6 +22,6 @@ public class FileUploadAo {
     /**
      *oss附件对象Id
      */
-    @NotBlank(message = "oss附件对象Id不能为空")
+    @NotBlank(message = "oss附件对象不能为空")
     private String fileName;
 }

@@ -67,10 +67,10 @@ public class CmsArticleAo {
     private String qrcodePath;
 
     /**
-     * 附件地址
+     * 附件
      */
-    @ApiModelProperty(value = "附件地址")
-    private String fileUrl;
+    @ApiModelProperty(value = "附件")
+    private List<FileAo> files;
 
     /**
      * 是否置顶 0 否 1 是
@@ -153,6 +153,11 @@ public class CmsArticleAo {
     @NotNull(message = "站点栏目不能为空")
     private List<CmsSiteColumn> list;
 
+    /**
+     * 发布时间
+     */
+    @ApiModelProperty(value = "发布时间", required = true)
+    @NotNull(message = "发布时间不能为空")
     private LocalDateTime publishTime;
 
 }

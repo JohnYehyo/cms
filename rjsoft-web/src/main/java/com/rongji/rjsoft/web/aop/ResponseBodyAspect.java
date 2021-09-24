@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StopWatch;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,9 +73,9 @@ public class ResponseBodyAspect {
     private void printRequestParam(String controllerName, String methodName, Object[] args) {
         List<Object> argList = new ArrayList<>();
         for (Object arg : args) {
-//            if (arg instanceof ServletRequest || arg instanceof ServletResponse) {
-//                continue;
-//            }
+            if (arg instanceof MultipartFile || arg instanceof MultipartFile[]) {
+                continue;
+            }
             argList.add(arg);
         }
         LogUtils.info("[{}]-->[{}] 请求参数：{}", controllerName, methodName,

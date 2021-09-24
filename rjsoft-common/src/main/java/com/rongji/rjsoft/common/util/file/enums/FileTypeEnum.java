@@ -1,4 +1,4 @@
-package com.rongji.rjsoft.common.enums;
+package com.rongji.rjsoft.common.util.file.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
