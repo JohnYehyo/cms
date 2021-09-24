@@ -54,7 +54,7 @@ public class FileUploadUtils {
      */
     public static final String upload(MultipartFile file) throws IOException {
         try {
-            return upload(FileConfig.getPath() + Constants.default_path, file, MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION);
+            return upload(FileConfig.getPath() + Constants.DEFAULT_PATH, file, MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION);
         } catch (Exception e) {
             throw new IOException(e.getMessage(), e);
         }
