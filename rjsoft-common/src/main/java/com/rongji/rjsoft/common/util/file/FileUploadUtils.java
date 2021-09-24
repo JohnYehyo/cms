@@ -8,7 +8,6 @@ import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.exception.BusinessException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -16,9 +15,9 @@ import java.io.IOException;
 import java.util.Date;
 
 /**
- * 文件上传工具类
- *
- * @author ruoyi
+ * @description: 文件上传工具类
+ * @author: JohnYehyo
+ * @create: 2021-09-24 12:33:26
  */
 public class FileUploadUtils {
 
@@ -53,11 +52,7 @@ public class FileUploadUtils {
      * @throws Exception
      */
     public static final String upload(MultipartFile file) throws IOException {
-        try {
-            return upload(FileConfig.getPath() + Constants.DEFAULT_PATH, file, MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION);
-        } catch (Exception e) {
-            throw new IOException(e.getMessage(), e);
-        }
+        return upload(FileConfig.getPath() + Constants.DEFAULT_PATH, file);
     }
 
     /**
@@ -69,31 +64,13 @@ public class FileUploadUtils {
      * @throws IOException
      */
     public static final String upload(String baseDir, MultipartFile file) throws IOException {
-        try {
-            return upload(baseDir, file, MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION);
-        } catch (Exception e) {
-            throw new IOException(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * 文件上传
-     *
-     * @param baseDir          相对应用的基目录
-     * @param file             上传的文件
-     * @param allowedExtension 上传文件类型
-     * @return 返回上传成功的文件名
-     * @throws FileSizeLimitExceededException 如果超出最大大小
-     * @throws IOException                    比如读写文件出错时
-     */
-    public static final String upload(String baseDir, MultipartFile file, String[] allowedExtension)
-            throws IOException {
         int fileNamelength = file.getOriginalFilename().length();
         if (fileNamelength > FileUploadUtils.DEFAULT_FILE_NAME_LENGTH) {
             throw new BusinessException(ResponseEnum.SUPER_LONG_FILE);
         }
 
-        assertAllowed(file, allowedExtension);
+        //文件大小及类型校验
+        assertAllowed(file);
 
         String fileName = extractFilename(file);
 
@@ -113,6 +90,14 @@ public class FileUploadUtils {
         return fileName;
     }
 
+    /**
+     * 文件绝对地址
+     *
+     * @param uploadDir 上传路径
+     * @param fileName  文件名
+     * @return 文件绝对地址
+     * @throws IOException
+     */
     private static final File getAbsoluteFile(String uploadDir, String fileName) throws IOException {
         File desc = new File(uploadDir + File.separator + fileName);
 
@@ -125,6 +110,14 @@ public class FileUploadUtils {
         return desc;
     }
 
+    /**
+     * 获取完整路径
+     *
+     * @param uploadDir 上传路径
+     * @param fileName  文件名
+     * @return 完整路径
+     * @throws IOException
+     */
     private static final String getPathFileName(String uploadDir, String fileName) throws IOException {
         int dirLastIndex = FileConfig.getPath().length() + 1;
         String currentDir = StringUtils.substring(uploadDir, dirLastIndex);
@@ -138,34 +131,16 @@ public class FileUploadUtils {
      * @param file 上传的文件
      * @return
      */
-    public static final void assertAllowed(MultipartFile file, String[] allowedExtension) {
+    public static final void assertAllowed(MultipartFile file) throws IOException {
         long size = file.getSize();
         if (DEFAULT_MAX_SIZE != -1 && size > DEFAULT_MAX_SIZE) {
             throw new BusinessException(ResponseEnum.SUPER_LARGE_FILE);
         }
 
-        String fileName = file.getOriginalFilename();
-        String extension = getExtension(file);
-        if (allowedExtension != null && !isAllowedExtension(extension, allowedExtension)) {
+        if (!FileTypeJudgeUtils.isPermit(file)) {
             throw new BusinessException(ResponseEnum.NO_ALLOW_FILE);
         }
 
-    }
-
-    /**
-     * 判断MIME类型是否是允许的MIME类型
-     *
-     * @param extension
-     * @param allowedExtension
-     * @return
-     */
-    public static final boolean isAllowedExtension(String extension, String[] allowedExtension) {
-        for (String str : allowedExtension) {
-            if (str.equalsIgnoreCase(extension)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -177,8 +152,9 @@ public class FileUploadUtils {
     public static final String getExtension(MultipartFile file) {
         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
         if (StringUtils.isEmpty(extension)) {
-            extension = MimeTypeUtils.getExtension(file.getContentType());
+            extension = FileTypeJudgeUtils.getExtension(file.getContentType());
         }
         return extension;
     }
+
 }
