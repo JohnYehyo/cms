@@ -4,7 +4,8 @@
     <!--为了防止进程退出时，内存中的数据丢失，请加上此选项-->
     <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
 
-    <property name="log.pattern" value="%yellow(%d{yyyy-MM-dd HH:mm:ss}) %boldCyan([%thread]) %highlight(%-5level) %green([%logger{50}[%L]]) %msg%n" />
+    <property name="log.pattern"
+              value="%yellow(%d{yyyy-MM-dd HH:mm:ss}) %boldCyan([%thread]) %highlight(%-5level) %green([%logger{50}[%L]]) %msg%n"/>
 
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
@@ -79,6 +80,22 @@
         </filter>
     </appender>
 
+    <appender name="STOUT_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="console"/>
+    </appender>
+
+    <appender name="INFO_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="info_log"/>
+    </appender>
+
+    <appender name="WARN_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="warn_log"/>
+    </appender>
+
+    <appender name="ERROR_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="error_log"/>
+    </appender>
+
     <logger name="info" additivity="false" level="INFO">
         <appender-ref ref="info_log"/>
         <appender-ref ref="console"/>
@@ -93,10 +110,10 @@
     </logger>
 
     <root level="INFO">
-        <appender-ref ref="console"/>
-        <!--        <appender-ref ref="info_log" />-->
-        <!--        <appender-ref ref="warn_log" />-->
-        <!--        <appender-ref ref="error_log" />-->
+        <appender-ref ref="STOUT_ASYNC"/>
+        <appender-ref ref="INFO_ASYNC"/>
+        <appender-ref ref="WARN_ASYNC"/>
+        <appender-ref ref="ERROR_ASYNC"/>
     </root>
 
 </configuration>
