@@ -3,7 +3,6 @@ package com.rongji.rjsoft.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,12 +10,12 @@ import com.rongji.rjsoft.ao.content.CmsArticleAo;
 import com.rongji.rjsoft.ao.content.CmsArticleAuditAo;
 import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
-import com.rongji.rjsoft.entity.content.CmsArticle;
-import com.rongji.rjsoft.entity.content.CmsArticleContent;
-import com.rongji.rjsoft.entity.content.CmsArticleTags;
+import com.rongji.rjsoft.constants.Constants;
+import com.rongji.rjsoft.entity.content.*;
 import com.rongji.rjsoft.mapper.CmsArticleContentMapper;
 import com.rongji.rjsoft.mapper.CmsArticleMapper;
 import com.rongji.rjsoft.mapper.CmsArticleTagsMapper;
+import com.rongji.rjsoft.mapper.CmsFinalArticleMapper;
 import com.rongji.rjsoft.query.content.CmsArticleQuery;
 import com.rongji.rjsoft.service.ICmsArticleService;
 import com.rongji.rjsoft.vo.CommonPage;
@@ -28,9 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -49,6 +46,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     private CmsArticleContentMapper cmsArticleContentMapper;
 
     private CmsArticleTagsMapper cmsArticleTagsMapper;
+
+    private CmsFinalArticleMapper cmsColumnArticleMapper;
 
     /**
      * 添加文章
@@ -69,14 +68,22 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         boolean result1 = saveContent(cmsArticleAo);
         //保存文章标签
         boolean result2 = saveTags(cmsArticleAo);
+        //保存栏目文章关系
+        boolean result3 = saveArticleWithColumn(cmsArticleAo);
 
-        return result && result1 && result2;
+        return result && result1 && result2 && result3;
     }
 
     private boolean insertArticle(CmsArticleAo cmsArticleAo, CmsArticle cmsArticle) {
         cmsArticleAo.setAuthorId(SecurityUtils.getLoginUser().getUser().getUserId());
         cmsArticleAo.setAuthorName(SecurityUtils.getLoginUser().getUser().getUserName());
         BeanUtil.copyProperties(cmsArticleAo, cmsArticle);
+        //判断是否需要审核
+        if (SecurityUtils.getLoginUser().getRoles().contains(Constants.CMS_ADMIN)) {
+            cmsArticle.setState(3);
+        } else {
+            cmsArticle.setState(cmsArticleAo.getState());
+        }
         return cmsArticleMapper.insert(cmsArticle) > 0;
     }
 
@@ -99,6 +106,19 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         return cmsArticleContentMapper.insert(cmsArticleContent) > 0;
     }
 
+    private boolean saveArticleWithColumn(CmsArticleAo cmsArticleAo) {
+        List<CmsSiteColumn> siteColumnList = cmsArticleAo.getList();
+        List<CmsFinalArticle> list = new ArrayList<>();
+        CmsFinalArticle cmsColumnArticle;
+        for (CmsSiteColumn cmsSiteColumn:siteColumnList) {
+            cmsColumnArticle = new CmsFinalArticle();
+            cmsColumnArticle.setArticleId(cmsArticleAo.getArticleId());
+            cmsColumnArticle.setSiteId(cmsSiteColumn.getSiteId());
+            cmsColumnArticle.setColumnId(cmsSiteColumn.getColumnId());
+        }
+        return cmsColumnArticleMapper.batchInsert(list) > 0;
+    }
+
     /**
      * 编辑文章
      *
@@ -111,12 +131,26 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         //编辑文章
         boolean result = editArticle(cmsArticleAo);
         //编辑文章标签
+        boolean result1 = updateTags(cmsArticleAo);
+        //编辑栏目文章关系
+        boolean result2 = updateArticleWithColumn(cmsArticleAo);
+        //编辑文章内容
+        boolean result3 = updateContent(cmsArticleAo);
+        return result && result1 && result2 && result3;
+    }
+
+    private boolean updateArticleWithColumn(CmsArticleAo cmsArticleAo) {
+        LambdaUpdateWrapper<CmsFinalArticle> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(CmsFinalArticle::getArticleId, cmsArticleAo.getArticleId());
+        cmsColumnArticleMapper.delete(wrapper);
+        return saveArticleWithColumn(cmsArticleAo);
+    }
+
+    private boolean updateTags(CmsArticleAo cmsArticleAo) {
         LambdaUpdateWrapper<CmsArticleTags> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(CmsArticleTags::getArticleId, cmsArticleAo.getArticleId());
         cmsArticleTagsMapper.delete(wrapper);
-        saveTags(cmsArticleAo);
-        //编辑文章内容
-        return updateContent(cmsArticleAo);
+        return saveTags(cmsArticleAo);
     }
 
     private boolean editArticle(CmsArticleAo cmsArticleAo) {
@@ -160,6 +194,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
 
     /**
      * 文章列表
+     *
      * @param cmsArticleQuery 查询对象
      * @return 文章列表
      */
@@ -169,7 +204,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         page = cmsArticleMapper.getPage(page, cmsArticleQuery);
         List<CmsArticleVo> records = page.getRecords();
         LambdaQueryWrapper<CmsArticleTags> wrapper;
-        for (CmsArticleVo cmsArticleVo: records) {
+        for (CmsArticleVo cmsArticleVo : records) {
             cmsArticleVo.setTags(cmsArticleTagsMapper.getTagsByArticleId(cmsArticleVo.getArticleId()));
         }
         return CommonPageUtils.assemblyPage(page);
@@ -177,6 +212,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
 
     /**
      * 文章详情
+     *
      * @param articleId 文章id
      * @return 文章详情
      */

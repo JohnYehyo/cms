@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rongji.rjsoft.mapper.CmsFinalArticleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.rongji.rjsoft.entity.content.CmsFinalArticle">
+        <id column="site_id" property="siteId" />
+        <result column="column_id" property="columnId" />
+        <result column="article_id" property="articleId" />
+    </resultMap>
+
+    <insert id="batchInsert">
+        insert into cms_column_article (site_id, column _id, article_id) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.siteId}, #{item.columnId}, #{item.articleId})
+        </foreach>
+    </insert>
+
+</mapper>

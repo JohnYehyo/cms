@@ -74,6 +74,14 @@ public class Constants {
      */
     public static final String RESOURCE_PREFIX = "/file";
 
-    public static final String default_path = "/common";
+    /**
+     * 附件默认路径
+     */
+    public static final String DEFAULT_PATH = "/common";
+
+    /**
+     * 内容管理员
+     */
+    public static final String CMS_ADMIN = "cms_admin";
 
 }

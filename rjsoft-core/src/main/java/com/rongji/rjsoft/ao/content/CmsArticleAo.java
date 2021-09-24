@@ -1,10 +1,12 @@
 package com.rongji.rjsoft.ao.content;
 
+import com.rongji.rjsoft.entity.content.CmsSiteColumn;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * @description: 文章表单
@@ -136,5 +138,18 @@ public class CmsArticleAo {
     @ApiModelProperty(value = "文章内容", required = true)
     @NotEmpty(message = "文章内容不能为空")
     private String content;
+
+    /**
+     * 文章来源
+     */
+    @ApiModelProperty(value = "文章来源")
+    private String source;
+
+    /**
+     * 站点栏目
+     */
+    @ApiModelProperty(value = "站点栏目", required = true)
+    @NotNull(message = "站点栏目不能为空")
+    private List<CmsSiteColumn> list;
 
 }

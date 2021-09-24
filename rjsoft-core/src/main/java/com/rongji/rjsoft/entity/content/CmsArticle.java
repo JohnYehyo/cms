@@ -107,6 +107,11 @@ public class CmsArticle implements Serializable {
     private int state;
 
     /**
+     * 文章来源
+     */
+    private String source;
+
+    /**
      * 创建者
      */
     @TableField(fill = FieldFill.INSERT)
