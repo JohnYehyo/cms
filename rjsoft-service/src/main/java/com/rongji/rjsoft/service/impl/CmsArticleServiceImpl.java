@@ -110,7 +110,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         List<CmsSiteColumn> siteColumnList = cmsArticleAo.getList();
         List<CmsFinalArticle> list = new ArrayList<>();
         CmsFinalArticle cmsColumnArticle;
-        for (CmsSiteColumn cmsSiteColumn:siteColumnList) {
+        for (CmsSiteColumn cmsSiteColumn : siteColumnList) {
             cmsColumnArticle = new CmsFinalArticle();
             cmsColumnArticle.setArticleId(cmsArticleAo.getArticleId());
             cmsColumnArticle.setSiteId(cmsSiteColumn.getSiteId());
