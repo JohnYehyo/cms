@@ -109,4 +109,18 @@ public class CmsColumnController {
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsColumnService.tree(cmsColumnQuery));
     }
 
+    /**
+     * 通过站点获取栏目树
+     * @param siteId 查询条件
+     * @return 栏目树
+     */
+    @PreAuthorize("@permissionIdentify.hasRole('admin')")
+    @ApiOperation(value = "栏目树")
+    @ApiImplicitParam(name = "siteId", value = "站点id", required = true)
+    @GetMapping(value = "columnTree/{siteId}")
+    public Object columnTree(@PathVariable Long siteId){
+        return ResponseVo.response(ResponseEnum.SUCCESS, cmsColumnService.getColumnTreeBySite(siteId));
+    }
+
+
 }

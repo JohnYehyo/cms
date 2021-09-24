@@ -53,4 +53,21 @@
         </foreach>
     </update>
 
+    <select id="selectParentTreeNode" resultType="com.rongji.rjsoft.vo.content.CmsColumnAllTree">
+        select column_Id, column_name, parent_id from cms_column where column_id = #{parentId}
+    </select>
+
+    <select id="getColumnTreeBySite" resultType="com.rongji.rjsoft.vo.content.CmsColumnAllTree">
+        SELECT
+            t1.column_Id,
+            t1.column_name,
+            t1.parent_id
+        FROM
+            cms_column AS t1
+                INNER JOIN cms_site_column AS t2 ON t1.column_id = t2.column_id
+        WHERE
+            t2.site_id = #{siteId}
+        order by t1.parent_id
+    </select>
+
 </mapper>

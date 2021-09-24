@@ -1,6 +1,7 @@
 package com.rongji.rjsoft.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -17,18 +18,15 @@ import com.rongji.rjsoft.mapper.CmsSiteColumnMapper;
 import com.rongji.rjsoft.query.content.CmsColumnQuery;
 import com.rongji.rjsoft.service.ICmsColumnService;
 import com.rongji.rjsoft.vo.CommonPage;
-import com.rongji.rjsoft.vo.content.CmsColumnTreeVo;
-import com.rongji.rjsoft.vo.content.CmsColumnVo;
-import com.rongji.rjsoft.vo.content.CmsSiteTreeVo;
-import com.rongji.rjsoft.vo.content.CmsSiteVo;
+import com.rongji.rjsoft.vo.content.*;
 import lombok.AllArgsConstructor;
+import org.springframework.security.web.access.channel.AbstractRetryEntryPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -198,4 +196,44 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         Integer count = cmsColumnMapper.selectCount(wrapper);
         return count > 0 ? false : true;
     }
+
+    /**
+     * 获取站点下的栏目树
+     *
+     * @param siteId 站点Id
+     * @return 栏目树
+     */
+    @Override
+    public CmsColumnAllTree getColumnTreeBySite(Long siteId) {
+        List<CmsColumnAllTree> list = cmsColumnMapper.getColumnTreeBySite(siteId);
+        if (CollectionUtil.isNotEmpty(list)) {
+            List<CmsColumnAllTree> tree = new ArrayList<>();
+            CmsColumnAllTree top = list.remove(0);
+            tree.add(top);
+            assembly(tree, list);
+            return top;
+        }
+        return null;
+    }
+
+    private void assembly(List<CmsColumnAllTree> parentChildren, List<CmsColumnAllTree> list) {
+
+        for (CmsColumnAllTree CmsColumnAllTree : parentChildren) {
+            List<CmsColumnAllTree> children = new ArrayList<>();
+            Iterator<CmsColumnAllTree> iterator = list.iterator();
+            CmsColumnAllTree next;
+            while (iterator.hasNext()) {
+                next = iterator.next();
+                if (next.getParentId().longValue() == CmsColumnAllTree.getColumnId().longValue()) {
+                    children.add(next);
+                    iterator.remove();
+                }
+            }
+            CmsColumnAllTree.setChildren(children);
+            if (CollectionUtil.isNotEmpty(list)) {
+                assembly(CmsColumnAllTree.getChildren(), list);
+            }
+        }
+    }
+
 }

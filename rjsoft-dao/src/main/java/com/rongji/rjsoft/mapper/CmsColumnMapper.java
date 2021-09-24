@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.rongji.rjsoft.entity.content.CmsColumn;
 import com.rongji.rjsoft.query.content.CmsColumnQuery;
+import com.rongji.rjsoft.vo.content.CmsColumnAllTree;
 import com.rongji.rjsoft.vo.content.CmsColumnVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -47,4 +48,20 @@ public interface CmsColumnMapper extends BaseMapper<CmsColumn> {
      * @return
      */
     int batchDeleteColumn(Long[] columnId);
+
+    /**
+     * 通过父节点获取父节点树信息
+     * @param parentId
+     * @return
+     */
+    CmsColumnAllTree selectParentTreeNode(Long parentId);
+
+    /**
+     * 获取站点下的栏目树
+     * @param siteId
+     * @return
+     */
+    List<CmsColumnAllTree> getColumnTreeBySite(Long siteId);
+
+
 }
