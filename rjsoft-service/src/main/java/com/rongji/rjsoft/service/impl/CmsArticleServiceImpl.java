@@ -115,6 +115,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
             cmsColumnArticle.setArticleId(cmsArticleAo.getArticleId());
             cmsColumnArticle.setSiteId(cmsSiteColumn.getSiteId());
             cmsColumnArticle.setColumnId(cmsSiteColumn.getColumnId());
+            list.add(cmsColumnArticle);
         }
         return cmsColumnArticleMapper.batchInsert(list) > 0;
     }
