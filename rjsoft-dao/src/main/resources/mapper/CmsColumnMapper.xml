@@ -8,6 +8,8 @@
         <result column="column_name" property="columnName"/>
         <result column="parent_id" property="parentId"/>
         <result column="ancestors" property="ancestors"/>
+        <result column="image_url" property="imageUrl"/>
+        <result column="del_flag" property="delFlag"/>
         <result column="create_by" property="createBy"/>
         <result column="create_time" property="createTime"/>
         <result column="update_by" property="updateBy"/>
@@ -41,6 +43,13 @@
         where column_id in
         <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
             #{item.columnId}
+        </foreach>
+    </update>
+
+    <update id="batchDeleteColumn">
+        update cms_column set del_flag = 1 where column_id in
+        <foreach collection="columnId" item="item" index="index" open="(" separator="," close=")">
+            #{item}
         </foreach>
     </update>
 

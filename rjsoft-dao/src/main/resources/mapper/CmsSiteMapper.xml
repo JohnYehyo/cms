@@ -12,6 +12,7 @@
         <result column="site_url" property="siteUrl"/>
         <result column="order_num" property="orderNum"/>
         <result column="site_file" property="siteFile"/>
+        <result column="del_flag" property="delFlag"/>
         <result column="create_by" property="createBy"/>
         <result column="create_time" property="createTime"/>
         <result column="update_by" property="updateBy"/>
@@ -45,6 +46,14 @@
         where site_id in
         <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
             #{item.siteId}
+        </foreach>
+    </update>
+
+    <update id="deleteSites">
+        update cms_site set del_flag = 1
+        where site_id in
+        <foreach collection="siteId" item="item" index="index" open="(" separator="," close=")">
+            #{item}
         </foreach>
     </update>
 

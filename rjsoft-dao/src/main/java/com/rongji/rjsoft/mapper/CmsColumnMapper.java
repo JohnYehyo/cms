@@ -40,4 +40,11 @@ public interface CmsColumnMapper extends BaseMapper<CmsColumn> {
      * @return 更新结果
      */
     int batchUpdateChildreAncestors(List<CmsColumn> list);
+
+    /**
+     * 删除栏目
+     * @param columnId
+     * @return
+     */
+    int batchDeleteColumn(Long[] columnId);
 }

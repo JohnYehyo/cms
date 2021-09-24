@@ -3,6 +3,7 @@ package com.rongji.rjsoft.vo.content;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -68,5 +69,15 @@ public class CmsArticleVo implements Serializable {
      * 文章标签
      */
     private List<String> tags;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createTime;
+
+    /**
+     * 发布时间
+     */
+    private LocalDateTime publishTime;
 
 }

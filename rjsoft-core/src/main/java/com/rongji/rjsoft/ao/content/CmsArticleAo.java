@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -151,5 +152,7 @@ public class CmsArticleAo {
     @ApiModelProperty(value = "站点栏目", required = true)
     @NotNull(message = "站点栏目不能为空")
     private List<CmsSiteColumn> list;
+
+    private LocalDateTime publishTime;
 
 }

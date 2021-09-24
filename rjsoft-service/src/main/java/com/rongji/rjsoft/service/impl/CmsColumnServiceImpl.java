@@ -2,6 +2,7 @@ package com.rongji.rjsoft.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -9,7 +10,10 @@ import com.rongji.rjsoft.ao.content.CmsColumnAo;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.entity.content.CmsColumn;
 import com.rongji.rjsoft.entity.content.CmsSite;
+import com.rongji.rjsoft.entity.content.CmsSiteColumn;
+import com.rongji.rjsoft.enums.DelFlagEnum;
 import com.rongji.rjsoft.mapper.CmsColumnMapper;
+import com.rongji.rjsoft.mapper.CmsSiteColumnMapper;
 import com.rongji.rjsoft.query.content.CmsColumnQuery;
 import com.rongji.rjsoft.service.ICmsColumnService;
 import com.rongji.rjsoft.vo.CommonPage;
@@ -19,7 +23,9 @@ import com.rongji.rjsoft.vo.content.CmsSiteTreeVo;
 import com.rongji.rjsoft.vo.content.CmsSiteVo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,6 +44,8 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
 
     private final CmsColumnMapper cmsColumnMapper;
 
+    private final CmsSiteColumnMapper cmsSiteColumnMapper;
+
     /**
      * 添加栏目信息
      *
@@ -45,12 +53,34 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
      * @return 添加结果
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean add(CmsColumnAo cmsColumnAo) {
+        //保存栏目
         CmsColumn parent = cmsColumnMapper.selectById(cmsColumnAo.getParentId());
         CmsColumn cmsColumn = new CmsColumn();
         BeanUtil.copyProperties(cmsColumnAo, cmsColumn);
         cmsColumn.setAncestors(parent.getAncestors() + "," + parent.getParentId());
-        return cmsColumnMapper.insert(cmsColumn) > 0;
+        boolean result = cmsColumnMapper.insert(cmsColumn) > 0;
+
+        //保存站点关系
+        cmsColumnAo.setColumnId(cmsColumn.getColumnId());
+        boolean result1 = saveSiteWithColumn(cmsColumnAo);
+
+        return result && result1;
+    }
+
+    private boolean saveSiteWithColumn(CmsColumnAo cmsColumnAo) {
+        CmsSiteColumn cmsSiteColumn;
+        List<CmsSiteColumn> list = new ArrayList<>();
+        Long[] siteIds = cmsColumnAo.getSiteId();
+        for (int i = 0; i < siteIds.length; i++) {
+            cmsSiteColumn = new CmsSiteColumn();
+            cmsSiteColumn.setSiteId(siteIds[i]);
+            cmsSiteColumn.setColumnId(cmsColumnAo.getColumnId());
+            list.add(cmsSiteColumn);
+        }
+        boolean result1 = cmsSiteColumnMapper.batchInsert(list);
+        return result1;
     }
 
     /**
@@ -60,7 +90,13 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
      * @return 编辑结果
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean edit(CmsColumnAo cmsColumnAo) {
+
+        //编辑站点栏目关系
+        boolean result = updateSiteWithColumn(cmsColumnAo);
+
+        //编辑栏目信息
         CmsColumn parent = cmsColumnMapper.selectById(cmsColumnAo.getParentId());
         CmsColumn old = cmsColumnMapper.selectById(cmsColumnAo.getColumnId());
 
@@ -77,12 +113,21 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
             updateSiteChildren(old.getColumnId(), newAncestors, oldAncestors);
         }
 
-        return cmsColumnMapper.updateById(cmsColumn) > 0;
+        boolean result1 = cmsColumnMapper.updateById(cmsColumn) > 0;
+
+        return result && result1;
+    }
+
+    private boolean updateSiteWithColumn(CmsColumnAo cmsColumnAo) {
+        LambdaUpdateWrapper<CmsSiteColumn> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(CmsSiteColumn::getColumnId, cmsColumnAo.getColumnId());
+        cmsSiteColumnMapper.delete(wrapper);
+        return saveSiteWithColumn(cmsColumnAo);
     }
 
     private void updateSiteChildren(Long siteId, String newAncestors, String oldAncestors) {
         List<CmsColumn> list = cmsColumnMapper.selectChildrenByColumnId(siteId);
-        if(null == list || list.size() == 0){
+        if (null == list || list.size() == 0) {
             return;
         }
         for (CmsColumn cmsColumn : list) {
@@ -99,12 +144,18 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
      * @return 删除结果
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean delete(Long[] columnId) {
-        return cmsColumnMapper.deleteBatchIds(Arrays.asList(columnId)) > 0;
+        //删除站点栏目关系
+        boolean result = cmsSiteColumnMapper.deleteSiteColumnByColumnId(columnId) > 0;
+        //删除栏目
+        boolean result1 = cmsColumnMapper.batchDeleteColumn(columnId) > 0;
+        return result && result1;
     }
 
     /**
      * 栏目分页列表
+     *
      * @param cmsColumnQuery 查询条件
      * @return 栏目分页列表
      */
@@ -117,6 +168,7 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
 
     /**
      * 栏目树
+     *
      * @param cmsColumnQuery 查询条件
      * @return 栏目树
      */
@@ -129,6 +181,7 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         cmsColumnQuery.setColumnId(cmsColumnQuery.getColumnId() == null ? 0L : cmsColumnQuery.getColumnId());
         //查询以cmsSiteQuery.getSiteId为父节点的所有站点
         wrapper.eq(CmsColumn::getParentId, cmsColumnQuery.getColumnId());
+        wrapper.eq(CmsColumn::getDelFlag, DelFlagEnum.exist.getCode());
         list = cmsColumnMapper.selectList(wrapper);
         for (CmsColumn cmsColumn : list) {
             cmsColumnTreeVo = new CmsColumnTreeVo();

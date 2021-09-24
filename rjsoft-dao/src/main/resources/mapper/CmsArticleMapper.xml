@@ -21,6 +21,7 @@
         <result column="order_num" property="orderNum"/>
         <result column="state" property="state"/>
         <result column="source" property="source"/>
+        <result column="publish_time" property="publishTime"/>
         <result column="create_by" property="createBy"/>
         <result column="create_time" property="createTime"/>
         <result column="update_by" property="updateBy"/>
@@ -43,6 +44,8 @@
         t2.category_name as categoryName,
         t1.top,
         t1.slider
+        t1.create_time,
+        t1.publish_time
         FROM
         cms_article AS t1
         INNER JOIN cms_category AS t2 ON t1.category_id = t2.category_id

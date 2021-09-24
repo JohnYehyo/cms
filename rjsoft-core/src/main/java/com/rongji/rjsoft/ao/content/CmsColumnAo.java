@@ -46,4 +46,17 @@ public class CmsColumnAo {
     @NotNull(message = "父级ID不能为空")
     private Long parentId;
 
+    /**
+     * 栏目图片地址
+     */
+    @ApiModelProperty(value = "栏目图片地址")
+    private String imageUrl;
+
+    /**
+     * 站点
+     */
+    @ApiModelProperty(value = "站点", required = true)
+    @NotNull(message = "站点不能为空")
+    private Long[] siteId;
+
 }

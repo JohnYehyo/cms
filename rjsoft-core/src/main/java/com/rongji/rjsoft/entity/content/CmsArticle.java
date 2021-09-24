@@ -4,11 +4,12 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -110,6 +111,11 @@ public class CmsArticle implements Serializable {
      * 文章来源
      */
     private String source;
+
+    /**
+     * 发布时间
+     */
+    private LocalDateTime publishTime;
 
     /**
      * 创建者

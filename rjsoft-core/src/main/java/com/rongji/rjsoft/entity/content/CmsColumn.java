@@ -48,6 +48,16 @@ public class CmsColumn implements Serializable {
     private String ancestors;
 
     /**
+     * 栏目图片地址
+     */
+    private String imageUrl;
+
+    /**
+     * 伪删除标记
+     */
+    private Integer delFlag;
+
+    /**
      * 创建者
      */
     @TableField(fill = FieldFill.INSERT)

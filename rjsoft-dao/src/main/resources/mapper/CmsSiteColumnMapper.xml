@@ -8,4 +8,25 @@
         <result column="column_id" property="columnId" />
     </resultMap>
 
+    <insert id="batchInsert">
+        insert into cms_site_column (site_id, column_id) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.siteId}, #{item.columnId})
+        </foreach>
+    </insert>
+
+    <update id="deleteSiteColumnByColumnId">
+        update cms_site_column set del_flag = 1 where column_id in
+        <foreach collection="columnId" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="deleteSiteColumnBySiteId">
+        update cms_site_column set del_flag = 1 where site_id in
+        <foreach collection="siteId" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
 </mapper>

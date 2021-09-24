@@ -33,4 +33,10 @@ public class CmsColumnVo implements Serializable {
     @ApiModelProperty(value = "父级栏目id")
     private Long parentId;
 
+    /**
+     * 栏目图片地址
+     */
+    @ApiModelProperty(value = "栏目图片地址")
+    private String imageUrl;
+
 }

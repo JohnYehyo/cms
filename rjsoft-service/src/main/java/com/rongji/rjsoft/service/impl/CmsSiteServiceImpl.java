@@ -9,6 +9,8 @@ import com.rongji.rjsoft.ao.content.CmsSiteAo;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.entity.content.CmsSite;
 import com.rongji.rjsoft.entity.system.SysDept;
+import com.rongji.rjsoft.enums.DelFlagEnum;
+import com.rongji.rjsoft.mapper.CmsSiteColumnMapper;
 import com.rongji.rjsoft.mapper.CmsSiteMapper;
 import com.rongji.rjsoft.query.content.CmsSiteQuery;
 import com.rongji.rjsoft.service.ICmsSiteService;
@@ -36,6 +38,8 @@ import java.util.List;
 public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> implements ICmsSiteService {
 
     private final CmsSiteMapper cmsSiteMapper;
+
+    private final CmsSiteColumnMapper cmsSiteColumnMapper;
 
     /**
      * 新增站点信息
@@ -81,7 +85,7 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
 
     private void updateSiteChildren(Long siteId, String newAncestors, String oldAncestors) {
         List<CmsSite> list = cmsSiteMapper.selectChildrenBySiteId(siteId);
-        if(null == list || list.size() == 0){
+        if (null == list || list.size() == 0) {
             return;
         }
         for (CmsSite cmsSite : list) {
@@ -98,7 +102,11 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
      */
     @Override
     public boolean delete(Long[] siteId) {
-        return cmsSiteMapper.deleteBatchIds(Arrays.asList(siteId)) > 0;
+        //删除站点栏目关系
+        boolean result = cmsSiteColumnMapper.deleteSiteColumnBySiteId(siteId) > 0;
+        //删除站点
+        boolean result1 = cmsSiteMapper.deleteSites(siteId) > 0;
+        return result && result1;
     }
 
     /**
@@ -129,6 +137,7 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         cmsSiteQuery.setSiteId(cmsSiteQuery.getSiteId() == null ? 0L : cmsSiteQuery.getSiteId());
         //查询以cmsSiteQuery.getSiteId为父节点的所有站点
         wrapper.eq(CmsSite::getParentId, cmsSiteQuery.getSiteId());
+        wrapper.eq(CmsSite::getDelFlag, DelFlagEnum.exist.getCode());
         list = cmsSiteMapper.selectList(wrapper);
         for (CmsSite cmsSite : list) {
             cmsSiteTreeVo = new CmsSiteTreeVo();

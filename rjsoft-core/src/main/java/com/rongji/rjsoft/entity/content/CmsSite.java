@@ -67,6 +67,11 @@ public class CmsSite implements Serializable {
     private Integer orderNum;
 
     /**
+     * 伪删除标记
+     */
+    private Integer delFlag;
+
+    /**
      * 创建者
      */
     @TableField(fill = FieldFill.INSERT)
