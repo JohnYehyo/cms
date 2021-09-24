@@ -4,9 +4,9 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.rongji.rjsoft.entity.content.CmsFinalArticle">
-        <id column="site_id" property="siteId" />
-        <result column="column_id" property="columnId" />
-        <result column="article_id" property="articleId" />
+        <id column="site_id" property="siteId"/>
+        <result column="column_id" property="columnId"/>
+        <result column="article_id" property="articleId"/>
     </resultMap>
 
     <insert id="batchInsert">
