@@ -6,7 +6,7 @@ import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 /**
- * @description:
+ * @description: 启动类
  * @author: JohnYehyo
  * @create: 2021-04-25 19:09:03
  */
