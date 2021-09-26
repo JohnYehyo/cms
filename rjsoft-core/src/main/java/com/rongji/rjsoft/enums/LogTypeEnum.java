@@ -58,6 +58,11 @@ public enum LogTypeEnum {
     DISBLE(9, "禁用"),
 
     /**
+     * 查看
+     */
+    SELECT(10, "查看"),
+
+    /**
      * 其它
      */
     OTHER(0, "其它");

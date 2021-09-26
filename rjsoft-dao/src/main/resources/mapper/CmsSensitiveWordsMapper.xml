@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rongji.rjsoft.mapper.CmsSensitiveWordsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.rongji.rjsoft.entity.content.CmsSensitiveWords">
+        <id column="word_id" property="wordId"/>
+        <result column="word" property="word"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <update id="deleteWords">
+        update cms_sensitive_words set del_flag = 1 where word_id in
+        <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="getPages" resultType="com.rongji.rjsoft.vo.content.CmsSensitiveWordsVo">
+        select word_id, word, start_time, end_time, del_flag
+        from cms_sensitive_words
+        <where>
+            <if test="null != param.startTime">
+                start_time &gt;= #{param.startTime}
+            </if>
+            <if test="null != param.endTime ">
+                and end_time &lt;= #{param.endTime}
+            </if>
+            <if test="null != param.word and param.word != ''">
+                and word like concat('%', #{param.word}, '%')
+            </if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,5 +1,6 @@
 package com.rongji.rjsoft.ao.content;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.rongji.rjsoft.entity.content.CmsSiteColumn;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -160,7 +161,7 @@ public class CmsArticleAo {
     @ApiModelProperty(value = "发布时间", required = true, example = "2021-04-01 00:00:00")
     @NotNull(groups = {CmsArticleAo.insert.class, CmsArticleAo.update.class}, message = "发布时间不能为空")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishTime;
 
 }
