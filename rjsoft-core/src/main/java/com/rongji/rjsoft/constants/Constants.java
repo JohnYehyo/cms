@@ -84,4 +84,7 @@ public class Constants {
      */
     public static final String CMS_ADMIN = "cms_admin";
 
+
+    public static final String SENSITIVE_WORDS = "sensitive_words";
+
 }

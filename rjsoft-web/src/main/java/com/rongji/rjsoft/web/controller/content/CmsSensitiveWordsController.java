@@ -40,7 +40,7 @@ public class CmsSensitiveWordsController {
      * 添加敏感词
      *
      * @param cmsSensitiveWordsAo 敏感词信息
-     * @return 添加敏感词
+     * @return 添加结果
      */
     @PreAuthorize("@permissionIdentify.hasRole('admin')")
     @ApiOperation(value = "添加敏感词")
@@ -101,6 +101,24 @@ public class CmsSensitiveWordsController {
     public Object list(CmsSensitiveWordsQuery cmsSensitiveWordsQuery) {
         CommonPage<CmsSensitiveWordsVo> page = cmsSensitiveWordsService.listOfWords(cmsSensitiveWordsQuery);
         return ResponseVo.response(ResponseEnum.SUCCESS, page);
+    }
+
+    /**
+     * 批量添加敏感词
+     *
+     * @param fileUrl 文件地址
+     * @return 添加结果
+     */
+    @PreAuthorize("@permissionIdentify.hasRole('admin')")
+    @ApiOperation(value = "批量添加敏感词")
+    @ApiImplicitParam(name = "fileUrl", value = "敏感词文件路径", required = true)
+    @PostMapping(value = "batchSaveWords")
+    @LogAction(module = "敏感词管理", method = "批量添加敏感词", logType = LogTypeEnum.INSERT, operatorType = OperatorTypeEnum.WEB)
+    public Object batchSaveWords(@RequestParam String fileUrl) {
+        if (cmsSensitiveWordsService.batchSaveWords(fileUrl)) {
+            return ResponseVo.success("添加敏感词成功");
+        }
+        return ResponseVo.error("添加敏感词失败");
     }
 
 }

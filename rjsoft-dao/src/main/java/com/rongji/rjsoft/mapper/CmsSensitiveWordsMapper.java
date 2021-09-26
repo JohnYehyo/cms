@@ -33,4 +33,10 @@ public interface CmsSensitiveWordsMapper extends BaseMapper<CmsSensitiveWords> {
     IPage<CmsSensitiveWordsVo> getPages(IPage<CmsSensitiveWordsVo> page, @Param("param") CmsSensitiveWordsQuery cmsSensitiveWordsQuery);
 
 
+    /**
+     * 批量添加敏感词
+     * @param words
+     * @return
+     */
+    boolean batchSaveWords(String[] words);
 }

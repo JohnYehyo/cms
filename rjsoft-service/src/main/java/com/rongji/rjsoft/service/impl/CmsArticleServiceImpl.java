@@ -1,6 +1,9 @@
 package com.rongji.rjsoft.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.dfa.SensitiveUtil;
+import cn.hutool.dfa.WordTree;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -13,6 +16,8 @@ import com.rongji.rjsoft.ao.content.CmsArticleAuditAo;
 import com.rongji.rjsoft.ao.content.CmsArticleDeleteAo;
 import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
+import com.rongji.rjsoft.common.util.LogUtils;
+import com.rongji.rjsoft.common.util.RedisCache;
 import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.content.*;
 import com.rongji.rjsoft.enums.ResponseEnum;
@@ -20,6 +25,7 @@ import com.rongji.rjsoft.exception.BusinessException;
 import com.rongji.rjsoft.mapper.*;
 import com.rongji.rjsoft.query.content.CmsArticleQuery;
 import com.rongji.rjsoft.service.ICmsArticleService;
+import com.rongji.rjsoft.service.ICmsSensitiveWordsService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.content.CmsArticleInfoVo;
 import com.rongji.rjsoft.vo.content.CmsArticleRefVo;
@@ -28,9 +34,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -52,7 +61,9 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
 
     private final CmsFinalArticleMapper cmsFinalArticleMapper;
 
-    private final CmsSensitiveWordsMapper cmsSensitiveWordsMapper;
+    private final ICmsSensitiveWordsService cmsSensitiveWordsService;
+
+    private final RedisCache redisCache;
 
     /**
      * 添加文章
@@ -82,13 +93,20 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     }
 
     private void checkSensitiveWords(CmsArticleAo cmsArticleAo) {
-        List<CmsSensitiveWords> cmsSensitiveWords = cmsSensitiveWordsMapper.selectList(new QueryWrapper<>());
-        for (CmsSensitiveWords word : cmsSensitiveWords) {
-            if (cmsArticleAo.getArticleTitle().contains(word.getWord())
-                    || cmsArticleAo.getDescription().contains(word.getWord())
-                    || cmsArticleAo.getContent().contains(word.getWord())) {
+        List<String> list = redisCache.getCacheList(Constants.SENSITIVE_WORDS);
+        if (CollectionUtil.isEmpty(list)) {
+            list = cmsSensitiveWordsService.refreshCache();
+        }
+        if (CollectionUtil.isNotEmpty(list)) {
+            WordTree tree = new WordTree();
+            tree.addWords(list);
+            String text = cmsArticleAo.getArticleTitle() + cmsArticleAo.getDescription() + cmsArticleAo.getContent();
+            System.out.println(tree.isMatch(text));
+            List<String> matchAll = tree.matchAll(text, -1, false, true);
+
+            if (CollectionUtil.isNotEmpty(matchAll)) {
                 throw new BusinessException(ResponseEnum.NO_ALLOW_WORD.getCode(),
-                        ResponseEnum.NO_ALLOW_WORD.getValue() + word.getWord());
+                        ResponseEnum.NO_ALLOW_WORD.getValue() + matchAll);
             }
         }
     }
@@ -259,4 +277,5 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     public List<CmsArticleRefVo> listOfArticleRef(Long articleId) {
         return cmsFinalArticleMapper.listOfArticleRef(articleId);
     }
+
 }

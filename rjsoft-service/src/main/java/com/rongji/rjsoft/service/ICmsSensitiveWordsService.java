@@ -7,6 +7,8 @@ import com.rongji.rjsoft.query.content.CmsSensitiveWordsQuery;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.content.CmsSensitiveWordsVo;
 
+import java.util.List;
+
 /**
  * <p>
  * 敏感词 服务类
@@ -44,4 +46,16 @@ public interface ICmsSensitiveWordsService extends IService<CmsSensitiveWords> {
      * @return 敏感词列表
      */
     CommonPage<CmsSensitiveWordsVo> listOfWords(CmsSensitiveWordsQuery cmsSensitiveWordsQuery);
+
+    /**
+     * 批量添加敏感词
+     * @param fileUrl 文件地址
+     * @return 添加结果
+     */
+    boolean batchSaveWords(String fileUrl);
+
+    /**
+     * 刷新关键词缓存
+     */
+    List<String> refreshCache();
 }
