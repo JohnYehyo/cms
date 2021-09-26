@@ -3,6 +3,7 @@ package com.rongji.rjsoft.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -14,10 +15,9 @@ import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.content.*;
-import com.rongji.rjsoft.mapper.CmsArticleContentMapper;
-import com.rongji.rjsoft.mapper.CmsArticleMapper;
-import com.rongji.rjsoft.mapper.CmsArticleTagsMapper;
-import com.rongji.rjsoft.mapper.CmsFinalArticleMapper;
+import com.rongji.rjsoft.enums.ResponseEnum;
+import com.rongji.rjsoft.exception.BusinessException;
+import com.rongji.rjsoft.mapper.*;
 import com.rongji.rjsoft.query.content.CmsArticleQuery;
 import com.rongji.rjsoft.service.ICmsArticleService;
 import com.rongji.rjsoft.vo.CommonPage;
@@ -44,13 +44,15 @@ import java.util.List;
 @AllArgsConstructor
 public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArticle> implements ICmsArticleService {
 
-    private CmsArticleMapper cmsArticleMapper;
+    private final CmsArticleMapper cmsArticleMapper;
 
-    private CmsArticleContentMapper cmsArticleContentMapper;
+    private final CmsArticleContentMapper cmsArticleContentMapper;
 
-    private CmsArticleTagsMapper cmsArticleTagsMapper;
+    private final CmsArticleTagsMapper cmsArticleTagsMapper;
 
-    private CmsFinalArticleMapper cmsFinalArticleMapper;
+    private final CmsFinalArticleMapper cmsFinalArticleMapper;
+
+    private final CmsSensitiveWordsMapper cmsSensitiveWordsMapper;
 
     /**
      * 添加文章
@@ -61,6 +63,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean saveArticle(CmsArticleAo cmsArticleAo) {
+
+        checkSensitiveWords(cmsArticleAo);
 
         //保存文章
         CmsArticle cmsArticle = new CmsArticle();
@@ -75,6 +79,18 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         boolean result3 = saveArticleWithColumn(cmsArticleAo);
 
         return result && result1 && result2 && result3;
+    }
+
+    private void checkSensitiveWords(CmsArticleAo cmsArticleAo) {
+        List<CmsSensitiveWords> cmsSensitiveWords = cmsSensitiveWordsMapper.selectList(new QueryWrapper<>());
+        for (CmsSensitiveWords word : cmsSensitiveWords) {
+            if (cmsArticleAo.getArticleTitle().contains(word.getWord())
+                    || cmsArticleAo.getDescription().contains(word.getWord())
+                    || cmsArticleAo.getContent().contains(word.getWord())) {
+                throw new BusinessException(ResponseEnum.NO_ALLOW_WORD.getCode(),
+                        ResponseEnum.NO_ALLOW_WORD.getValue() + word.getWord());
+            }
+        }
     }
 
     private boolean insertArticle(CmsArticleAo cmsArticleAo, CmsArticle cmsArticle) {
@@ -133,6 +149,9 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean updateArticle(CmsArticleAo cmsArticleAo) {
+
+        checkSensitiveWords(cmsArticleAo);
+
         //编辑文章
         boolean result = editArticle(cmsArticleAo);
         //编辑文章标签
@@ -232,6 +251,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
 
     /**
      * 文章引用查询
+     *
      * @param articleId 文章ID
      * @return 文章引用列表
      */
