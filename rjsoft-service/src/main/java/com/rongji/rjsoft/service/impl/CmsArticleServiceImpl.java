@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.ao.content.CmsArticleAo;
 import com.rongji.rjsoft.ao.content.CmsArticleAuditAo;
+import com.rongji.rjsoft.ao.content.CmsArticleDeleteAo;
 import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.constants.Constants;
@@ -177,13 +178,13 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     /**
      * 删除文章
      *
-     * @param articleId 文章ID
+     * @param list 删除条件
      * @return 删除结果
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean deleteArticle(Long[] articleId) {
-        return cmsArticleMapper.deleteBatchIds(Arrays.asList(articleId)) > 0;
+    public boolean deleteArticle(CmsArticleDeleteAo[] list) {
+        return cmsFinalArticleMapper.deleteArticle(list) > 0;
     }
 
     /**

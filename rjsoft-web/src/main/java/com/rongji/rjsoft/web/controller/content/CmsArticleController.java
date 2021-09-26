@@ -3,6 +3,7 @@ package com.rongji.rjsoft.web.controller.content;
 
 import com.rongji.rjsoft.ao.content.CmsArticleAo;
 import com.rongji.rjsoft.ao.content.CmsArticleAuditAo;
+import com.rongji.rjsoft.ao.content.CmsArticleDeleteAo;
 import com.rongji.rjsoft.common.annotation.LogAction;
 import com.rongji.rjsoft.enums.LogTypeEnum;
 import com.rongji.rjsoft.enums.OperatorTypeEnum;
@@ -76,16 +77,15 @@ public class CmsArticleController {
     /**
      * 删除文章
      *
-     * @param articleId 文章ID
+     * @param list 删除条件
      * @return 删除结果
      */
     @PreAuthorize("@permissionIdentify.hasPermi('cms:article:audit')")
     @ApiOperation(value = "删除文章")
-    @ApiImplicitParam(name = "articleId", value = "文章ID", required = true)
-    @DeleteMapping(value = "article/{articleId}")
+    @DeleteMapping(value = "article")
     @LogAction(module = "文章管理", method = "删除文章", logType = LogTypeEnum.DELETE, operatorType = OperatorTypeEnum.WEB)
-    public Object audit(@PathVariable Long[] articleId) {
-        if (cmsArticleService.deleteArticle(articleId)) {
+    public Object audit(@Valid @RequestBody CmsArticleDeleteAo[] list) {
+        if (cmsArticleService.deleteArticle(list)) {
             return ResponseVo.success("删除文章成功");
         }
         return ResponseVo.error("删除文章失败");

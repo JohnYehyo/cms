@@ -3,6 +3,7 @@ package com.rongji.rjsoft.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.rongji.rjsoft.ao.content.CmsArticleAo;
 import com.rongji.rjsoft.ao.content.CmsArticleAuditAo;
+import com.rongji.rjsoft.ao.content.CmsArticleDeleteAo;
 import com.rongji.rjsoft.entity.content.CmsArticle;
 import com.rongji.rjsoft.query.content.CmsArticleQuery;
 import com.rongji.rjsoft.vo.CommonPage;
@@ -38,10 +39,10 @@ public interface ICmsArticleService extends IService<CmsArticle> {
 
     /**
      * 删除文章
-     * @param articleId 文章ID
+     * @param list 删除条件
      * @return 删除结果
      */
-    boolean deleteArticle(Long[] articleId);
+    boolean deleteArticle(CmsArticleDeleteAo[] list);
 
     /**
      * 审核文章

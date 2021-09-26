@@ -1,6 +1,7 @@
 package com.rongji.rjsoft.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.rongji.rjsoft.ao.content.CmsArticleDeleteAo;
 import com.rongji.rjsoft.entity.content.CmsFinalArticle;
 import com.rongji.rjsoft.vo.content.CmsArticleRefVo;
 
@@ -29,4 +30,12 @@ public interface CmsFinalArticleMapper extends BaseMapper<CmsFinalArticle> {
      * @return 文章引用列表
      */
     List<CmsArticleRefVo> listOfArticleRef(Long articleId);
+
+
+    /**
+     * 删除文章
+     * @param list 删除对象
+     * @return 删除结果
+     */
+    int deleteArticle(CmsArticleDeleteAo[] list);
 }

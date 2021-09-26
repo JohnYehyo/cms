@@ -32,4 +32,11 @@
             t1.article_id = #{articleId}
     </select>
 
+    <update id="deleteArticle">
+        update cms_final_article set del_flag = 1 where
+        <foreach collection="array" item="item" index="index" separator="or">
+            (site_id = #{item.siteId} and column_id = #{item.columnId} and article_id = #{item.articleId})
+        </foreach>
+    </update>
+
 </mapper>
