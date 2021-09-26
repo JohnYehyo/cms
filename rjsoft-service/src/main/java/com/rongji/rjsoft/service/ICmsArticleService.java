@@ -7,7 +7,10 @@ import com.rongji.rjsoft.entity.content.CmsArticle;
 import com.rongji.rjsoft.query.content.CmsArticleQuery;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.content.CmsArticleInfoVo;
+import com.rongji.rjsoft.vo.content.CmsArticleRefVo;
 import com.rongji.rjsoft.vo.content.CmsArticleVo;
+
+import java.util.List;
 
 /**
  * <p>
@@ -60,4 +63,11 @@ public interface ICmsArticleService extends IService<CmsArticle> {
      * @return 文章详情
      */
     CmsArticleInfoVo getInfo(Long articleId);
+
+    /**
+     * 文章引用查询
+     * @param articleId 文章ID
+     * @return 文章引用列表
+     */
+    List<CmsArticleRefVo> listOfArticleRef(Long articleId);
 }

@@ -2,6 +2,7 @@ package com.rongji.rjsoft.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.rongji.rjsoft.entity.content.CmsFinalArticle;
+import com.rongji.rjsoft.vo.content.CmsArticleRefVo;
 
 import java.util.List;
 
@@ -21,4 +22,11 @@ public interface CmsFinalArticleMapper extends BaseMapper<CmsFinalArticle> {
      * @return 保存结果
      */
     int batchInsert(List<CmsFinalArticle> list);
+
+    /**
+     * 文章引用查询
+     * @param articleId 文章ID
+     * @return 文章引用列表
+     */
+    List<CmsArticleRefVo> listOfArticleRef(Long articleId);
 }

@@ -21,6 +21,7 @@ import com.rongji.rjsoft.query.content.CmsArticleQuery;
 import com.rongji.rjsoft.service.ICmsArticleService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.content.CmsArticleInfoVo;
+import com.rongji.rjsoft.vo.content.CmsArticleRefVo;
 import com.rongji.rjsoft.vo.content.CmsArticleVo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
 
     private CmsArticleTagsMapper cmsArticleTagsMapper;
 
-    private CmsFinalArticleMapper cmsColumnArticleMapper;
+    private CmsFinalArticleMapper cmsFinalArticleMapper;
 
     /**
      * 添加文章
@@ -119,7 +120,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
             cmsColumnArticle.setColumnId(cmsSiteColumn.getColumnId());
             list.add(cmsColumnArticle);
         }
-        return cmsColumnArticleMapper.batchInsert(list) > 0;
+        return cmsFinalArticleMapper.batchInsert(list) > 0;
     }
 
     /**
@@ -145,7 +146,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     private boolean updateArticleWithColumn(CmsArticleAo cmsArticleAo) {
         LambdaUpdateWrapper<CmsFinalArticle> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(CmsFinalArticle::getArticleId, cmsArticleAo.getArticleId());
-        cmsColumnArticleMapper.delete(wrapper);
+        cmsFinalArticleMapper.delete(wrapper);
         return saveArticleWithColumn(cmsArticleAo);
     }
 
@@ -224,6 +225,17 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     public CmsArticleInfoVo getInfo(Long articleId) {
         CmsArticleInfoVo cmsArticleInfoVo = cmsArticleMapper.getInfo(articleId);
         cmsArticleInfoVo.setTags(cmsArticleTagsMapper.getTagsByArticleId(cmsArticleInfoVo.getArticleId()));
+        cmsArticleInfoVo.setSiteColumns(cmsFinalArticleMapper.listOfArticleRef(articleId));
         return cmsArticleInfoVo;
+    }
+
+    /**
+     * 文章引用查询
+     * @param articleId 文章ID
+     * @return 文章引用列表
+     */
+    @Override
+    public List<CmsArticleRefVo> listOfArticleRef(Long articleId) {
+        return cmsFinalArticleMapper.listOfArticleRef(articleId);
     }
 }

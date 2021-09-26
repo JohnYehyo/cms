@@ -52,7 +52,7 @@
     <update id="deleteSites">
         update cms_site set del_flag = 1
         where site_id in
-        <foreach collection="siteId" item="item" index="index" open="(" separator="," close=")">
+        <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
             #{item}
         </foreach>
     </update>

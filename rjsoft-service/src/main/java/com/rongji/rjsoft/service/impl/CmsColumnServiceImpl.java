@@ -165,7 +165,7 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
     }
 
     /**
-     * 栏目树
+     * 栏目树异步
      *
      * @param cmsColumnQuery 查询条件
      * @return 栏目树

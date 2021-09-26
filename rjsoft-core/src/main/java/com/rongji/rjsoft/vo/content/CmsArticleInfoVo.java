@@ -1,5 +1,6 @@
 package com.rongji.rjsoft.vo.content;
 
+import com.rongji.rjsoft.entity.content.CmsSiteColumn;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -30,7 +31,6 @@ public class CmsArticleInfoVo extends CmsArticleVo implements Serializable {
      */
     private String sliderImg;
 
-
     /**
      * 文章简介，最多200字
      */
@@ -40,5 +40,15 @@ public class CmsArticleInfoVo extends CmsArticleVo implements Serializable {
      * 文章内容
      */
     private String content;
+
+    /**
+     * 关键词
+     */
+    private String keywords;
+
+    /**
+     * 文章引用情况
+     */
+    private List<CmsArticleRefVo> siteColumns;
 
 }

@@ -2,6 +2,9 @@ package com.rongji.rjsoft.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.rongji.rjsoft.entity.content.CmsArticleTags;
+import com.rongji.rjsoft.entity.content.CmsFinalArticle;
+import com.rongji.rjsoft.entity.content.CmsTags;
+import com.rongji.rjsoft.vo.content.CmsTagsSimpleVo;
 
 import java.util.List;
 
@@ -27,5 +30,5 @@ public interface CmsArticleTagsMapper extends BaseMapper<CmsArticleTags> {
      * @param articleId 文章id
      * @return 标签
      */
-    List<String> getTagsByArticleId(Long articleId);
+    List<CmsTagsSimpleVo> getTagsByArticleId(Long articleId);
 }

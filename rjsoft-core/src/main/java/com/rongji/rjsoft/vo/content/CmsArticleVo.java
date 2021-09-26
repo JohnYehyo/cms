@@ -68,7 +68,7 @@ public class CmsArticleVo implements Serializable {
     /**
      * 文章标签
      */
-    private List<String> tags;
+    private List<CmsTagsSimpleVo> tags;
 
     /**
      * 创建时间

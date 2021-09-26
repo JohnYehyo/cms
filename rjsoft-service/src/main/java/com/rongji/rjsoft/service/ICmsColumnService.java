@@ -50,7 +50,7 @@ public interface ICmsColumnService extends IService<CmsColumn> {
     CommonPage<CmsColumnVo> pageList(CmsColumnQuery cmsColumnQuery);
 
     /**
-     * 栏目树查询
+     * 栏目树查询异步
      * @param cmsColumnQuery 查询条件
      * @return 栏目树查询
      */
@@ -62,4 +62,5 @@ public interface ICmsColumnService extends IService<CmsColumn> {
      * @return 栏目树
      */
     CmsColumnAllTree getColumnTreeBySite(Long siteId);
+
 }

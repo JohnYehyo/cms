@@ -98,12 +98,12 @@ public class CmsColumnController {
     }
 
     /**
-     * 栏目树
+     * 栏目树-异步
      * @param cmsColumnQuery 查询条件
      * @return 栏目树
      */
     @PreAuthorize("@permissionIdentify.hasRole('admin')")
-    @ApiOperation(value = "栏目树")
+    @ApiOperation(value = "栏目树-异步")
     @GetMapping(value = "tree")
     public Object tree(CmsColumnQuery cmsColumnQuery){
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsColumnService.tree(cmsColumnQuery));
@@ -115,12 +115,11 @@ public class CmsColumnController {
      * @return 栏目树
      */
     @PreAuthorize("@permissionIdentify.hasRole('admin')")
-    @ApiOperation(value = "栏目树")
+    @ApiOperation(value = "通过站点获取栏目树")
     @ApiImplicitParam(name = "siteId", value = "站点id", required = true)
     @GetMapping(value = "columnTree/{siteId}")
     public Object columnTree(@PathVariable Long siteId){
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsColumnService.getColumnTreeBySite(siteId));
     }
-
 
 }

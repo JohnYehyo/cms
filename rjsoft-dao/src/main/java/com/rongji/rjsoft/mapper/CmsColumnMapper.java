@@ -44,24 +44,23 @@ public interface CmsColumnMapper extends BaseMapper<CmsColumn> {
 
     /**
      * 删除栏目
-     * @param columnId
-     * @return
+     * @param columnId 栏目ID
+     * @return 删除结果
      */
     int batchDeleteColumn(Long[] columnId);
 
     /**
      * 通过父节点获取父节点树信息
-     * @param parentId
-     * @return
+     * @param parentId 父节点ID
+     * @return 父节点树信息
      */
     CmsColumnAllTree selectParentTreeNode(Long parentId);
 
     /**
      * 获取站点下的栏目树
-     * @param siteId
-     * @return
+     * @param siteId 站点ID
+     * @return 栏目树
      */
     List<CmsColumnAllTree> getColumnTreeBySite(Long siteId);
-
 
 }

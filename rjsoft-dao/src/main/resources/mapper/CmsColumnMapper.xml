@@ -48,7 +48,7 @@
 
     <update id="batchDeleteColumn">
         update cms_column set del_flag = 1 where column_id in
-        <foreach collection="columnId" item="item" index="index" open="(" separator="," close=")">
+        <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
             #{item}
         </foreach>
     </update>

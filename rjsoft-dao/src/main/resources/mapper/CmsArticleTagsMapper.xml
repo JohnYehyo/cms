@@ -15,8 +15,8 @@
         </foreach>
     </insert>
 
-    <select id="getTagsByArticleId" parameterType="long" resultType="string">
-        select t2.tag_name
+    <select id="getTagsByArticleId" parameterType="long" resultType="com.rongji.rjsoft.vo.content.CmsTagsSimpleVo">
+        select t2.tag_id, t2.tag_name
         from cms_article_tags as t1
                  INNER JOIN cms_tags as t2 on t1.tag_id = t2.tag_id
         where t1.article_id = #{articleId}

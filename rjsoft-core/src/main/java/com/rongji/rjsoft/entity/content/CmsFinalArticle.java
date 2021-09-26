@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ *  最终文章表
  * </p>
  *
  * @author JohnYehyo
@@ -34,5 +34,10 @@ public class CmsFinalArticle implements Serializable {
      * 文章id
      */
     private Long articleId;
+
+    /**
+     * 伪删除标记
+     */
+    private int delFlag;
 
 }

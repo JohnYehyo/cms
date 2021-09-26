@@ -30,5 +30,10 @@ public class CmsSiteColumn implements Serializable {
      */
     private Long columnId;
 
+    /**
+     * 伪删除
+     */
+    private int delFlag;
+
 
 }
