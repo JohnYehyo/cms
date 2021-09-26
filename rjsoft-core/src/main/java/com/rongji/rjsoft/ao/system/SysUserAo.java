@@ -44,14 +44,14 @@ public class SysUserAo {
      * 用户账号
      */
     @ApiModelProperty(value = "用户账号", required = true)
-    @NotEmpty(message = "用户名称不能为空")
+    @NotEmpty(groups = {SysUserAo.add.class, SysUserAo.update.class}, message = "用户名称不能为空")
     private String userName;
 
     /**
      * 用户昵称
      */
     @ApiModelProperty(value = "用户昵称", required = true)
-    @NotEmpty(message = "用户昵称不能为空")
+    @NotEmpty(groups = {SysUserAo.add.class, SysUserAo.update.class}, message = "用户昵称不能为空")
     private String nickName;
 
     /**

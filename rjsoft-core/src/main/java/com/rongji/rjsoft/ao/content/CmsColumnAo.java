@@ -3,6 +3,7 @@ package com.rongji.rjsoft.ao.content;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -36,14 +37,17 @@ public class CmsColumnAo {
      * 栏目名称
      */
     @ApiModelProperty(value = "栏目名称", required = true)
-    @NotEmpty(message = "栏目名称不能为空")
+    @NotEmpty(
+            groups = {CmsColumnAo.insert.class, CmsColumnAo.update.class},
+            message = "栏目名称不能为空"
+    )
     private String columnName;
 
     /**
      * 栏目父级id
      */
     @ApiModelProperty(value = "父级ID", required = true)
-    @NotNull(message = "父级ID不能为空")
+    @NotNull(groups = {CmsColumnAo.insert.class, CmsColumnAo.update.class}, message = "父级ID不能为空")
     private Long parentId;
 
     /**
@@ -56,7 +60,7 @@ public class CmsColumnAo {
      * 站点
      */
     @ApiModelProperty(value = "站点", required = true)
-    @NotNull(message = "站点不能为空")
+    @NotNull(groups = {CmsColumnAo.insert.class, CmsColumnAo.update.class}, message = "站点不能为空")
     private Long[] siteId;
 
 }

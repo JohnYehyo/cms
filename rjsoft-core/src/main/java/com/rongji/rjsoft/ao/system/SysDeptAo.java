@@ -36,21 +36,21 @@ public class SysDeptAo {
      * 父级部门id
      */
     @ApiModelProperty(value = "父级部门id", required = true)
-    @NotEmpty(message = "上级部门不能缺失")
+    @NotEmpty(groups = {SysDeptAo.insert.class, SysDeptAo.update.class}, message = "上级部门不能缺失")
     private Long parentId;
 
     /**
      * 部门名称
      */
     @ApiModelProperty(value = "部门名称", required = true)
-    @NotEmpty(message = "部门名称不能为空")
+    @NotEmpty(groups = {SysDeptAo.insert.class, SysDeptAo.update.class}, message = "部门名称不能为空")
     private String deptName;
 
     /**
      * 排序序号
      */
     @ApiModelProperty(value = "排序序号", required = true)
-    @NotNull(message = "排序序号不能为缺失")
+    @NotNull(groups = {SysDeptAo.insert.class, SysDeptAo.update.class}, message = "排序序号不能为缺失")
     private int orderNum;
 
     /**
@@ -81,7 +81,7 @@ public class SysDeptAo {
      * 行政区划code
      */
     @ApiModelProperty(value = "行政区划code", required = true)
-    @NotEmpty(message = "行政区划不能为空")
+    @NotEmpty(groups = {SysDeptAo.insert.class, SysDeptAo.update.class}, message = "行政区划不能为空")
     private String branch_code;
 
     /**

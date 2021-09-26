@@ -36,7 +36,7 @@ public class CmsSiteAo {
      * 站点名称
      */
     @ApiModelProperty(value = "站点名称", required = true)
-    @NotEmpty(message = "站点名称不能为空")
+    @NotEmpty(groups = {CmsSiteAo.insert.class, CmsSiteAo.update.class}, message = "站点名称不能为空")
     private String siteName;
 
     /**
@@ -49,7 +49,7 @@ public class CmsSiteAo {
      * 站点父级id
      */
     @ApiModelProperty(value = "父级ID", required = true)
-    @NotNull(message = "父级ID不能为空")
+    @NotNull(groups = {CmsSiteAo.insert.class, CmsSiteAo.update.class}, message = "父级ID不能为空")
     private Long parentId;
 
     /**

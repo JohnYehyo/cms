@@ -34,21 +34,21 @@ public class SysRoleAo {
      * 角色名称
      */
     @ApiModelProperty(value = "角色名称", required = true)
-    @NotEmpty(message = "角色名称不能为空")
+    @NotEmpty(groups = {SysRoleAo.add.class, SysRoleAo.update.class}, message = "角色名称不能为空")
     private String roleName;
 
     /**
      * 角色权限字符串
      */
     @ApiModelProperty(value = "角色权限字符串", required = true)
-    @NotEmpty(message = "角色权限字符串不能为空")
+    @NotEmpty(groups = {SysRoleAo.add.class, SysRoleAo.update.class}, message = "角色权限字符串不能为空")
     private String roleKey;
 
     /**
      * 显示顺序
      */
     @ApiModelProperty(value = "显示顺序", required = true)
-    @NotEmpty(message = "显示顺序不能为空")
+    @NotEmpty(groups = {SysRoleAo.add.class, SysRoleAo.update.class}, message = "显示顺序不能为空")
     private Integer roleSort;
 
     /**

@@ -14,11 +14,11 @@ import javax.validation.constraints.NotNull;
 @Data
 public class CmsTagsAo {
 
-    public interface insert{
+    public interface insert {
 
     }
 
-    public interface update{
+    public interface update {
 
     }
 
@@ -36,7 +36,7 @@ public class CmsTagsAo {
      * 标签名
      */
     @ApiModelProperty(value = "标签名", required = true)
-    @NotEmpty(message = "标签名不能为空")
+    @NotEmpty(groups = {CmsTagsAo.insert.class, CmsTagsAo.update.class}, message = "标签名不能为空")
     private String tagName;
 
     /**

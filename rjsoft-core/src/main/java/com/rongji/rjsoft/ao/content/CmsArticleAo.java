@@ -17,11 +17,11 @@ import java.util.List;
 @Data
 public class CmsArticleAo {
 
-    public interface insert{
+    public interface insert {
 
     }
 
-    public interface update{
+    public interface update {
 
     }
 
@@ -30,7 +30,7 @@ public class CmsArticleAo {
      */
     @ApiModelProperty(value = "文章ID")
     @NotNull(
-            groups = CmsArticleAo.update.class,
+            groups = {CmsArticleAo.update.class},
             message = "文章ID不能为空"
     )
     private Long articleId;
@@ -39,7 +39,7 @@ public class CmsArticleAo {
      * 文章标题
      */
     @ApiModelProperty(value = "文章标题", required = true)
-    @NotEmpty(message = "文章标题不能为空")
+    @NotEmpty(groups = {CmsArticleAo.insert.class, CmsArticleAo.update.class}, message = "文章标题不能为空")
     private String articleTitle;
 
     /**
@@ -130,14 +130,14 @@ public class CmsArticleAo {
      * 标签
      */
     @ApiModelProperty(value = "标签", required = true)
-    @NotNull(message = "标签不能为空")
+    @NotNull(groups = {CmsArticleAo.insert.class, CmsArticleAo.update.class}, message = "标签不能为空")
     private Long[] tagIds;
 
     /**
      * 文章内容
      */
     @ApiModelProperty(value = "文章内容", required = true)
-    @NotEmpty(message = "文章内容不能为空")
+    @NotEmpty(groups = {CmsArticleAo.insert.class, CmsArticleAo.update.class}, message = "文章内容不能为空")
     private String content;
 
     /**
@@ -150,14 +150,14 @@ public class CmsArticleAo {
      * 站点栏目
      */
     @ApiModelProperty(value = "站点栏目", required = true)
-    @NotNull(message = "站点栏目不能为空")
+    @NotNull(groups = {CmsArticleAo.insert.class, CmsArticleAo.update.class}, message = "站点栏目不能为空")
     private List<CmsSiteColumn> list;
 
     /**
      * 发布时间
      */
     @ApiModelProperty(value = "发布时间", required = true)
-    @NotNull(message = "发布时间不能为空")
+    @NotNull(groups = {CmsArticleAo.insert.class, CmsArticleAo.update.class}, message = "发布时间不能为空")
     private LocalDateTime publishTime;
 
 }

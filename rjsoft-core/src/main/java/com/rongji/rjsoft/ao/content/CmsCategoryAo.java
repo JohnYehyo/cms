@@ -36,14 +36,14 @@ public class CmsCategoryAo {
      * 文章类别名称
      */
     @ApiModelProperty(value = "文章类别名称", required = true)
-    @NotEmpty(message = "文章类别名称不能为空")
+    @NotEmpty(groups = {CmsCategoryAo.insert.class, CmsCategoryAo.update.class}, message = "文章类别名称不能为空")
     private String categoryName;
 
     /**
      * 文章类别父级id
      */
     @ApiModelProperty(value = "父级ID", required = true)
-    @NotNull(message = "父级ID不能为空")
+    @NotNull(groups = {CmsCategoryAo.insert.class, CmsCategoryAo.update.class}, message = "父级ID不能为空")
     private Long parentId;
 
     /**

@@ -1,5 +1,6 @@
 package com.rongji.rjsoft.ao.common;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -15,13 +16,14 @@ public class FileUploadAo {
     /**
      *业务类型
      */
+    @ApiModelProperty(value = "业务类型", required = true)
     @NotBlank(message = "业务类型不能为空")
     private String businessType;
 
 
     /**
-     *oss附件对象Id
+     *oss存储对象id
      */
-    @NotBlank(message = "oss附件对象不能为空")
+    @ApiModelProperty(value = "oss存储对象id")
     private String fileName;
 }

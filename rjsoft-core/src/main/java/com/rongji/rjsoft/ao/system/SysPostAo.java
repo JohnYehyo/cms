@@ -14,11 +14,11 @@ import javax.validation.constraints.NotNull;
 @Data
 public class SysPostAo {
 
-    public interface insert{
+    public interface insert {
 
     }
 
-    public interface update{
+    public interface update {
 
     }
 
@@ -38,14 +38,14 @@ public class SysPostAo {
      * 岗位名称
      */
     @ApiModelProperty(value = "岗位名称", required = true, dataType = "String")
-    @NotEmpty(message = "岗位名称不能空")
+    @NotEmpty(groups = {SysPostAo.insert.class, SysPostAo.update.class}, message = "岗位名称不能空")
     private String postName;
 
     /**
      * 显示顺序
      */
     @ApiModelProperty(value = "显示顺序不能空", required = true, dataType = "int")
-    @NotNull(message = "显示顺序不能为空")
+    @NotNull(groups = {SysPostAo.insert.class, SysPostAo.update.class}, message = "显示顺序不能为空")
     private Integer postSort;
 
 

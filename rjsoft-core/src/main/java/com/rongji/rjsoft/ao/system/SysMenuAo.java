@@ -34,7 +34,7 @@ public class SysMenuAo {
      * 菜单名称
      */
     @ApiModelProperty(value = "菜单名称", required = true)
-    @NotEmpty(message = "菜单名称不能为空")
+    @NotEmpty(groups = {SysMenuAo.add.class, SysMenuAo.update.class}, message = "菜单名称不能为空")
     private String menuName;
 
     /**
@@ -53,14 +53,14 @@ public class SysMenuAo {
      * 显示顺序
      */
     @ApiModelProperty(value = "显示顺序", required = true)
-    @NotEmpty(message = "显示顺序不能为空")
+    @NotEmpty(groups = {SysMenuAo.add.class, SysMenuAo.update.class}, message = "显示顺序不能为空")
     private String orderNum;
 
     /**
      * 路由地址
      */
     @ApiModelProperty(value = "路由地址", required = true)
-    @NotEmpty(message = "路由地址不能为空")
+    @NotEmpty(groups = {SysMenuAo.add.class, SysMenuAo.update.class}, message = "路由地址不能为空")
     private String path;
 
     /**
@@ -85,7 +85,7 @@ public class SysMenuAo {
      * 类型（M目录 C菜单 F按钮）
      */
     @ApiModelProperty(value = "菜单类型", required = true)
-    @NotEmpty(message = "菜单类型不能为空")
+    @NotEmpty(groups = {SysMenuAo.add.class, SysMenuAo.update.class}, message = "菜单类型不能为空")
     private String menuType;
 
     /**

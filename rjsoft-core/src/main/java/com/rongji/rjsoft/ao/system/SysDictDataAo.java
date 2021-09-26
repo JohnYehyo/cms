@@ -14,11 +14,11 @@ import javax.validation.constraints.NotNull;
 @Data
 public class SysDictDataAo {
 
-    public interface insert{
+    public interface insert {
 
     }
 
-    public interface update{
+    public interface update {
 
     }
 
@@ -42,21 +42,21 @@ public class SysDictDataAo {
      * 字典标签
      */
     @ApiModelProperty(value = "字典标签", required = true)
-    @NotEmpty(message = "字典标签不能为空")
+    @NotEmpty(groups = {SysDictDataAo.insert.class, SysDictDataAo.update.class}, message = "字典标签不能为空")
     private String dictLabel;
 
     /**
      * 字典键值
      */
     @ApiModelProperty(value = "字典键值", required = true)
-    @NotEmpty(message = "字典键值不能为空")
+    @NotEmpty(groups = {SysDictDataAo.insert.class, SysDictDataAo.update.class}, message = "字典键值不能为空")
     private String dictValue;
 
     /**
      * 字典类型
      */
     @ApiModelProperty(value = "字典类型", required = true)
-    @NotEmpty(message = "字典类型不能为空")
+    @NotEmpty(groups = {SysDictDataAo.insert.class, SysDictDataAo.update.class}, message = "字典类型不能为空")
     private String dictType;
 
     /**
