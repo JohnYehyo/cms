@@ -2,11 +2,9 @@ package com.rongji.rjsoft.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.dfa.SensitiveUtil;
 import cn.hutool.dfa.WordTree;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -16,13 +14,15 @@ import com.rongji.rjsoft.ao.content.CmsArticleAuditAo;
 import com.rongji.rjsoft.ao.content.CmsArticleDeleteAo;
 import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
-import com.rongji.rjsoft.common.util.LogUtils;
 import com.rongji.rjsoft.common.util.RedisCache;
 import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.content.*;
 import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.exception.BusinessException;
-import com.rongji.rjsoft.mapper.*;
+import com.rongji.rjsoft.mapper.CmsArticleContentMapper;
+import com.rongji.rjsoft.mapper.CmsArticleMapper;
+import com.rongji.rjsoft.mapper.CmsArticleTagsMapper;
+import com.rongji.rjsoft.mapper.CmsFinalArticleMapper;
 import com.rongji.rjsoft.query.content.CmsArticleQuery;
 import com.rongji.rjsoft.service.ICmsArticleService;
 import com.rongji.rjsoft.service.ICmsSensitiveWordsService;
@@ -34,12 +34,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>

@@ -54,7 +54,9 @@ public class CmsSensitiveWordsServiceImpl extends ServiceImpl<CmsSensitiveWordsM
         CmsSensitiveWords cmsSensitiveWords = new CmsSensitiveWords();
         BeanUtil.copyProperties(cmsSensitiveWordsAo, cmsSensitiveWords);
         boolean result = cmsSensitiveWordsMapper.insert(cmsSensitiveWords) > 0;
-        ThreadUtil.execute(() -> refreshCache());
+        if(result){
+            ThreadUtil.execute(() -> refreshCache());
+        }
         return result;
     }
 
@@ -69,7 +71,9 @@ public class CmsSensitiveWordsServiceImpl extends ServiceImpl<CmsSensitiveWordsM
         CmsSensitiveWords cmsSensitiveWords = new CmsSensitiveWords();
         BeanUtil.copyProperties(cmsSensitiveWordsAo, cmsSensitiveWords);
         boolean result = cmsSensitiveWordsMapper.updateById(cmsSensitiveWords) > 0;
-        ThreadUtil.execute(() -> refreshCache());
+        if(result){
+            ThreadUtil.execute(() -> refreshCache());
+        }
         return result;
     }
 

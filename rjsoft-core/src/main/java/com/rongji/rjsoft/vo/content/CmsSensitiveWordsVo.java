@@ -12,6 +12,12 @@ import java.time.LocalDateTime;
 @Data
 public class CmsSensitiveWordsVo {
 
+
+    /**
+     * 敏感词Id
+     */
+    private Long wordId;
+
     /**
      * 敏感词
      */
