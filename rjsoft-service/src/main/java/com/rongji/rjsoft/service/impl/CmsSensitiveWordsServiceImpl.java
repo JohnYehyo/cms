@@ -12,12 +12,15 @@ import com.rongji.rjsoft.common.util.LogUtils;
 import com.rongji.rjsoft.common.util.RedisCache;
 import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.content.CmsSensitiveWords;
+import com.rongji.rjsoft.enums.ResponseEnum;
+import com.rongji.rjsoft.exception.BusinessException;
 import com.rongji.rjsoft.mapper.CmsSensitiveWordsMapper;
 import com.rongji.rjsoft.query.content.CmsSensitiveWordsQuery;
 import com.rongji.rjsoft.service.ICmsSensitiveWordsService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.content.CmsSensitiveWordsVo;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -51,6 +54,10 @@ public class CmsSensitiveWordsServiceImpl extends ServiceImpl<CmsSensitiveWordsM
      */
     @Override
     public boolean saveWord(CmsSensitiveWordsAo cmsSensitiveWordsAo) {
+        CmsSensitiveWords words = getCmsSensitiveWords(cmsSensitiveWordsAo);
+        if(null != words){
+            throw new BusinessException(ResponseEnum.FAIL.getCode(), "系统已存在该敏感词");
+        }
         CmsSensitiveWords cmsSensitiveWords = new CmsSensitiveWords();
         BeanUtil.copyProperties(cmsSensitiveWordsAo, cmsSensitiveWords);
         boolean result = cmsSensitiveWordsMapper.insert(cmsSensitiveWords) > 0;
@@ -58,6 +65,12 @@ public class CmsSensitiveWordsServiceImpl extends ServiceImpl<CmsSensitiveWordsM
             ThreadUtil.execute(() -> refreshCache());
         }
         return result;
+    }
+
+    private CmsSensitiveWords getCmsSensitiveWords(CmsSensitiveWordsAo cmsSensitiveWordsAo) {
+        LambdaQueryWrapper<CmsSensitiveWords> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(CmsSensitiveWords::getWord, cmsSensitiveWordsAo.getWord()).last(" limit 0, 1");
+        return cmsSensitiveWordsMapper.selectOne(wrapper);
     }
 
     /**
@@ -68,6 +81,10 @@ public class CmsSensitiveWordsServiceImpl extends ServiceImpl<CmsSensitiveWordsM
      */
     @Override
     public boolean updateWord(CmsSensitiveWordsAo cmsSensitiveWordsAo) {
+        CmsSensitiveWords words = getCmsSensitiveWords(cmsSensitiveWordsAo);
+        if(null != words && words.getWordId().longValue() != cmsSensitiveWordsAo.getWordId().longValue()){
+            throw new BusinessException(ResponseEnum.FAIL.getCode(), "系统已存在该敏感词");
+        }
         CmsSensitiveWords cmsSensitiveWords = new CmsSensitiveWords();
         BeanUtil.copyProperties(cmsSensitiveWordsAo, cmsSensitiveWords);
         boolean result = cmsSensitiveWordsMapper.updateById(cmsSensitiveWords) > 0;
