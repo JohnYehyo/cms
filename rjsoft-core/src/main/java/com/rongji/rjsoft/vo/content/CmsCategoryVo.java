@@ -23,12 +23,6 @@ public class CmsCategoryVo implements Serializable {
     private Long categoryId;
 
     /**
-     * 父级id
-     */
-    @ApiModelProperty(value = "父级id")
-    private Long parentId;
-
-    /**
      * 类型名
      */
     @ApiModelProperty(value = "类型名")
@@ -45,12 +39,6 @@ public class CmsCategoryVo implements Serializable {
      */
     @ApiModelProperty(value = "排序")
     private Integer orderNum;
-
-    /**
-     * 图标
-     */
-    @ApiModelProperty(value = "图标")
-    private String icon;
 
     /**
      * 是否可用

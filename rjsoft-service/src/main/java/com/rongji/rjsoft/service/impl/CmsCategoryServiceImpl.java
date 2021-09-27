@@ -8,18 +8,17 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.ao.content.CmsCategoryAo;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.entity.content.CmsCategory;
-import com.rongji.rjsoft.entity.content.CmsColumn;
-import com.rongji.rjsoft.enums.EnableEnum;
+import com.rongji.rjsoft.enums.ResponseEnum;
+import com.rongji.rjsoft.exception.BusinessException;
 import com.rongji.rjsoft.mapper.CmsCategoryMapper;
 import com.rongji.rjsoft.query.content.CmsCategoryQuery;
 import com.rongji.rjsoft.service.ICmsCategoryService;
 import com.rongji.rjsoft.vo.CommonPage;
-import com.rongji.rjsoft.vo.content.CmsCategoryTreeVo;
+import com.rongji.rjsoft.vo.content.CmsCategorySimpleVo;
 import com.rongji.rjsoft.vo.content.CmsCategoryVo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,57 +38,48 @@ public class CmsCategoryServiceImpl extends ServiceImpl<CmsCategoryMapper, CmsCa
 
     /**
      * 添加文章类别
+     *
      * @param cmsCategoryAo 文章类别表单
      * @return 添加结果
      */
     @Override
     public boolean add(CmsCategoryAo cmsCategoryAo) {
-        CmsCategory parent = cmsCategoryMapper.selectById(cmsCategoryAo.getParentId());
+        CmsCategory category = getCmsCategory(cmsCategoryAo);
+        if (null != category) {
+            throw new BusinessException(ResponseEnum.FAIL.getCode(), "系统中已存在该类别!");
+        }
         CmsCategory cmsCategory = new CmsCategory();
         BeanUtil.copyProperties(cmsCategoryAo, cmsCategory);
-        cmsCategory.setAncestors(parent.getAncestors() + "," + parent.getParentId());
         return cmsCategoryMapper.insert(cmsCategory) > 0;
+    }
+
+    private CmsCategory getCmsCategory(CmsCategoryAo cmsCategoryAo) {
+        LambdaQueryWrapper<CmsCategory> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(CmsCategory::getCategoryName, cmsCategoryAo.getCategoryName()).last(" limit 0, 1");
+        CmsCategory category = cmsCategoryMapper.selectOne(wrapper);
+        return category;
     }
 
     /**
      * 编辑文章类别
+     *
      * @param cmsCategoryAo 文章类别表单
      * @return 编辑结果
      */
     @Override
     public boolean edit(CmsCategoryAo cmsCategoryAo) {
-        CmsCategory parent = cmsCategoryMapper.selectById(cmsCategoryAo.getParentId());
-        CmsCategory old = cmsCategoryMapper.selectById(cmsCategoryAo.getCategoryId());
+        CmsCategory category = getCmsCategory(cmsCategoryAo);
+        if (null != category && category.getCategoryId().longValue() != cmsCategoryAo.getCategoryId().longValue()) {
+            throw new BusinessException(ResponseEnum.FAIL.getCode(), "系统中已存在该类别!");
+        }
         CmsCategory cmsCategory = new CmsCategory();
         BeanUtil.copyProperties(cmsCategoryAo, cmsCategory);
-        cmsCategory.setAncestors(parent.getAncestors() + "," + parent.getParentId());
-
-        if (null != parent && null != old) {
-            String newAncestors = parent.getAncestors() + "," + parent.getCategoryId();
-            String oldAncestors = old.getAncestors();
-            old.setAncestors(newAncestors);
-            cmsCategory.setAncestors(newAncestors);
-            //修改该节点下所有节点的ancestors
-            updateSiteChildren(old.getCategoryId(), newAncestors, oldAncestors);
-        }
-
         return cmsCategoryMapper.updateById(cmsCategory) > 0;
-    }
-
-    private void updateSiteChildren(Long categoryId, String newAncestors, String oldAncestors) {
-
-        List<CmsCategory> list = cmsCategoryMapper.selectChildrenByCategoryId(categoryId);
-        if(null == list || list.size() == 0){
-            return;
-        }
-        for (CmsCategory cmsCategory : list) {
-            cmsCategory.setAncestors(cmsCategory.getAncestors().replace(oldAncestors, newAncestors));
-        }
-        int count = cmsCategoryMapper.batchUpdateChildreAncestors(list);
     }
 
     /**
      * 删除文章类别
+     *
      * @param categoryId 文章类别id
      * @return 删除结果
      */
@@ -100,6 +90,7 @@ public class CmsCategoryServiceImpl extends ServiceImpl<CmsCategoryMapper, CmsCa
 
     /**
      * 禁用文章类别
+     *
      * @param categoryId 文章类别id
      * @return 禁用结果
      */
@@ -110,6 +101,7 @@ public class CmsCategoryServiceImpl extends ServiceImpl<CmsCategoryMapper, CmsCa
 
     /**
      * 文章类别分页结果
+     *
      * @param cmsCategoryQuery 查询对象
      * @return 文章类别分页结果
      */
@@ -121,36 +113,12 @@ public class CmsCategoryServiceImpl extends ServiceImpl<CmsCategoryMapper, CmsCa
     }
 
     /**
-     * 文章类别树
-     * @param cmsCategoryQuery 查询对象
-     * @return 文章类别树
+     * 文章类别信息列表
+     * @param categoryName 类别名
+     * @return 文章类别信息列表
      */
     @Override
-    public List<CmsCategoryTreeVo> tree(CmsCategoryQuery cmsCategoryQuery) {
-        LambdaQueryWrapper<CmsCategory> wrapper = new LambdaQueryWrapper<>();
-        List<CmsCategory> list;
-        List<CmsCategoryTreeVo> treeList = new ArrayList<>();
-        CmsCategoryTreeVo cmsCategoryTreeVo;
-        cmsCategoryQuery.setCategoryId(cmsCategoryQuery.getCategoryId() == null ? 0L : cmsCategoryQuery.getCategoryId());
-        //查询以cmsSiteQuery.getSiteId为父节点的所有站点
-        wrapper.eq(CmsCategory::getParentId, cmsCategoryQuery.getCategoryId());
-        wrapper.eq(CmsCategory::getStatus, EnableEnum.DISABLE);
-        list = cmsCategoryMapper.selectList(wrapper);
-        for (CmsCategory cmsCategory : list) {
-            cmsCategoryTreeVo = new CmsCategoryTreeVo();
-            BeanUtil.copyProperties(cmsCategory, cmsCategoryTreeVo);
-            cmsCategoryTreeVo.setParentNode(!isLeaf(cmsCategoryTreeVo));
-            treeList.add(cmsCategoryTreeVo);
-        }
-        return treeList;
+    public List<CmsCategorySimpleVo> listOfCategory(String categoryName) {
+        return cmsCategoryMapper.listOfCategory(categoryName);
     }
-
-    private boolean isLeaf(CmsCategoryTreeVo cmsCategoryTreeVo) {
-        LambdaQueryWrapper<CmsCategory> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(CmsCategory::getParentId, cmsCategoryTreeVo.getCategoryId());
-        Integer count = cmsCategoryMapper.selectCount(wrapper);
-        return count > 0 ? false : true;
-    }
-
-
 }

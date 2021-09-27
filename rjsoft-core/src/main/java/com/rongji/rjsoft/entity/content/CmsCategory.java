@@ -32,16 +32,6 @@ public class CmsCategory implements Serializable {
     private Long categoryId;
 
     /**
-     * 父级id
-     */
-    private Long parentId;
-
-    /**
-     * 树关系
-     */
-    private String ancestors;
-
-    /**
      * 类型名
      */
     private String categoryName;
@@ -55,11 +45,6 @@ public class CmsCategory implements Serializable {
      * 排序
      */
     private Integer orderNum;
-
-    /**
-     * 图标
-     */
-    private String icon;
 
     /**
      * 是否可用

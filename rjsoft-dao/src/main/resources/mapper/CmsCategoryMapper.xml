@@ -5,12 +5,9 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.rongji.rjsoft.entity.content.CmsCategory">
         <id column="category_id" property="categoryId"/>
-        <result column="parent_id" property="parentId"/>
-        <result column="ancestors" property="ancestors"/>
         <result column="category_name" property="categoryName"/>
         <result column="description" property="description"/>
         <result column="order_num" property="orderNum"/>
-        <result column="icon" property="icon"/>
         <result column="status" property="status"/>
         <result column="create_by" property="createBy"/>
         <result column="create_time" property="createTime"/>
@@ -26,7 +23,7 @@
     </update>
 
     <select id="getPages" resultType="com.rongji.rjsoft.vo.content.CmsCategoryVo">
-        select category_id, parent_id, category_name, description, order_num, icon, status
+        select category_id, category_name, description, order_num, status
         from cms_category
         <where>
             <if test="param.categoryId != null">
@@ -38,21 +35,15 @@
         </where>
     </select>
 
-    <select id="selectChildrenByCategoryId" resultMap="BaseResultMap">
-        select category_id, parent_id, ancestors
+    <select id="listOfCategory" resultType="com.rongji.rjsoft.vo.content.CmsCategorySimpleVo">
+        select category_id, category_name
         from cms_category
-        where find_in_set(#{categoryId}, ancestors)
+        <where>
+            <if test="categoryName != null and categoryName != ''">
+                and category_name like concat ('%', #{param.categoryName}, '%')
+            </if>
+        </where>
     </select>
 
-    <update id="batchUpdateChildreAncestors">
-        update cms_category set ancestors =
-        <foreach collection="list" item="item" index="index" separator=" " open="case category_id" close="end">
-            when #{item.categoryId} then #{item.ancestors}
-        </foreach>
-        where category_id in
-        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
-            #{item.categoryId}
-        </foreach>
-    </update>
 
 </mapper>

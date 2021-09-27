@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @create: 2021-09-16 14:06:07
  */
 @Data
-public class CmsCategoryTreeVo implements Serializable {
+public class CmsCategorySimpleVo implements Serializable {
 
     private static final long serialVersionUID = -136941801905312782L;
 
@@ -22,20 +22,9 @@ public class CmsCategoryTreeVo implements Serializable {
     private Long categoryId;
 
     /**
-     * 父级id
-     */
-    @ApiModelProperty(value = "父级id")
-    private Long parentId;
-
-    /**
      * 类型名
      */
     @ApiModelProperty(value = "类型名")
     private String categoryName;
 
-    /**
-     * 是否叶子节点
-     */
-    @ApiModelProperty(value = "是否叶子节点")
-    private boolean parentNode;
 }

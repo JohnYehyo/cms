@@ -3,8 +3,8 @@ package com.rongji.rjsoft.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.rongji.rjsoft.entity.content.CmsCategory;
-import com.rongji.rjsoft.entity.content.CmsColumn;
 import com.rongji.rjsoft.query.content.CmsCategoryQuery;
+import com.rongji.rjsoft.vo.content.CmsCategorySimpleVo;
 import com.rongji.rjsoft.vo.content.CmsCategoryVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -36,18 +36,11 @@ public interface CmsCategoryMapper extends BaseMapper<CmsCategory> {
     IPage<CmsCategoryVo> getPages(IPage<CmsCategoryVo> page, @Param("param") CmsCategoryQuery cmsCategoryQuery);
 
     /**
-     *
-     * @param categoryId
-     * @return
+     * 文章类别信息列表
+     * @param categoryName 类别名
+     * @return 文章类别信息列表
      */
-    List<CmsCategory> selectChildrenByCategoryId(Long categoryId);
-
-    /**
-     *
-     * @param list
-     * @return
-     */
-    int batchUpdateChildreAncestors(List<CmsCategory> list);
+    List<CmsCategorySimpleVo> listOfCategory(String categoryName);
 }
 
 

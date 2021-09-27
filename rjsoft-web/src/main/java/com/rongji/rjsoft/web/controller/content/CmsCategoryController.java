@@ -2,18 +2,15 @@ package com.rongji.rjsoft.web.controller.content;
 
 
 import com.rongji.rjsoft.ao.content.CmsCategoryAo;
-import com.rongji.rjsoft.ao.content.CmsColumnAo;
 import com.rongji.rjsoft.common.annotation.LogAction;
 import com.rongji.rjsoft.enums.LogTypeEnum;
 import com.rongji.rjsoft.enums.OperatorTypeEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.query.content.CmsCategoryQuery;
-import com.rongji.rjsoft.query.content.CmsColumnQuery;
 import com.rongji.rjsoft.service.ICmsCategoryService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.ResponseVo;
 import com.rongji.rjsoft.vo.content.CmsCategoryVo;
-import com.rongji.rjsoft.vo.content.CmsColumnVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -21,8 +18,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.stereotype.Controller;
 
 /**
  * <p>
@@ -121,15 +116,17 @@ public class CmsCategoryController {
     }
 
     /**
-     * 文章类别树
-     * @param cmsCategoryQuery 查询条件
-     * @return 文章类别树
+     * 文章类别信息列表
+     * @param categoryName 类别名称
+     * @return 文章类别信息列表
      */
     @PreAuthorize("@permissionIdentify.hasRole('admin')")
-    @ApiOperation(value = "文章类别树")
-    @GetMapping(value = "tree")
-    public Object tree(CmsCategoryQuery cmsCategoryQuery){
-        return ResponseVo.response(ResponseEnum.SUCCESS, cmsCategoryService.tree(cmsCategoryQuery));
+    @ApiOperation(value = "文章类别信息列表")
+    @ApiImplicitParam(name = "categoryName", value = "类别名称")
+    @GetMapping(value = "list")
+    public Object list(@RequestParam(required = false) String categoryName){
+        return ResponseVo.response(ResponseEnum.SUCCESS, cmsCategoryService.listOfCategory(categoryName));
     }
+
 
 }

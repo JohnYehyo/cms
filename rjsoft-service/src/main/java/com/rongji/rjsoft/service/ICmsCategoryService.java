@@ -5,7 +5,7 @@ import com.rongji.rjsoft.ao.content.CmsCategoryAo;
 import com.rongji.rjsoft.entity.content.CmsCategory;
 import com.rongji.rjsoft.query.content.CmsCategoryQuery;
 import com.rongji.rjsoft.vo.CommonPage;
-import com.rongji.rjsoft.vo.content.CmsCategoryTreeVo;
+import com.rongji.rjsoft.vo.content.CmsCategorySimpleVo;
 import com.rongji.rjsoft.vo.content.CmsCategoryVo;
 
 import java.util.List;
@@ -56,9 +56,9 @@ public interface ICmsCategoryService extends IService<CmsCategory> {
     CommonPage<CmsCategoryVo> pageList(CmsCategoryQuery cmsCategoryQuery);
 
     /**
-     * 文章类别树
-     * @param cmsCategoryQuery 查询对象
-     * @return 文章类别树
+     * 文章类别信息列表
+     * @param categoryName 类别名
+     * @return 文章类别信息列表
      */
-    List<CmsCategoryTreeVo> tree(CmsCategoryQuery cmsCategoryQuery);
+    List<CmsCategorySimpleVo> listOfCategory(String categoryName);
 }

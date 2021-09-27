@@ -40,23 +40,10 @@ public class CmsCategoryAo {
     private String categoryName;
 
     /**
-     * 文章类别父级id
-     */
-    @ApiModelProperty(value = "父级ID", required = true)
-    @NotNull(groups = {CmsCategoryAo.insert.class, CmsCategoryAo.update.class}, message = "父级ID不能为空")
-    private Long parentId;
-
-    /**
      * 文章类别描述
      */
     @ApiModelProperty(value = "文章类别描述")
     private String description;
-
-    /**
-     * 图标
-     */
-    @ApiModelProperty(value = "图标")
-    private String icon;
 
     /**
      * 排序
