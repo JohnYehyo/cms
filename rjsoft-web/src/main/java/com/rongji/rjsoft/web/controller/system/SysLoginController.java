@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @description: 登录
@@ -62,10 +62,10 @@ public class SysLoginController {
         SysUser user = loginUser.getUser();
         SysUserVo sysUserVo = new SysUserVo();
         BeanUtil.copyProperties(user, sysUserVo);
+        Set<String> roles = loginUser.getRoles();
         //暂时不需要
-//        Set<String> roles = sysRoleService.getRoleKeysByUserId(user.getUserId());
 //        Set<String> menus = sysMenuService.getMenuPermsByUserId(user.getUserId());
-        CurrentUserInfoVo currentUserInfoVo = new CurrentUserInfoVo(sysUserVo, null, null);
+        CurrentUserInfoVo currentUserInfoVo = new CurrentUserInfoVo(sysUserVo, roles, null);
         return ResponseVo.response(ResponseEnum.SUCCESS, currentUserInfoVo);
     }
 
