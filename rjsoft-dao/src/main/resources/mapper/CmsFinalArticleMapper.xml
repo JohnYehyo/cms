@@ -18,18 +18,15 @@
     </insert>
 
     <select id="listOfArticleRef" resultType="com.rongji.rjsoft.vo.content.CmsArticleRefVo">
-        SELECT
-            t1.article_id,
-            t1.site_id,
-            t2.site_name,
-            t1.column_id,
-            t3.column_name
-        FROM
-            cms_final_article AS t1
-                INNER JOIN cms_site AS t2 ON t1.site_id = t2.site_id
-                INNER JOIN cms_column AS t3 ON t1.column_id = t3.column_id
-        where
-            t1.article_id = #{articleId}
+        SELECT t1.article_id,
+               t1.site_id,
+               t2.site_name,
+               t1.column_id,
+               t3.column_name
+        FROM cms_final_article AS t1
+                 INNER JOIN cms_site AS t2 ON t1.site_id = t2.site_id
+                 INNER JOIN cms_column AS t3 ON t1.column_id = t3.column_id
+        where t1.article_id = #{articleId}
     </select>
 
     <update id="deleteArticle">
@@ -38,5 +35,71 @@
             (site_id = #{item.siteId} and column_id = #{item.columnId} and article_id = #{item.articleId})
         </foreach>
     </update>
+
+    <select id="getArticlePageByColumn" resultType="com.rongji.rjsoft.vo.content.CmsArticlePortalVo">
+        SELECT
+        t2.article_id as articleId,
+        t2.article_title as articleTitle,
+        t2.create_time as createTime
+        FROM
+        cms_final_article AS t1
+        INNER JOIN cms_article AS t2 ON t1.article_id = t2.article_id
+        WHERE
+        t1.site_id = #{siteId}
+        AND t1.column_id IN
+        <foreach collection="columnIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        AND t1.del_flag = 0
+        ORDER BY t2.top, t2.order_num
+    </select>
+
+    <select id="getArticlePageByTag" resultType="com.rongji.rjsoft.vo.content.CmsArticlePortalVo">
+        SELECT
+        t2.article_id as articleId,
+        t2.article_title as articleTitle,
+        t2.create_time as createTime
+        FROM
+        cms_final_article AS t1
+        INNER JOIN cms_article AS t2 ON t1.article_id = t2.article_id
+        WHERE
+        t1.site_id = #{siteId}
+        AND t1.article_id IN
+        <foreach collection="articleIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        AND t1.del_flag = 0
+        ORDER BY t2.top, t2.order_num
+    </select>
+
+    <select id="getArticlesByCategory" resultType="com.rongji.rjsoft.vo.content.CmsArticlePortalVo">
+        SELECT
+        t2.article_id as articleId,
+        t2.article_title as articleTitle,
+        t2.create_time as createTime
+        FROM
+        cms_final_article AS t1
+        INNER JOIN cms_article AS t2 ON t1.article_id = t2.article_id
+        WHERE
+        t1.site_id = #{param.siteId}
+        AND t1.category_id = #{param.categoryId}
+        AND t1.del_flag = 0
+        ORDER BY t2.top, t2.order_num
+    </select>
+
+    <select id="getArticlesBySlider" resultType="com.rongji.rjsoft.vo.content.CmsArticlePortalVo">
+        SELECT
+            t2.article_id as articleId,
+            t2.article_title as articleTitle,
+            t2.create_time as createTime
+        FROM
+            cms_final_article AS t1
+                INNER JOIN cms_article AS t2 ON t1.article_id = t2.article_id
+        WHERE
+            t1.site_id = #{param.siteId}
+          AND t1.slider = 1
+          AND t1.del_flag = 0
+        ORDER BY t2.top, t2.order_num
+    </select>
 
 </mapper>

@@ -123,8 +123,8 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         return saveSiteWithColumn(cmsColumnAo);
     }
 
-    private void updateSiteChildren(Long siteId, String newAncestors, String oldAncestors) {
-        List<CmsColumn> list = cmsColumnMapper.selectChildrenByColumnId(siteId);
+    private void updateSiteChildren(Long columnId, String newAncestors, String oldAncestors) {
+        List<CmsColumn> list = cmsColumnMapper.selectChildrenByColumnId(columnId);
         if (null == list || list.size() == 0) {
             return;
         }
@@ -205,7 +205,10 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
      */
     @Override
     public CmsColumnAllTree getColumnTreeBySite(Long siteId) {
+
+
         List<CmsColumnAllTree> list = cmsColumnMapper.getColumnTreeBySite(siteId);
+
         if (CollectionUtil.isNotEmpty(list)) {
             List<CmsColumnAllTree> tree = new ArrayList<>();
             CmsColumnAllTree top = list.remove(0);

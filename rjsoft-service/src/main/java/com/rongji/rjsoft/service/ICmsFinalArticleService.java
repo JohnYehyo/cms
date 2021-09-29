@@ -13,4 +13,9 @@ import com.rongji.rjsoft.entity.content.CmsFinalArticle;
  */
 public interface ICmsFinalArticleService extends IService<CmsFinalArticle> {
 
+    /**
+     * 生成门户
+     * @return
+     */
+    boolean generate();
 }

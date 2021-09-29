@@ -30,7 +30,7 @@ public interface CmsColumnMapper extends BaseMapper<CmsColumn> {
 
     /**
      * 查询该节点下栏目节点
-     * @param columnId 站点id
+     * @param columnId 栏目id
      * @return 该节点下的所有节点
      */
     List<CmsColumn> selectChildrenByColumnId(Long columnId);

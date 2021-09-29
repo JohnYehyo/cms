@@ -5,8 +5,7 @@ import com.rongji.rjsoft.ao.content.CmsArticleAo;
 import com.rongji.rjsoft.ao.content.CmsArticleAuditAo;
 import com.rongji.rjsoft.ao.content.CmsArticleDeleteAo;
 import com.rongji.rjsoft.entity.content.CmsArticle;
-import com.rongji.rjsoft.query.content.CmsArticleQuery;
-import com.rongji.rjsoft.query.content.CmsColumnArticleQuery;
+import com.rongji.rjsoft.query.content.*;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.content.CmsArticleInfoVo;
 import com.rongji.rjsoft.vo.content.CmsArticlePortalVo;
@@ -80,4 +79,25 @@ public interface ICmsArticleService extends IService<CmsArticle> {
      * @return 文章列表
      */
     CommonPage<CmsArticlePortalVo> getArticlesByColumn(CmsColumnArticleQuery cmsColumnArticleQuery);
+
+    /**
+     * 通过标签获取文章列表
+     * @param cmsTagArticleQuery 查询对象
+     * @return 文章列表
+     */
+    CommonPage<CmsArticlePortalVo> getArticlesByTag(CmsTagArticleQuery cmsTagArticleQuery);
+
+    /**
+     * 通过类别获取文章列表
+     * @param cmsCategoryArticleQuery 查询对象
+     * @return 文章列表
+     */
+    CommonPage<CmsArticlePortalVo> getArticlesByCategory(CmsCategoryArticleQuery cmsCategoryArticleQuery);
+
+    /**
+     * 查询轮播文章
+     * @param cmsSliderArticleQuery 查询对象
+     * @return 轮播文章
+     */
+    List<CmsArticlePortalVo> getArticlesBySlider(CmsSliderArticleQuery cmsSliderArticleQuery);
 }

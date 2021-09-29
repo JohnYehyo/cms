@@ -2,16 +2,12 @@ package com.rongji.rjsoft.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.rongji.rjsoft.ao.content.CmsArticleAo;
 import com.rongji.rjsoft.ao.content.CmsArticleAuditAo;
-import com.rongji.rjsoft.ao.content.CmsArticleDeleteAo;
 import com.rongji.rjsoft.entity.content.CmsArticle;
 import com.rongji.rjsoft.query.content.CmsArticleQuery;
 import com.rongji.rjsoft.vo.content.CmsArticleInfoVo;
 import com.rongji.rjsoft.vo.content.CmsArticleVo;
 import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
 
 /**
  * <p>

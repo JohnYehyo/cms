@@ -8,8 +8,7 @@ import com.rongji.rjsoft.common.annotation.LogAction;
 import com.rongji.rjsoft.enums.LogTypeEnum;
 import com.rongji.rjsoft.enums.OperatorTypeEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
-import com.rongji.rjsoft.query.content.CmsArticleQuery;
-import com.rongji.rjsoft.query.content.CmsColumnArticleQuery;
+import com.rongji.rjsoft.query.content.*;
 import com.rongji.rjsoft.service.ICmsArticleService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.ResponseVo;
@@ -145,10 +144,45 @@ public class CmsArticleController {
      * @return 文章列表
      */
     @ApiOperation(value = "通过栏目获取文章列表")
-    @GetMapping(value = "column/{columnId}")
+    @GetMapping(value = "column")
     public Object getArticlesByColumn(CmsColumnArticleQuery cmsColumnArticleQuery) {
         CommonPage<CmsArticlePortalVo> page = cmsArticleService.getArticlesByColumn(cmsColumnArticleQuery);
         return ResponseVo.response(ResponseEnum.SUCCESS, page);
+    }
+
+    /**
+     * 通过标签获取文章列表
+     * @param cmsTagArticleQuery 查询对象
+     * @return 文章列表
+     */
+    @ApiOperation(value = "通过标签获取文章列表")
+    @GetMapping(value = "tag")
+    public Object getArticlesByColumn(CmsTagArticleQuery cmsTagArticleQuery) {
+        CommonPage<CmsArticlePortalVo> page = cmsArticleService.getArticlesByTag(cmsTagArticleQuery);
+        return ResponseVo.response(ResponseEnum.SUCCESS, page);
+    }
+
+    /**
+     * 通过类别获取文章列表
+     * @param cmsCategoryArticleQuery 查询对象
+     * @return 文章列表
+     */
+    @ApiOperation(value = "通过类别获取文章列表")
+    @GetMapping(value = "category")
+    public Object getArticlesByCategory(CmsCategoryArticleQuery cmsCategoryArticleQuery) {
+        CommonPage<CmsArticlePortalVo> page = cmsArticleService.getArticlesByCategory(cmsCategoryArticleQuery);
+        return ResponseVo.response(ResponseEnum.SUCCESS, page);
+    }
+
+    /**
+     * 查询轮播文章列表
+     * @param cmsSliderArticleQuery 查询对象
+     * @return 文章列表
+     */
+    @ApiOperation(value = "查询轮播文章列表")
+    @GetMapping(value = "slider")
+    public Object getArticlesBySlider(CmsSliderArticleQuery cmsSliderArticleQuery) {
+        return ResponseVo.response(ResponseEnum.SUCCESS, cmsArticleService.getArticlesBySlider(cmsSliderArticleQuery));
     }
 
 }
