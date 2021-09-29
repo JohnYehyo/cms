@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.dfa.WordTree;
 import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -15,19 +14,20 @@ import com.rongji.rjsoft.ao.content.CmsArticleDeleteAo;
 import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.common.util.RedisCache;
+import com.rongji.rjsoft.common.util.ServletUtils;
 import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.content.*;
+import com.rongji.rjsoft.enums.CmsArticleStateEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.exception.BusinessException;
-import com.rongji.rjsoft.mapper.CmsArticleContentMapper;
-import com.rongji.rjsoft.mapper.CmsArticleMapper;
-import com.rongji.rjsoft.mapper.CmsArticleTagsMapper;
-import com.rongji.rjsoft.mapper.CmsFinalArticleMapper;
+import com.rongji.rjsoft.mapper.*;
 import com.rongji.rjsoft.query.content.CmsArticleQuery;
+import com.rongji.rjsoft.query.content.CmsColumnArticleQuery;
 import com.rongji.rjsoft.service.ICmsArticleService;
 import com.rongji.rjsoft.service.ICmsSensitiveWordsService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.content.CmsArticleInfoVo;
+import com.rongji.rjsoft.vo.content.CmsArticlePortalVo;
 import com.rongji.rjsoft.vo.content.CmsArticleRefVo;
 import com.rongji.rjsoft.vo.content.CmsArticleVo;
 import lombok.AllArgsConstructor;
@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -60,6 +61,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     private final ICmsSensitiveWordsService cmsSensitiveWordsService;
 
     private final RedisCache redisCache;
+
+    private final CmsColumnMapper cmsColumnMapper;
 
     /**
      * 添加文章
@@ -108,12 +111,13 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     }
 
     private boolean insertArticle(CmsArticleAo cmsArticleAo, CmsArticle cmsArticle) {
-        cmsArticleAo.setAuthorId(SecurityUtils.getLoginUser().getUser().getUserId());
-        cmsArticleAo.setAuthorName(SecurityUtils.getLoginUser().getUser().getUserName());
+        cmsArticleAo.setAuthorId(SecurityUtils.getLoginUser().getSysDept().getDeptId());
+        cmsArticleAo.setAuthorName(SecurityUtils.getLoginUser().getSysDept().getDeptName());
         BeanUtil.copyProperties(cmsArticleAo, cmsArticle);
         cmsArticle.setFiles(JSON.toJSONString(cmsArticleAo.getFiles()));
         //判断是否需要审核
-        if (SecurityUtils.getLoginUser().getRoles().contains(Constants.CMS_ADMIN)) {
+        if (cmsArticleAo.getState() == CmsArticleStateEnum.TO_AUDIT.getState()
+                && SecurityUtils.getLoginUser().getRoles().contains(Constants.CMS_ADMIN)) {
             cmsArticle.setState(3);
         } else {
             cmsArticle.setState(cmsArticleAo.getState());
@@ -239,10 +243,15 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
      */
     @Override
     public CommonPage<CmsArticleVo> getPage(CmsArticleQuery cmsArticleQuery) {
+        //判断是否为内容管理员
+        boolean flag = SecurityUtils.getLoginUser().getRoles().contains(Constants.CMS_ADMIN);
+        if(flag && CmsArticleStateEnum.DRAFT.getState().equals(cmsArticleQuery.getState())){
+            throw new BusinessException(ResponseEnum.NO_PERMISSION.getCode(), "不能查看未提交的文章");
+        }
+        Long deptId = SecurityUtils.getLoginUser().getSysDept().getDeptId();
         IPage<CmsArticleVo> page = new Page<>();
-        page = cmsArticleMapper.getPage(page, cmsArticleQuery);
+        page = cmsArticleMapper.getPage(page, cmsArticleQuery, flag, deptId);
         List<CmsArticleVo> records = page.getRecords();
-        LambdaQueryWrapper<CmsArticleTags> wrapper;
         for (CmsArticleVo cmsArticleVo : records) {
             cmsArticleVo.setTags(cmsArticleTagsMapper.getTagsByArticleId(cmsArticleVo.getArticleId()));
         }
@@ -274,4 +283,18 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         return cmsFinalArticleMapper.listOfArticleRef(articleId);
     }
 
+    /**
+     * 通过栏目获取文章列表
+     *
+     * @param cmsColumnArticleQuery 查询对象
+     * @return 文章列表
+     */
+    @Override
+    public CommonPage<CmsArticlePortalVo> getArticlesByColumn(CmsColumnArticleQuery cmsColumnArticleQuery) {
+        List<CmsColumn> cmsColumns = cmsColumnMapper.selectChildrenByColumnId(cmsColumnArticleQuery.getColumnId());
+        List<Long> columns = cmsColumns.stream().map(k -> k.getColumnId()).collect(Collectors.toList());
+        IPage<CmsArticlePortalVo> page = new Page<>();
+        page = cmsFinalArticleMapper.getArticlePageByColumn(page, columns);
+        return CommonPageUtils.assemblyPage(page);
+    }
 }

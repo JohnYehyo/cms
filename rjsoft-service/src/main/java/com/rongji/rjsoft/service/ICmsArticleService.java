@@ -6,8 +6,10 @@ import com.rongji.rjsoft.ao.content.CmsArticleAuditAo;
 import com.rongji.rjsoft.ao.content.CmsArticleDeleteAo;
 import com.rongji.rjsoft.entity.content.CmsArticle;
 import com.rongji.rjsoft.query.content.CmsArticleQuery;
+import com.rongji.rjsoft.query.content.CmsColumnArticleQuery;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.content.CmsArticleInfoVo;
+import com.rongji.rjsoft.vo.content.CmsArticlePortalVo;
 import com.rongji.rjsoft.vo.content.CmsArticleRefVo;
 import com.rongji.rjsoft.vo.content.CmsArticleVo;
 
@@ -71,4 +73,11 @@ public interface ICmsArticleService extends IService<CmsArticle> {
      * @return 文章引用列表
      */
     List<CmsArticleRefVo> listOfArticleRef(Long articleId);
+
+    /**
+     * 通过栏目获取文章列表
+     * @param cmsColumnArticleQuery 查询对象
+     * @return 文章列表
+     */
+    CommonPage<CmsArticlePortalVo> getArticlesByColumn(CmsColumnArticleQuery cmsColumnArticleQuery);
 }

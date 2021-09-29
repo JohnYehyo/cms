@@ -12,13 +12,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum CmsArticleStateEnum {
 
-    DRAFT(0, "草稿"),
+    DRAFT(0, "待提交"),
     TO_AUDIT(1, "待审核"),
     ENABLE(2, "已发布"),
     NO_PASS(3, "审核不通过"),
     DISABLE(4, "警用");
 
-    private int state;
+    private Integer state;
 
     private String notes;
 
