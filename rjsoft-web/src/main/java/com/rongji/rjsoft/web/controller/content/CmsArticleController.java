@@ -9,10 +9,12 @@ import com.rongji.rjsoft.enums.LogTypeEnum;
 import com.rongji.rjsoft.enums.OperatorTypeEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.query.content.CmsArticleQuery;
+import com.rongji.rjsoft.query.content.CmsColumnArticleQuery;
 import com.rongji.rjsoft.service.ICmsArticleService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.ResponseVo;
 import com.rongji.rjsoft.vo.content.CmsArticleInfoVo;
+import com.rongji.rjsoft.vo.content.CmsArticlePortalVo;
 import com.rongji.rjsoft.vo.content.CmsArticleVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -46,7 +48,6 @@ public class CmsArticleController {
      * @param cmsArticleAo 文章表单信息
      * @return 添加结果
      */
-    @PreAuthorize("@permissionIdentify.hasPermi('cms:article:add')")
     @ApiOperation(value = "添加文章")
     @PostMapping(value = "article")
     @LogAction(module = "文章管理", method = "添加文章", logType = LogTypeEnum.INSERT, operatorType = OperatorTypeEnum.WEB)
@@ -63,7 +64,6 @@ public class CmsArticleController {
      * @param cmsArticleAo 文章表单信息
      * @return 添加结果
      */
-    @PreAuthorize("@permissionIdentify.hasPermi('cms:article:update')")
     @ApiOperation(value = "编辑文章")
     @PutMapping(value = "article")
     @LogAction(module = "文章管理", method = "编辑文章", logType = LogTypeEnum.UPDATE, operatorType = OperatorTypeEnum.WEB)
@@ -80,7 +80,6 @@ public class CmsArticleController {
      * @param list 删除条件
      * @return 删除结果
      */
-    @PreAuthorize("@permissionIdentify.hasPermi('cms:article:audit')")
     @ApiOperation(value = "删除文章")
     @DeleteMapping(value = "article")
     @LogAction(module = "文章管理", method = "删除文章", logType = LogTypeEnum.DELETE, operatorType = OperatorTypeEnum.WEB)
@@ -97,7 +96,8 @@ public class CmsArticleController {
      * @param cmsArticleAuditAo 文章状态信息
      * @return 审核结果
      */
-    @PreAuthorize("@permissionIdentify.hasPermi('cms:article:audit')")
+//    @PreAuthorize("@permissionIdentify.hasPermi('cms:article:audit')")
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "审核文章")
     @PutMapping(value = "audit")
     @LogAction(module = "文章管理", method = "审核文章", logType = LogTypeEnum.UPDATE, operatorType = OperatorTypeEnum.WEB)
@@ -114,7 +114,8 @@ public class CmsArticleController {
      * @param cmsArticleQuery 查询对象
      * @return 文章列表
      */
-    @PreAuthorize("@permissionIdentify.hasPermi('cms:article:update')")
+//    @PreAuthorize("@permissionIdentify.hasPermi('cms:article:list')")
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "文章列表")
     @GetMapping(value = "list")
     public Object list(CmsArticleQuery cmsArticleQuery) {
@@ -128,13 +129,26 @@ public class CmsArticleController {
      * @param articleId 文章id
      * @return 文章详情
      */
-    @PreAuthorize("@permissionIdentify.hasPermi('cms:article:query')")
+//    @PreAuthorize("@permissionIdentify.hasPermi('cms:article:query')")
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "文章详情")
     @ApiImplicitParam(name = "articleId", value = "文章ID", required = true)
     @GetMapping(value = "article/{articleId}")
     public Object info(@PathVariable Long articleId) {
         CmsArticleInfoVo cmsArticleInfoVo = cmsArticleService.getInfo(articleId);
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsArticleInfoVo);
+    }
+
+    /**
+     * 通过栏目获取文章列表
+     * @param cmsColumnArticleQuery 查询对象
+     * @return 文章列表
+     */
+    @ApiOperation(value = "通过栏目获取文章列表")
+    @GetMapping(value = "column/{columnId}")
+    public Object getArticlesByColumn(CmsColumnArticleQuery cmsColumnArticleQuery) {
+        CommonPage<CmsArticlePortalVo> page = cmsArticleService.getArticlesByColumn(cmsColumnArticleQuery);
+        return ResponseVo.response(ResponseEnum.SUCCESS, page);
     }
 
 }

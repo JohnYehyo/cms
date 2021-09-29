@@ -44,7 +44,7 @@ public class CmsTagsController {
      * @param cmsTagsAo 标签表单
      * @return 添加结果
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "添加标签信息")
     @PostMapping(value = "tag")
     @LogAction(module = "标签信息管理", method = "添加标签信息", logType = LogTypeEnum.INSERT, operatorType = OperatorTypeEnum.WEB)
@@ -57,7 +57,7 @@ public class CmsTagsController {
      * @param cmsTagsAo 标签表单
      * @return 更新结果
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "编辑标签信息")
     @PutMapping(value = "tag")
     @LogAction(module = "标签信息管理", method = "编辑标签信息", logType = LogTypeEnum.UPDATE, operatorType = OperatorTypeEnum.WEB)
@@ -70,7 +70,7 @@ public class CmsTagsController {
      * @param tag_id 标签表单
      * @return 添加结果
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "删除标签信息")
     @ApiImplicitParam(name = "tag_id", value = "标签id", required = true)
     @DeleteMapping(value = "tag/{tag_id}")
@@ -84,7 +84,6 @@ public class CmsTagsController {
      * @param cmsTagsQuery 查询对象
      * @return 标签信息分页
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
     @ApiOperation(value = "标签信息分页")
     @GetMapping(value = "page")
     public Object page(CmsTagsQuery cmsTagsQuery){
@@ -97,7 +96,6 @@ public class CmsTagsController {
      * @param cmsTagsSimpleQuery 查询对象
      * @return 标签信息列表
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
     @ApiOperation(value = "标签信息列表")
     @GetMapping(value = "list")
     public Object list(CmsTagsSimpleQuery cmsTagsSimpleQuery){

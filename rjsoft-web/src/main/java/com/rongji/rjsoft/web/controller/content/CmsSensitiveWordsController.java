@@ -42,7 +42,7 @@ public class CmsSensitiveWordsController {
      * @param cmsSensitiveWordsAo 敏感词信息
      * @return 添加结果
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "添加敏感词")
     @PostMapping
     @LogAction(module = "敏感词管理", method = "添加敏感词", logType = LogTypeEnum.INSERT, operatorType = OperatorTypeEnum.WEB)
@@ -59,7 +59,7 @@ public class CmsSensitiveWordsController {
      * @param cmsSensitiveWordsAo 敏感词信息
      * @return 编辑结果
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "编辑敏感词")
     @PutMapping
     @LogAction(module = "敏感词管理", method = "编辑敏感词", logType = LogTypeEnum.UPDATE, operatorType = OperatorTypeEnum.WEB)
@@ -76,7 +76,7 @@ public class CmsSensitiveWordsController {
      * @param wordId 敏感词id
      * @return 删除结果
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "删除敏感词")
     @ApiImplicitParam(name = "wordId", value = "敏感词id", required = true)
     @DeleteMapping(value = "{wordId}")
@@ -94,7 +94,6 @@ public class CmsSensitiveWordsController {
      * @param cmsSensitiveWordsQuery 查询对象
      * @return 敏感词列表
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
     @ApiOperation(value = "敏感词列表")
     @GetMapping
     @LogAction(module = "敏感词管理", method = "查询敏感词列表", logType = LogTypeEnum.SELECT, operatorType = OperatorTypeEnum.WEB)

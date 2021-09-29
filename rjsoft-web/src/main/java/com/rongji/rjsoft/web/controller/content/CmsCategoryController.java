@@ -41,7 +41,7 @@ public class CmsCategoryController {
      * @param cmsCategoryAo 文章类别信息
      * @return 新增结果
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "新增文章类别信息")
     @PostMapping(value = "category")
     @LogAction(module = "文章类别信息管理", method = "新增文章类别信息", logType = LogTypeEnum.INSERT, operatorType = OperatorTypeEnum.WEB)
@@ -57,7 +57,7 @@ public class CmsCategoryController {
      * @param cmsCategoryAo 文章类别信息
      * @return 编辑结果
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "编辑文章类别信息")
     @PutMapping(value = "category")
     @LogAction(module = "文章类别信息管理", method = "编辑文章类别信息", logType = LogTypeEnum.UPDATE, operatorType = OperatorTypeEnum.WEB)
@@ -73,7 +73,7 @@ public class CmsCategoryController {
      * @param categoryId 文章类别id
      * @return 删除结果
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "删除文章类别信息")
     @ApiImplicitParam(name = "categoryId", value = "文章类别id", required = true)
     @DeleteMapping(value = "category/{categoryId}")
@@ -90,7 +90,7 @@ public class CmsCategoryController {
      * @param categoryId 文章类别id
      * @return 禁用除结果
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "禁用文章类别信息")
     @ApiImplicitParam(name = "categoryId", value = "文章类别id", required = true)
     @DeleteMapping(value = "disable/{categoryId}")
@@ -107,7 +107,6 @@ public class CmsCategoryController {
      * @param cmsCategoryQuery 查询条件
      * @return 文章类别信息分页列表
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
     @ApiOperation(value = "文章类别信息分页列表")
     @GetMapping(value = "page")
     public Object page(CmsCategoryQuery cmsCategoryQuery){
@@ -120,7 +119,6 @@ public class CmsCategoryController {
      * @param categoryName 类别名称
      * @return 文章类别信息列表
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
     @ApiOperation(value = "文章类别信息列表")
     @ApiImplicitParam(name = "categoryName", value = "类别名称")
     @GetMapping(value = "list")

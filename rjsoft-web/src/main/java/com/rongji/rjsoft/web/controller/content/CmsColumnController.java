@@ -40,7 +40,7 @@ public class CmsColumnController {
      * @param cmsColumnAo 栏目信息
      * @return 新增结果
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "新增栏目信息")
     @PostMapping(value = "column")
     @LogAction(module = "栏目信息管理", method = "新增栏目信息", logType = LogTypeEnum.INSERT, operatorType = OperatorTypeEnum.WEB)
@@ -56,7 +56,7 @@ public class CmsColumnController {
      * @param cmsColumnAo 栏目信息
      * @return 编辑结果
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "编辑栏目信息")
     @PutMapping(value = "column")
     @LogAction(module = "栏目信息管理", method = "编辑栏目信息", logType = LogTypeEnum.UPDATE, operatorType = OperatorTypeEnum.WEB)
@@ -72,7 +72,7 @@ public class CmsColumnController {
      * @param columnId 栏目id
      * @return 删除结果
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "删除栏目信息")
     @ApiImplicitParam(name = "columnId", value = "栏目id", required = true)
     @DeleteMapping(value = "column/{columnId}")
@@ -89,7 +89,6 @@ public class CmsColumnController {
      * @param cmsColumnQuery 查询条件
      * @return 栏目信息分页列表
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
     @ApiOperation(value = "栏目信息分页列表")
     @GetMapping(value = "page")
     public Object page(CmsColumnQuery cmsColumnQuery){
@@ -102,7 +101,6 @@ public class CmsColumnController {
      * @param cmsColumnQuery 查询条件
      * @return 栏目树
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
     @ApiOperation(value = "栏目树-异步")
     @GetMapping(value = "tree")
     public Object tree(CmsColumnQuery cmsColumnQuery){
@@ -114,7 +112,6 @@ public class CmsColumnController {
      * @param siteId 查询条件
      * @return 栏目树
      */
-    @PreAuthorize("@permissionIdentify.hasRole('admin')")
     @ApiOperation(value = "通过站点获取栏目树")
     @ApiImplicitParam(name = "siteId", value = "站点id", required = true)
     @GetMapping(value = "columnTree/{siteId}")
