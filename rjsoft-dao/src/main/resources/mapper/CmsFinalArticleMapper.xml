@@ -102,7 +102,7 @@
         ORDER BY t2.top, t2.order_num
     </select>
 
-    <select id="getPublishArticel" resultType="com.rongji.rjsoft.vo.content.CmsArticleContentVo">
+    <select id="getPublishArticel" parameterType="string" resultType="com.rongji.rjsoft.vo.content.CmsArticleContentVo">
         SELECT
         t3.site_id as siteId, t1.article_id as articleId, t1.article_title as articleTitle,
                t1.source, t1.publish_time as publishTime, t1.author_id as authorId,
@@ -112,7 +112,7 @@
         INNER JOIN cms_article_content AS t2 ON t1.article_id = t2.article_id
         INNER JOIN cms_final_article AS t3 ON t1.article_id = t3.article_id
         WHERE
-        t1.publish_time &lt; now()
+        t1.publish_time &lt;= #{time}
         AND t1.state = 3
         AND t3.del_flag = 0
     </select>

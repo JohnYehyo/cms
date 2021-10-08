@@ -55,11 +55,11 @@ public class CmsFinalArticleController {
      * @return 响应
      */
     @ApiOperation(value = "生成文章")
-    @PostMapping(value = "generateHtml")
+    @PostMapping(value = "generateArticle")
     @ResponseBody
     @LogAction(module = "门户管理", method = "生成文章", logType = LogTypeEnum.INSERT, operatorType = OperatorTypeEnum.WEB)
-    public void generateHtml() {
-        cmsFinalArticleService.generateHtml();
+    public void generateArticle() {
+        cmsFinalArticleService.generateArticle();
     }
 
 }

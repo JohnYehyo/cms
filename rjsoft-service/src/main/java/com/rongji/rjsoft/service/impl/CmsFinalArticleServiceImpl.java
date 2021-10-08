@@ -1,5 +1,6 @@
 package com.rongji.rjsoft.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.common.config.FileConfig;
@@ -25,6 +26,7 @@ import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,11 +66,12 @@ public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMappe
      * @return
      */
     @Override
-    public void generateHtml() {
+    public void generateArticle() {
         if (StringUtils.isBlank(FileConfig.getFolder())) {
             throw new IllegalArgumentException("请先在Yml配置静态页面生成路径");
         }
-        List<CmsArticleContentVo> articles = cmsFinalArticleMapper.getPublishArticel();
+        List<CmsArticleContentVo> articles =
+                cmsFinalArticleMapper.getPublishArticel(DateUtil.format(LocalDateTime.now(), "yyyy-MM-dd HH:mm:ss"));
         Map<String, String> map = redisCache.existsHash(Constants.SITE_DICT);
         if (null == map || map.size() == 0) {
             cmsSiteService.refreshCache();

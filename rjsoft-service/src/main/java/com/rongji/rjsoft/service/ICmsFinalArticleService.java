@@ -23,5 +23,5 @@ public interface ICmsFinalArticleService extends IService<CmsFinalArticle> {
      * 生成文章
      * @return
      */
-    void generateHtml();
+    void generateArticle();
 }

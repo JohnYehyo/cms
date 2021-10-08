@@ -113,12 +113,12 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     }
 
     private boolean insertArticle(CmsArticleAo cmsArticleAo, CmsArticle cmsArticle) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         cmsArticleAo.setAuthorId(SecurityUtils.getLoginUser().getSysDept().getDeptId());
         cmsArticleAo.setAuthorName(SecurityUtils.getLoginUser().getSysDept().getDeptName());
         BeanUtil.copyProperties(cmsArticleAo, cmsArticle);
         cmsArticle.setFiles(JSON.toJSONString(cmsArticleAo.getFiles()));
-        cmsArticle.setArticleUrl(dateTimeFormatter.format(LocalDateTime.now())
+        cmsArticle.setArticleUrl(dateTimeFormatter.format(cmsArticle.getPublishTime())
                 + "-" + SecureUtil.md5(String.valueOf(cmsArticle.getArticleId() + cmsArticle.getAuthorId())));
         //判断是否需要审核
         if (cmsArticleAo.getState() == CmsArticleStateEnum.TO_AUDIT.getState()

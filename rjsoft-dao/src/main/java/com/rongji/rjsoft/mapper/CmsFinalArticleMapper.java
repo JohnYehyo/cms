@@ -86,7 +86,8 @@ public interface CmsFinalArticleMapper extends BaseMapper<CmsFinalArticle> {
 
     /**
      * 获取待发布文章信息
-     * @return
+     * @param time 时间
+     * @return 待发布文章信息
      */
-    List<CmsArticleContentVo> getPublishArticel();
+    List<CmsArticleContentVo> getPublishArticel(String time);
 }
