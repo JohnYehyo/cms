@@ -1,6 +1,5 @@
 package com.rongji.rjsoft.service.impl;
 
-import cn.hutool.core.util.HexUtil;
 import com.rongji.rjsoft.ao.system.LoginAo;
 import com.rongji.rjsoft.common.security.entity.LoginUser;
 import com.rongji.rjsoft.common.security.util.AESUtils;
@@ -18,13 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.codec.Hex;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Base64Utils;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 
 /**
  * @description: 登录
