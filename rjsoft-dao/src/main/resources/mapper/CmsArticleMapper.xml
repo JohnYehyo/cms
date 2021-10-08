@@ -21,6 +21,7 @@
         <result column="order_num" property="orderNum"/>
         <result column="state" property="state"/>
         <result column="source" property="source"/>
+        <result column="article_url" property="articleUrl"/>
         <result column="publish_time" property="publishTime"/>
         <result column="create_by" property="createBy"/>
         <result column="create_time" property="createTime"/>

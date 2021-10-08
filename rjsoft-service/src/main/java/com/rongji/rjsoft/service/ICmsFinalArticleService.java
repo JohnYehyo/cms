@@ -18,4 +18,10 @@ public interface ICmsFinalArticleService extends IService<CmsFinalArticle> {
      * @return
      */
     boolean generate();
+
+    /**
+     * 生成文章
+     * @return
+     */
+    void generateHtml();
 }

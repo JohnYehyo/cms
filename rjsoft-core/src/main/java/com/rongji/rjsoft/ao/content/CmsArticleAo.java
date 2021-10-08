@@ -125,7 +125,7 @@ public class CmsArticleAo {
      * 状态 0 草稿 1 待审核 2 审核不通过 3 已发布 4 取消发布
      */
     @ApiModelProperty(value = "文章状态", notes = "0 草稿 1 待审核 2 审核不通过 3 已发布 4 取消发布")
-    private Integer state = 0;
+    private int state = 0;
 
     /**
      * 标签

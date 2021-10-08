@@ -113,6 +113,11 @@ public class CmsArticle implements Serializable {
     private String source;
 
     /**
+     * 文章地址
+     */
+    private String articleUrl;
+
+    /**
      * 发布时间
      */
     private LocalDateTime publishTime;

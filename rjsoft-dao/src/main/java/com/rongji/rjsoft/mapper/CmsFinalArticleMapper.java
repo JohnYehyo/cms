@@ -7,6 +7,7 @@ import com.rongji.rjsoft.entity.content.CmsFinalArticle;
 import com.rongji.rjsoft.query.content.CmsCategoryArticleQuery;
 import com.rongji.rjsoft.query.content.CmsColumnQuery;
 import com.rongji.rjsoft.query.content.CmsSliderArticleQuery;
+import com.rongji.rjsoft.vo.content.CmsArticleContentVo;
 import com.rongji.rjsoft.vo.content.CmsArticlePortalVo;
 import com.rongji.rjsoft.vo.content.CmsArticleRefVo;
 import org.apache.ibatis.annotations.Param;
@@ -82,4 +83,10 @@ public interface CmsFinalArticleMapper extends BaseMapper<CmsFinalArticle> {
      * @return 轮播文章
      */
     List<CmsArticlePortalVo> getArticlesBySlider(CmsSliderArticleQuery cmsSliderArticleQuery);
+
+    /**
+     * 获取待发布文章信息
+     * @return
+     */
+    List<CmsArticleContentVo> getPublishArticel();
 }

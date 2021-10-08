@@ -2,6 +2,7 @@ package com.rongji.rjsoft.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.crypto.SecureUtil;
 import cn.hutool.dfa.WordTree;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -33,6 +34,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -110,10 +113,13 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     }
 
     private boolean insertArticle(CmsArticleAo cmsArticleAo, CmsArticle cmsArticle) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
         cmsArticleAo.setAuthorId(SecurityUtils.getLoginUser().getSysDept().getDeptId());
         cmsArticleAo.setAuthorName(SecurityUtils.getLoginUser().getSysDept().getDeptName());
         BeanUtil.copyProperties(cmsArticleAo, cmsArticle);
         cmsArticle.setFiles(JSON.toJSONString(cmsArticleAo.getFiles()));
+        cmsArticle.setArticleUrl(dateTimeFormatter.format(LocalDateTime.now())
+                + "-" + SecureUtil.md5(String.valueOf(cmsArticle.getArticleId() + cmsArticle.getAuthorId())));
         //判断是否需要审核
         if (cmsArticleAo.getState() == CmsArticleStateEnum.TO_AUDIT.getState()
                 && SecurityUtils.getLoginUser().getRoles().contains(Constants.CMS_ADMIN)) {
