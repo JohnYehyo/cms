@@ -11,7 +11,10 @@ spring:
   application:
     name: rjsoft
   profiles:
-    active: other
+    active: dev
+  thymeleaf:
+    cache: false
+    mode: HTML
   #jackson配置
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
@@ -42,3 +45,5 @@ JohnYehyo:
   version: 1.0.0
   # 验证码类型 math 数组计算 char 字符验证
   captchaType: math
+  # 加密公钥
+  key: 113813559663B1D1
