@@ -84,7 +84,23 @@ public class Constants {
      */
     public static final String CMS_ADMIN = "cms_admin";
 
-
+    /**
+     * 敏感词
+     */
     public static final String SENSITIVE_WORDS = "sensitive_words";
 
+    /**
+     * 文章生成目录
+     */
+    public static final String FILES_DESC_URL = "article";
+
+    /**
+     * 文章模板名
+     */
+    public static final String FILES_TEMPLATE_NAME = "article";
+
+    /**
+     * 站点 redis key
+     */
+    public static final String SITE_DICT = "site:dict";
 }

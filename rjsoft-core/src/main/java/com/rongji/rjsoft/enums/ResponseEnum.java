@@ -50,7 +50,9 @@ public enum ResponseEnum {
     SUPER_LONG_FILE(4000, "文件名超长"),
     SUPER_LARGE_FILE(4001, "文件超出大小限制"),
     NO_ALLOW_FILE(4002, "不支持的文件类型"),
-    NO_ALLOW_WORD(4003, "检测文章标题、描述活内容中包含敏感词:");
+    NO_ALLOW_WORD(4003, "检测文章标题、描述活内容中包含敏感词:"),
+    STATIC_HTML_EXCEPTION(4005, "文章静态化异常"),
+    CANT_GET_SITES(4006, "未能获取到站点信息");
 
     private Integer code;
     private String value;

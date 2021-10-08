@@ -1,14 +1,16 @@
 package com.rongji.rjsoft.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.ao.content.CmsSiteAo;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
+import com.rongji.rjsoft.common.util.RedisCache;
+import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.content.CmsSite;
-import com.rongji.rjsoft.entity.system.SysDept;
 import com.rongji.rjsoft.enums.DelFlagEnum;
 import com.rongji.rjsoft.mapper.CmsSiteColumnMapper;
 import com.rongji.rjsoft.mapper.CmsSiteMapper;
@@ -22,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -41,6 +42,8 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
 
     private final CmsSiteColumnMapper cmsSiteColumnMapper;
 
+    private final RedisCache redisCache;
+
     /**
      * 新增站点信息
      *
@@ -53,7 +56,11 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         CmsSite cmsSite = new CmsSite();
         BeanUtil.copyProperties(cmsSiteAo, cmsSite);
         cmsSite.setAncestors(parent.getAncestors() + "," + parent.getParentId());
-        return cmsSiteMapper.insert(cmsSite) > 0;
+        boolean result = cmsSiteMapper.insert(cmsSite) > 0;
+        if (result) {
+            ThreadUtil.execute(() -> refreshCache());
+        }
+        return result;
     }
 
     /**
@@ -80,7 +87,11 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
             //修改该节点下所有节点的ancestors
             updateSiteChildren(old.getSiteId(), newAncestors, oldAncestors);
         }
-        return cmsSiteMapper.updateById(cmsSite) > 0;
+        boolean result = cmsSiteMapper.updateById(cmsSite) > 0;
+        if (result) {
+            ThreadUtil.execute(() -> refreshCache());
+        }
+        return result;
     }
 
     private void updateSiteChildren(Long siteId, String newAncestors, String oldAncestors) {
@@ -106,6 +117,9 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         boolean result = cmsSiteColumnMapper.deleteSiteColumnBySiteId(siteId) > 0;
         //删除站点
         boolean result1 = cmsSiteMapper.deleteSites(siteId) > 0;
+        if (result && result1) {
+            ThreadUtil.execute(() -> refreshCache());
+        }
         return result && result1;
     }
 
@@ -153,5 +167,18 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         wrapper.eq(CmsSite::getParentId, cmsSiteTreeVo.getSiteId());
         Integer count = cmsSiteMapper.selectCount(wrapper);
         return count > 0 ? false : true;
+    }
+
+    /**
+     * 刷新站点缓存
+     */
+    @Override
+    public void refreshCache() {
+        LambdaQueryWrapper<CmsSite> wrapper = new LambdaQueryWrapper();
+        wrapper.eq(CmsSite::getDelFlag, DelFlagEnum.exist.getCode());
+        List<CmsSite> cmsSites = cmsSiteMapper.selectList(wrapper);
+        for (CmsSite cmsSite : cmsSites) {
+            redisCache.setCacheMapValue(Constants.SITE_DICT, String.valueOf(cmsSite.getSiteId()), cmsSite.getSiteFile());
+        }
     }
 }

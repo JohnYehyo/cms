@@ -54,4 +54,9 @@ public interface ICmsSiteService extends IService<CmsSite> {
      * @return 站点树
      */
     List<CmsSiteTreeVo> tree(CmsSiteQuery cmsSiteQuery);
+
+    /**
+     * 刷新站点缓存
+     */
+    void refreshCache();
 }

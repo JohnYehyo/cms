@@ -178,6 +178,17 @@ public class RedisCache {
     }
 
     /**
+     * 获取Hash中缓存的Map
+     *
+     * @param key  Redis键
+     * @return 缓存的Map
+     */
+    public <T> Map<String, T> existsHash(final String key) {
+        HashOperations<String, String, T> opsForHash = redisTemplate.opsForHash();
+        return opsForHash.entries(key);
+    }
+
+    /**
      * 获取Hash中的数据
      *
      * @param key  Redis键
