@@ -33,6 +33,11 @@ public class FileConfig {
         FileConfig.upload = upload;
     }
 
+    @Value("${file.static.folder}")
+    private void setFolder(String folder){
+        FileConfig.folder = folder;
+    }
+
 
 
     /**
@@ -55,6 +60,11 @@ public class FileConfig {
      */
     private static String upload;
 
+    /**
+     * 静态页
+     */
+    private static String folder;
+
     public static String getPath() {
         return path;
     }
@@ -69,5 +79,9 @@ public class FileConfig {
 
     public static String getUpload() {
         return upload;
+    }
+
+    public static String getFolder() {
+        return folder;
     }
 }
