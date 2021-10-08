@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = BusinessException.class)
     public ResponseVo handle(Exception e) {
         BusinessException e1 = (BusinessException) e;
-        LogUtils.error(ResponseEnum.EXCEPTION.getValue(), e);
+        LogUtils.error(e1.getMsg());
         return ResponseVo.error(e1.getCode(), e1.getMsg());
     }
 
