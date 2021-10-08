@@ -2,9 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <meta name="KeyWords" content="">
-    <meta name="Author" content="">
-    <meta name="Desctiption" content="">
+    <meta name="KeyWords" th:attr="content=${article.keywords}">
+    <meta name="Desctiption" th:attr="content=${article.description}">
     <meta name="Image" content="http://sft.fujian.gov.cn/zwgk/ywbd/sft/202103/W020210315437742908269.jpg">
     <meta name="Url" content="http://sft.fujian.gov.cn/zwgk/ywbd/sft/202103/t20210315_5548761.htm">
     <title th:text="${article.articleTitle}"></title>

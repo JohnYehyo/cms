@@ -59,9 +59,24 @@ public class CmsArticleContentVo {
     private String siteFile;
 
     /**
+     * 文章栏目id
+     */
+    private String columnId;
+
+    /**
      * 文章栏目
      */
     private String column;
+
+    /**
+     * 关键字
+     */
+    private String keywords;
+
+    /**
+     * 简介描述
+     */
+    private String description;
 
     /**
      * 文章创作时间

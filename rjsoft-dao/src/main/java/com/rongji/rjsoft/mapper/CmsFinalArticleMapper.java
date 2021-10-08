@@ -13,6 +13,7 @@ import com.rongji.rjsoft.vo.content.CmsArticleRefVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -90,4 +91,10 @@ public interface CmsFinalArticleMapper extends BaseMapper<CmsFinalArticle> {
      * @return 待发布文章信息
      */
     List<CmsArticleContentVo> getPublishArticel(String time);
+
+    /**
+     * 更新发布标记
+     * @param publishedList 待更新发布标记文章
+     */
+    int batchPublished(List<CmsArticleContentVo> publishedList);
 }

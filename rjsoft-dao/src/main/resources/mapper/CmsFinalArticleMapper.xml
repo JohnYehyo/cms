@@ -8,6 +8,7 @@
         <result column="column_id" property="columnId"/>
         <result column="article_id" property="articleId"/>
         <result column="del_flag" property="delFlag"/>
+        <result column="published" property="published"/>
     </resultMap>
 
     <insert id="batchInsert">
@@ -106,15 +107,24 @@
         SELECT
         t3.site_id as siteId, t1.article_id as articleId, t1.article_title as articleTitle,
                t1.source, t1.publish_time as publishTime, t1.author_id as authorId,
-               t1.author_name as authorName, t1.files, t1.article_url as articleUrl, t2.content
+               t1.author_name as authorName, t1.files, t1.article_url as articleUrl,
+               t1.keywords, t1.description, t2.content, t3.column_id as columnId
         FROM
         cms_article AS t1
         INNER JOIN cms_article_content AS t2 ON t1.article_id = t2.article_id
         INNER JOIN cms_final_article AS t3 ON t1.article_id = t3.article_id
         WHERE
-        t1.publish_time &lt;= #{time}
+        t3.published = 0
+        AND t1.publish_time &lt;= #{time}
         AND t1.state = 3
         AND t3.del_flag = 0
     </select>
+
+    <update id="batchPublished">
+        update cms_final_article set published = 1 where
+        <foreach collection="list" item="item" index="index" separator="or">
+            (site_id = #{item.siteId} and column_id = #{item.columnId} and article_id = #{item.articleId})
+        </foreach>
+    </update>
 
 </mapper>

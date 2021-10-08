@@ -40,4 +40,9 @@ public class CmsFinalArticle implements Serializable {
      */
     private int delFlag;
 
+    /**
+     * 发布标记
+     */
+    private int published;
+
 }
