@@ -3,6 +3,7 @@ package com.rongji.rjsoft.ao.content;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -63,5 +64,12 @@ public class CmsSiteAo {
      */
     @ApiModelProperty(value = "排序")
     private Integer orderNum;
+
+    /**
+     * 部门id
+     */
+    @ApiModelProperty(value = "部门id", required = true)
+    @NotNull(message = "部门不能为空")
+    private Long deptId;
 
 }
