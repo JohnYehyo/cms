@@ -13,12 +13,14 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.ao.content.CmsArticleAo;
 import com.rongji.rjsoft.ao.content.CmsArticleAuditAo;
 import com.rongji.rjsoft.ao.content.CmsArticleDeleteAo;
+import com.rongji.rjsoft.ao.content.CmsArticleForWardingAo;
 import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.common.util.RedisCache;
 import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.content.*;
 import com.rongji.rjsoft.enums.CmsArticleStateEnum;
+import com.rongji.rjsoft.enums.CmsOriginalEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.exception.BusinessException;
 import com.rongji.rjsoft.mapper.*;
@@ -88,7 +90,9 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         //保存文章标签
         boolean result2 = saveTags(cmsArticleAo);
         //保存栏目文章关系
-        boolean result3 = saveArticleWithColumn(cmsArticleAo);
+        List<CmsSiteColumn> list = cmsArticleAo.getList();
+        Long articleId = cmsArticleAo.getArticleId();
+        boolean result3 = saveArticleWithColumn(list, articleId, CmsOriginalEnum.ORIGINAL.getCode());
 
         return result && result1 && result2 && result3;
     }
@@ -149,15 +153,15 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         return cmsArticleContentMapper.insert(cmsArticleContent) > 0;
     }
 
-    private boolean saveArticleWithColumn(CmsArticleAo cmsArticleAo) {
-        List<CmsSiteColumn> siteColumnList = cmsArticleAo.getList();
+    private boolean saveArticleWithColumn(List<CmsSiteColumn> siteColumnList, Long articleId, int original) {
         List<CmsFinalArticle> list = new ArrayList<>();
         CmsFinalArticle cmsColumnArticle;
         for (CmsSiteColumn cmsSiteColumn : siteColumnList) {
             cmsColumnArticle = new CmsFinalArticle();
-            cmsColumnArticle.setArticleId(cmsArticleAo.getArticleId());
+            cmsColumnArticle.setArticleId(articleId);
             cmsColumnArticle.setSiteId(cmsSiteColumn.getSiteId());
             cmsColumnArticle.setColumnId(cmsSiteColumn.getColumnId());
+            cmsColumnArticle.setOriginal(original);
             list.add(cmsColumnArticle);
         }
         return cmsFinalArticleMapper.batchInsert(list) > 0;
@@ -190,7 +194,9 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         LambdaUpdateWrapper<CmsFinalArticle> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(CmsFinalArticle::getArticleId, cmsArticleAo.getArticleId());
         cmsFinalArticleMapper.delete(wrapper);
-        return saveArticleWithColumn(cmsArticleAo);
+        Long articleId = cmsArticleAo.getArticleId();
+        List<CmsSiteColumn> list = cmsArticleAo.getList();
+        return saveArticleWithColumn(list, articleId, CmsOriginalEnum.ORIGINAL.getCode());
     }
 
     private boolean updateTags(CmsArticleAo cmsArticleAo) {
@@ -339,5 +345,17 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     @Override
     public List<CmsArticlePortalVo> getArticlesBySlider(CmsSliderArticleQuery cmsSliderArticleQuery) {
         return cmsFinalArticleMapper.getArticlesBySlider(cmsSliderArticleQuery);
+    }
+
+    /**
+     * 转发文章
+     * @param cmsArticleForWardingAo 转发文章参数体
+     * @return 转发文章结果
+     */
+    @Override
+    public boolean forwarding(CmsArticleForWardingAo cmsArticleForWardingAo) {
+        List<CmsSiteColumn> list = cmsArticleForWardingAo.getList();
+        Long articleId = cmsArticleForWardingAo.getArticleId();
+        return saveArticleWithColumn(list, articleId, CmsOriginalEnum.FORWARDING.getCode());
     }
 }

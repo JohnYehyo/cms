@@ -15,7 +15,6 @@
         <result column="category_id" property="categoryId"/>
         <result column="slider" property="slider"/>
         <result column="slider_img" property="sliderImg"/>
-        <result column="original" property="original"/>
         <result column="description" property="description"/>
         <result column="keywords" property="keywords"/>
         <result column="order_num" property="orderNum"/>

@@ -45,4 +45,9 @@ public class CmsFinalArticle implements Serializable {
      */
     private int published;
 
+    /**
+     * 是否原创 0: 是 1:否
+     */
+    private int original;
+
 }

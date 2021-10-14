@@ -46,16 +46,6 @@ public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMappe
     private final RedisCache redisCache;
 
     /**
-     * 生成门户页
-     *
-     * @return
-     */
-    @Override
-    public boolean generate() {
-        return false;
-    }
-
-    /**
      * 生成文章
      *
      * @return

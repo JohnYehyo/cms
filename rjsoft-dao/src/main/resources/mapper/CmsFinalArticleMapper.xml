@@ -9,12 +9,13 @@
         <result column="article_id" property="articleId"/>
         <result column="del_flag" property="delFlag"/>
         <result column="published" property="published"/>
+        <result column="original" property="original"/>
     </resultMap>
 
     <insert id="batchInsert">
-        insert into cms_final_article (site_id, column_id, article_id) values
+        insert into cms_final_article (site_id, column_id, article_id, original) values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.siteId}, #{item.columnId}, #{item.articleId})
+            (#{item.siteId}, #{item.columnId}, #{item.articleId}, #{item.original})
         </foreach>
     </insert>
 
@@ -47,6 +48,7 @@
         INNER JOIN cms_article AS t2 ON t1.article_id = t2.article_id
         WHERE
         t1.site_id = #{siteId}
+        AND t1.published = 1
         AND t1.column_id IN
         <foreach collection="columnIds" index="index" item="item" open="(" separator="," close=")">
             #{item}
@@ -65,8 +67,9 @@
         INNER JOIN cms_article AS t2 ON t1.article_id = t2.article_id
         WHERE
         t1.site_id = #{siteId}
+        AND t1.published = 1
         AND t1.article_id IN
-        <foreach collection="articleIds" index="index" item="item" open="(" separator="," close=")">
+        <foreach collection="tagIds" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
         AND t1.del_flag = 0
@@ -83,12 +86,13 @@
         INNER JOIN cms_article AS t2 ON t1.article_id = t2.article_id
         WHERE
         t1.site_id = #{param.siteId}
-        AND t1.category_id = #{param.categoryId}
+        AND t1.published = 1
+        AND t2.category_id = #{param.categoryId}
         AND t1.del_flag = 0
         ORDER BY t2.top, t2.order_num
     </select>
 
-    <select id="getArticlesBySlider" resultType="com.rongji.rjsoft.vo.content.CmsArticlePortalVo">
+    <select id="getArticlesBySlider" parameterType="com.rongji.rjsoft.query.content.CmsSliderArticleQuery" resultType="com.rongji.rjsoft.vo.content.CmsArticlePortalVo">
         SELECT
             t2.article_id as articleId,
             t2.article_title as articleTitle,
@@ -97,8 +101,9 @@
             cms_final_article AS t1
                 INNER JOIN cms_article AS t2 ON t1.article_id = t2.article_id
         WHERE
-            t1.site_id = #{param.siteId}
-          AND t1.slider = 1
+            t1.site_id = #{siteId}
+          AND t1.published = 1
+          AND t2.slider = 1
           AND t1.del_flag = 0
         ORDER BY t2.top, t2.order_num
     </select>

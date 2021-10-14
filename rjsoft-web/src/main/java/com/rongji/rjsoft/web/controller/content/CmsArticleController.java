@@ -4,6 +4,7 @@ package com.rongji.rjsoft.web.controller.content;
 import com.rongji.rjsoft.ao.content.CmsArticleAo;
 import com.rongji.rjsoft.ao.content.CmsArticleAuditAo;
 import com.rongji.rjsoft.ao.content.CmsArticleDeleteAo;
+import com.rongji.rjsoft.ao.content.CmsArticleForWardingAo;
 import com.rongji.rjsoft.common.annotation.LogAction;
 import com.rongji.rjsoft.enums.LogTypeEnum;
 import com.rongji.rjsoft.enums.OperatorTypeEnum;
@@ -138,51 +139,20 @@ public class CmsArticleController {
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsArticleInfoVo);
     }
 
-    /**
-     * 通过栏目获取文章列表
-     * @param cmsColumnArticleQuery 查询对象
-     * @return 文章列表
-     */
-    @ApiOperation(value = "通过栏目获取文章列表")
-    @GetMapping(value = "column")
-    public Object getArticlesByColumn(CmsColumnArticleQuery cmsColumnArticleQuery) {
-        CommonPage<CmsArticlePortalVo> page = cmsArticleService.getArticlesByColumn(cmsColumnArticleQuery);
-        return ResponseVo.response(ResponseEnum.SUCCESS, page);
-    }
 
     /**
-     * 通过标签获取文章列表
-     * @param cmsTagArticleQuery 查询对象
-     * @return 文章列表
+     * 转发文章
+     * @param cmsArticleForWardingAo 转发文章参数体
+     * @return 转发结果
      */
-    @ApiOperation(value = "通过标签获取文章列表")
-    @GetMapping(value = "tag")
-    public Object getArticlesByColumn(CmsTagArticleQuery cmsTagArticleQuery) {
-        CommonPage<CmsArticlePortalVo> page = cmsArticleService.getArticlesByTag(cmsTagArticleQuery);
-        return ResponseVo.response(ResponseEnum.SUCCESS, page);
-    }
-
-    /**
-     * 通过类别获取文章列表
-     * @param cmsCategoryArticleQuery 查询对象
-     * @return 文章列表
-     */
-    @ApiOperation(value = "通过类别获取文章列表")
-    @GetMapping(value = "category")
-    public Object getArticlesByCategory(CmsCategoryArticleQuery cmsCategoryArticleQuery) {
-        CommonPage<CmsArticlePortalVo> page = cmsArticleService.getArticlesByCategory(cmsCategoryArticleQuery);
-        return ResponseVo.response(ResponseEnum.SUCCESS, page);
-    }
-
-    /**
-     * 查询轮播文章列表
-     * @param cmsSliderArticleQuery 查询对象
-     * @return 文章列表
-     */
-    @ApiOperation(value = "查询轮播文章列表")
-    @GetMapping(value = "slider")
-    public Object getArticlesBySlider(CmsSliderArticleQuery cmsSliderArticleQuery) {
-        return ResponseVo.response(ResponseEnum.SUCCESS, cmsArticleService.getArticlesBySlider(cmsSliderArticleQuery));
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
+    @ApiOperation(value = "转发文章")
+    @PostMapping(value = "forwarding")
+    public Object forwarding(@Valid @RequestBody CmsArticleForWardingAo cmsArticleForWardingAo){
+        if(cmsArticleService.forwarding(cmsArticleForWardingAo)){
+            return ResponseVo.success("转发成功");
+        }
+        return ResponseVo.error("转发失败,请重试");
     }
 
 }

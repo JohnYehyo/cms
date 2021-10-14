@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.rongji.rjsoft.ao.content.CmsArticleAo;
 import com.rongji.rjsoft.ao.content.CmsArticleAuditAo;
 import com.rongji.rjsoft.ao.content.CmsArticleDeleteAo;
+import com.rongji.rjsoft.ao.content.CmsArticleForWardingAo;
 import com.rongji.rjsoft.entity.content.CmsArticle;
 import com.rongji.rjsoft.query.content.*;
 import com.rongji.rjsoft.vo.CommonPage;
@@ -100,4 +101,11 @@ public interface ICmsArticleService extends IService<CmsArticle> {
      * @return 轮播文章
      */
     List<CmsArticlePortalVo> getArticlesBySlider(CmsSliderArticleQuery cmsSliderArticleQuery);
+
+    /**
+     * 转发文章
+     * @param cmsArticleForWardingAo 转发文章参数体
+     * @return 转发结果
+     */
+    boolean forwarding(CmsArticleForWardingAo cmsArticleForWardingAo);
 }

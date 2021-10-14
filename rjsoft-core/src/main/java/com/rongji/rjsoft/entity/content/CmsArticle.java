@@ -83,11 +83,6 @@ public class CmsArticle implements Serializable {
     private String sliderImg;
 
     /**
-     * 是否原创 0: 是 1:否
-     */
-    private int original;
-
-    /**
      * 文章简介，最多200字
      */
     private String description;
