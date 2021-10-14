@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.ao.content.CmsSiteAo;
+import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.common.util.RedisCache;
 import com.rongji.rjsoft.constants.Constants;
@@ -144,15 +145,21 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
      */
     @Override
     public List<CmsSiteTreeVo> tree(CmsSiteQuery cmsSiteQuery) {
+        Long deptId = SecurityUtils.getLoginUser().getSysDept().getDeptId();
         LambdaQueryWrapper<CmsSite> wrapper = new LambdaQueryWrapper<>();
         List<CmsSite> list;
         List<CmsSiteTreeVo> treeList = new ArrayList<>();
         CmsSiteTreeVo cmsSiteTreeVo;
-        cmsSiteQuery.setSiteId(cmsSiteQuery.getSiteId() == null ? 0L : cmsSiteQuery.getSiteId());
-        //查询以cmsSiteQuery.getSiteId为父节点的所有站点
-        wrapper.eq(CmsSite::getParentId, cmsSiteQuery.getSiteId());
-        wrapper.eq(CmsSite::getDelFlag, DelFlagEnum.exist.getCode());
-        list = cmsSiteMapper.selectList(wrapper);
+        if (cmsSiteQuery.getSiteId() == null) {
+            //无siteId查询部门拥有的最顶级站点
+            wrapper.eq(CmsSite::getDeptId, deptId);
+            list = cmsSiteMapper.selectList(wrapper);
+        } else {
+            //查询以cmsSiteQuery.getSiteId为父节点的所有站点
+            wrapper.eq(CmsSite::getParentId, cmsSiteQuery.getSiteId());
+            wrapper.eq(CmsSite::getDelFlag, DelFlagEnum.exist.getCode());
+            list = cmsSiteMapper.selectList(wrapper);
+        }
         for (CmsSite cmsSite : list) {
             cmsSiteTreeVo = new CmsSiteTreeVo();
             BeanUtil.copyProperties(cmsSite, cmsSiteTreeVo);

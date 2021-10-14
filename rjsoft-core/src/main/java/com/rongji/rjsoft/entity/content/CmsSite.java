@@ -72,6 +72,11 @@ public class CmsSite implements Serializable {
     private Integer delFlag;
 
     /**
+     * 部门id
+     */
+    private Integer deptId;
+
+    /**
      * 创建者
      */
     @TableField(fill = FieldFill.INSERT)
