@@ -12,8 +12,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum DelFlagEnum {
 
-    exist(0, "存在"),
-    remove(1, "删除");
+    EXIST(0, "存在"),
+    REMOVE(1, "删除");
 
     private int code;
     private String value;

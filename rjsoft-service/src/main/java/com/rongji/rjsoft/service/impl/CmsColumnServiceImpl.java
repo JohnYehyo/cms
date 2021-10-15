@@ -10,7 +10,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.ao.content.CmsColumnAo;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.entity.content.CmsColumn;
-import com.rongji.rjsoft.entity.content.CmsSite;
 import com.rongji.rjsoft.entity.content.CmsSiteColumn;
 import com.rongji.rjsoft.enums.DelFlagEnum;
 import com.rongji.rjsoft.mapper.CmsColumnMapper;
@@ -18,15 +17,16 @@ import com.rongji.rjsoft.mapper.CmsSiteColumnMapper;
 import com.rongji.rjsoft.query.content.CmsColumnQuery;
 import com.rongji.rjsoft.service.ICmsColumnService;
 import com.rongji.rjsoft.vo.CommonPage;
-import com.rongji.rjsoft.vo.content.*;
+import com.rongji.rjsoft.vo.content.CmsColumnAllTree;
+import com.rongji.rjsoft.vo.content.CmsColumnTreeVo;
+import com.rongji.rjsoft.vo.content.CmsColumnVo;
 import lombok.AllArgsConstructor;
-import org.springframework.security.web.access.channel.AbstractRetryEntryPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.NotNull;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * <p>
@@ -179,7 +179,7 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         cmsColumnQuery.setColumnId(cmsColumnQuery.getColumnId() == null ? 0L : cmsColumnQuery.getColumnId());
         //查询以cmsSiteQuery.getSiteId为父节点的所有站点
         wrapper.eq(CmsColumn::getParentId, cmsColumnQuery.getColumnId());
-        wrapper.eq(CmsColumn::getDelFlag, DelFlagEnum.exist.getCode());
+        wrapper.eq(CmsColumn::getDelFlag, DelFlagEnum.EXIST.getCode());
         list = cmsColumnMapper.selectList(wrapper);
         for (CmsColumn cmsColumn : list) {
             cmsColumnTreeVo = new CmsColumnTreeVo();

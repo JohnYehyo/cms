@@ -157,7 +157,7 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         } else {
             //查询以cmsSiteQuery.getSiteId为父节点的所有站点
             wrapper.eq(CmsSite::getParentId, cmsSiteQuery.getSiteId());
-            wrapper.eq(CmsSite::getDelFlag, DelFlagEnum.exist.getCode());
+            wrapper.eq(CmsSite::getDelFlag, DelFlagEnum.EXIST.getCode());
             list = cmsSiteMapper.selectList(wrapper);
         }
         for (CmsSite cmsSite : list) {
@@ -182,7 +182,7 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
     @Override
     public void refreshCache() {
         LambdaQueryWrapper<CmsSite> wrapper = new LambdaQueryWrapper();
-        wrapper.eq(CmsSite::getDelFlag, DelFlagEnum.exist.getCode());
+        wrapper.eq(CmsSite::getDelFlag, DelFlagEnum.EXIST.getCode());
         List<CmsSite> cmsSites = cmsSiteMapper.selectList(wrapper);
         for (CmsSite cmsSite : cmsSites) {
             redisCache.setCacheMapValue(Constants.SITE_DICT, String.valueOf(cmsSite.getSiteId()), cmsSite.getSiteFile());
