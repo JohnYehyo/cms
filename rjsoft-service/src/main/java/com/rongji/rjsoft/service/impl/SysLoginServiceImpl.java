@@ -15,6 +15,7 @@ import com.rongji.rjsoft.service.ISysLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -76,13 +77,15 @@ public class SysLoginServiceImpl implements ISysLoginService {
             throw new BusinessException(ResponseEnum.ENCRYPTION_TO_DECRYPT);
         }
 
-
         Authentication authentication = null;
         try {
             authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (Exception e) {
             sysLoginInfoService.saveLoginInfo(username, LogStatusEnum.FAIL.getCode(), e.getMessage());
+            if(e.getCause() instanceof BusinessException){
+                throw (BusinessException) e.getCause();
+            }
             throw new BusinessException(ResponseEnum.LOGIN_ERROR);
         }
 
