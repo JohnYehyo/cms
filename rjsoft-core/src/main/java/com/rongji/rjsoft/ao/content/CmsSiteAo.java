@@ -48,8 +48,7 @@ public class CmsSiteAo {
     /**
      * 站点父级id
      */
-    @ApiModelProperty(value = "父级ID", required = true)
-    @NotNull(groups = {CmsSiteAo.insert.class, CmsSiteAo.update.class}, message = "父级ID不能为空")
+    @ApiModelProperty(value = "父级ID")
     private Long parentId;
 
     /**
@@ -70,5 +69,12 @@ public class CmsSiteAo {
     @ApiModelProperty(value = "部门id", required = true)
     @NotNull(message = "部门不能为空")
     private Long deptId;
+
+    /**
+     * 站点存放目录
+     */
+    @ApiModelProperty(value = "站点存放目录", required = true, example = "henan")
+    @NotNull
+    private String siteFile;
 
 }
