@@ -1,8 +1,5 @@
 package com.rongji.rjsoft.entity.content;
 
-import java.time.LocalDateTime;
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -10,6 +7,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -56,6 +56,16 @@ public class CmsColumn implements Serializable {
      * 伪删除标记
      */
     private Integer delFlag;
+
+    /**
+     * 部门id
+     */
+    private Long deptId;
+
+    /**
+     * 模板id
+     */
+    private Long templateId;
 
     /**
      * 创建者

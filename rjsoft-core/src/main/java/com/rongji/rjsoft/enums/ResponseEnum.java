@@ -31,6 +31,7 @@ public enum ResponseEnum {
     ENCRYPTION_TO_DECRYPT(413, "加解密失败"),
     BUSY(429, "服务器繁忙，请稍后再试"),
     REPEAT_ACTION(430, "请勿重复提交"),
+    DATA_REPEAT(900, "数据重复"),
     EXCEPTION(1111, "系统异常，请稍后重试"),
     THIRD_PARTY_ERROR(503, "第三方系统异常"),
     USERCENTER_INVOKE_ERROR(505, "用户中心调用系统异常"),
@@ -53,7 +54,8 @@ public enum ResponseEnum {
     NO_ALLOW_FILE(4002, "不支持的文件类型"),
     NO_ALLOW_WORD(4003, "检测文章标题、描述活内容中包含敏感词:"),
     STATIC_HTML_EXCEPTION(4005, "文章静态化异常"),
-    CANT_GET_SITES(4006, "未能获取到站点信息");
+    CANT_GET_SITES(4006, "未能获取到站点信息"),
+    TAKE_UP(4007, "数据已被使用");
 
     private Integer code;
     private String value;

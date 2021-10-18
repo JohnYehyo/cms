@@ -63,4 +63,18 @@ public class CmsColumnAo {
     @NotNull(groups = {CmsColumnAo.insert.class, CmsColumnAo.update.class}, message = "站点不能为空")
     private Long[] siteId;
 
+    /**
+     * 部门id
+     */
+    @ApiModelProperty(value = "部门id", required = true)
+    @NotNull(message = "部门不能为空")
+    private Long deptId;
+
+    /**
+     * 模板id
+     */
+    @ApiModelProperty(value = "模板id", required = true)
+    @NotNull(message = "模板不能为空")
+    private Long tempId;
+
 }

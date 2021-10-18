@@ -10,6 +10,8 @@
         <result column="ancestors" property="ancestors"/>
         <result column="image_url" property="imageUrl"/>
         <result column="del_flag" property="delFlag"/>
+        <result column="dept_id" property="deptId"/>
+        <result column="template_id" property="templateId"/>
         <result column="create_by" property="createBy"/>
         <result column="create_time" property="createTime"/>
         <result column="update_by" property="updateBy"/>
