@@ -56,7 +56,12 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         CmsSite parent = cmsSiteMapper.selectById(cmsSiteAo.getParentId());
         CmsSite cmsSite = new CmsSite();
         BeanUtil.copyProperties(cmsSiteAo, cmsSite);
-        cmsSite.setAncestors(parent.getAncestors() + "," + parent.getParentId());
+        if(null == parent){
+            cmsSite.setAncestors("0");
+        }else{
+            cmsSite.setAncestors(parent.getAncestors() + "," + parent.getParentId());
+        }
+
         boolean result = cmsSiteMapper.insert(cmsSite) > 0;
         if (result) {
             ThreadUtil.execute(() -> refreshCache());
@@ -78,7 +83,12 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
 
         CmsSite cmsSite = new CmsSite();
         BeanUtil.copyProperties(cmsSiteAo, cmsSite);
-        cmsSite.setAncestors(parent.getAncestors() + "," + parent.getParentId());
+
+        if(null == parent){
+            cmsSite.setAncestors("0");
+        }else{
+            cmsSite.setAncestors(parent.getAncestors() + "," + parent.getParentId());
+        }
 
         if (null != parent && null != old) {
             String newAncestors = parent.getAncestors() + "," + parent.getSiteId();
@@ -118,10 +128,10 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         boolean result = cmsSiteColumnMapper.deleteSiteColumnBySiteId(siteId) > 0;
         //删除站点
         boolean result1 = cmsSiteMapper.deleteSites(siteId) > 0;
-        if (result && result1) {
+        if (result1) {
             ThreadUtil.execute(() -> refreshCache());
         }
-        return result && result1;
+        return result1;
     }
 
     /**
@@ -147,6 +157,7 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
     public List<CmsSiteTreeVo> tree(CmsSiteQuery cmsSiteQuery) {
         Long deptId = SecurityUtils.getLoginUser().getSysDept().getDeptId();
         LambdaQueryWrapper<CmsSite> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(CmsSite::getDelFlag, 0);
         List<CmsSite> list;
         List<CmsSiteTreeVo> treeList = new ArrayList<>();
         CmsSiteTreeVo cmsSiteTreeVo;

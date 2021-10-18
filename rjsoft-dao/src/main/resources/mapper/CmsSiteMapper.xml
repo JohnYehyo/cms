@@ -21,7 +21,7 @@
     </resultMap>
 
     <select id="getPage" resultType="com.rongji.rjsoft.vo.content.CmsSiteVo">
-        select site_id, site_name, description, parent_id, site_url, order_num, site_file
+        select site_id, site_name, description, parent_id, site_url, order_num, site_file, del_flag
         from cms_site
         <where>
             <if test="param.siteId != null">
