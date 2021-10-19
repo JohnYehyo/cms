@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.ao.content.CmsColumnAo;
+import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.entity.content.CmsColumn;
 import com.rongji.rjsoft.entity.content.CmsSiteColumn;
@@ -198,7 +199,7 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
     }
 
     /**
-     * 获取站点下的栏目树
+     * 获取站点下部门拥有的栏目树
      *
      * @param siteId 站点Id
      * @return 栏目树
@@ -206,8 +207,9 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
     @Override
     public CmsColumnAllTree getColumnTreeBySite(Long siteId) {
 
-
-        List<CmsColumnAllTree> list = cmsColumnMapper.getColumnTreeBySite(siteId);
+        //获取站点下部门拥有的栏目树
+        Long deptId = SecurityUtils.getLoginUser().getSysDept().getDeptId();
+        List<CmsColumnAllTree> list = cmsColumnMapper.getColumnTreeBySite(siteId, deptId);
 
         if (CollectionUtil.isNotEmpty(list)) {
             List<CmsColumnAllTree> tree = new ArrayList<>();

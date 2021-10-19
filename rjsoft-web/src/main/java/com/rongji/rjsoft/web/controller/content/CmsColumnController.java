@@ -108,11 +108,11 @@ public class CmsColumnController {
     }
 
     /**
-     * 通过站点获取栏目树
+     * 通过站点及部门获取栏目树
      * @param siteId 查询条件
      * @return 栏目树
      */
-    @ApiOperation(value = "通过站点获取栏目树")
+    @ApiOperation(value = "通过站点及部门获取栏目树")
     @ApiImplicitParam(name = "siteId", value = "站点id", required = true)
     @GetMapping(value = "columnTree/{siteId}")
     public Object columnTree(@PathVariable Long siteId){

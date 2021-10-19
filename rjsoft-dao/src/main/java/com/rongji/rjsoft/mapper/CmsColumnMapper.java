@@ -57,10 +57,11 @@ public interface CmsColumnMapper extends BaseMapper<CmsColumn> {
     CmsColumnAllTree selectParentTreeNode(Long parentId);
 
     /**
-     * 获取站点下的栏目树
+     * 获取站点下部门拥有的栏目树
      * @param siteId 站点ID
+     * @param deptId 部门ID
      * @return 栏目树
      */
-    List<CmsColumnAllTree> getColumnTreeBySite(Long siteId);
+    List<CmsColumnAllTree> getColumnTreeBySite(Long siteId, Long deptId);
 
 }
