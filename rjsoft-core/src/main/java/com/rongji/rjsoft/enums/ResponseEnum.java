@@ -48,14 +48,15 @@ public enum ResponseEnum {
     NO_PERMISSION_ACTION(1008, "无数据或无权操作"),
     USER_DISABLE(1009, "此账号已被禁用"),
     USER_DELETE(1010, "此账号已被删除"),
-    NO_DEPT(1010, "请先为账号绑定部门"),
+    NO_DEPT(1011, "请先为账号绑定部门"),
     SUPER_LONG_FILE(4000, "文件名超长"),
     SUPER_LARGE_FILE(4001, "文件超出大小限制"),
     NO_ALLOW_FILE(4002, "不支持的文件类型"),
-    NO_ALLOW_WORD(4003, "检测文章标题、描述活内容中包含敏感词:"),
-    STATIC_HTML_EXCEPTION(4005, "文章静态化异常"),
-    CANT_GET_SITES(4006, "未能获取到站点信息"),
-    TAKE_UP(4007, "数据已被使用");
+    FILE_UPLOAD_ERROR(4004, "文件上传失败"),
+    NO_ALLOW_WORD(4005, "检测文章标题、描述活内容中包含敏感词:"),
+    STATIC_HTML_EXCEPTION(4006, "文章静态化异常"),
+    CANT_GET_SITES(4007, "未能获取到站点信息"),
+    TAKE_UP(4008, "数据已被使用");
 
     private Integer code;
     private String value;
