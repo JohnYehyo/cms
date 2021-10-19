@@ -1,4 +1,4 @@
-package com.rongji.rjsoft.ao.content;
+package com.rongji.rjsoft.ao.system;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
