@@ -19,6 +19,7 @@ import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.common.util.RedisCache;
 import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.content.*;
+import com.rongji.rjsoft.entity.system.SysDept;
 import com.rongji.rjsoft.enums.CmsArticleStateEnum;
 import com.rongji.rjsoft.enums.CmsOriginalEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
@@ -67,6 +68,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     private final RedisCache redisCache;
 
     private final CmsColumnMapper cmsColumnMapper;
+
+    private final SysDeptMapper sysDeptMapper;
 
     /**
      * 添加文章
@@ -254,22 +257,31 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
      */
     @Override
     public CommonPage<CmsArticleVo> getPage(CmsArticleQuery cmsArticleQuery) {
-        //判断是否为内容管理员
-        boolean flag = SecurityUtils.getLoginUser().getRoles().contains(Constants.ARTICLE_ADMIN);
-        if(!flag){
-            throw new BusinessException(ResponseEnum.NO_PERMISSION);
-        }
         if(CmsArticleStateEnum.DRAFT.getState().equals(cmsArticleQuery.getState())){
             throw new BusinessException(ResponseEnum.NO_PERMISSION.getCode(), "不能查看未提交的文章");
         }
-        Long deptId = SecurityUtils.getLoginUser().getSysDept().getDeptId();
+        //查询用户的部门及所有下属部门
+        List<Long> deptIds = getOwnDepts();
+
         IPage<CmsArticleVo> page = new Page<>();
-        page = cmsArticleMapper.getPage(page, cmsArticleQuery, flag, deptId);
+        page = cmsArticleMapper.getPage(page, cmsArticleQuery, deptIds);
         List<CmsArticleVo> records = page.getRecords();
         for (CmsArticleVo cmsArticleVo : records) {
             cmsArticleVo.setTags(cmsArticleTagsMapper.getTagsByArticleId(cmsArticleVo.getArticleId()));
         }
         return CommonPageUtils.assemblyPage(page);
+    }
+
+    private List<Long> getOwnDepts() {
+        String branchCode = SecurityUtils.getLoginUser().getSysDept().getBranchCode();
+        LambdaQueryWrapper<SysDept> wrapper = new LambdaQueryWrapper<>();
+        wrapper.likeRight(SysDept::getBranchCode, branchCode);
+        List<SysDept> sysDepts = sysDeptMapper.selectList(wrapper);
+        if(null == sysDepts){
+            throw new BusinessException(ResponseEnum.NO_DATA);
+        }
+        List<Long> deptIds = sysDepts.stream().map(SysDept::getDeptId).collect(Collectors.toList());
+        return deptIds;
     }
 
     /**

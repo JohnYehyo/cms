@@ -51,15 +51,16 @@
         cms_article AS t1
         INNER JOIN cms_category AS t2 ON t1.category_id = t2.category_id
         <where>
-            <if test ="!flag">
-                t1.author_id = #{deptId}
-            </if>
+            t1.author_id in
+            <foreach collection="deptIds" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
             <choose>
                 <when test="null != param.state">
-                   and t1.state = #{param.state}
+                    and t1.state = #{param.state}
                 </when>
                 <otherwise>
-                   and t1.state != 0
+                    and t1.state != 0
                 </otherwise>
             </choose>
             <if test="null != param.articleTitle and param.articleTitle != ''">
@@ -69,7 +70,7 @@
                 and t1.keywords like concat('%', #{param.keywords}, '%')
             </if>
         </where>
-        order by t1.order_num, t1.article_id
+        order by t1.top desc, t1.order_num, t1.article_id
     </select>
 
     <select id="getInfo" parameterType="long" resultType="com.rongji.rjsoft.vo.content.CmsArticleInfoVo">

@@ -9,6 +9,8 @@ import com.rongji.rjsoft.vo.content.CmsArticleInfoVo;
 import com.rongji.rjsoft.vo.content.CmsArticleVo;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * <p>
  * 文章信息表 Mapper 接口
@@ -30,12 +32,12 @@ public interface CmsArticleMapper extends BaseMapper<CmsArticle> {
      * 文章列表
      * @param page 分页对象
      * @param cmsArticleQuery 查询对象
+     * @param deptIds 拥有的部门id
      * @return 文章列表
      */
     IPage<CmsArticleVo> getPage(IPage<CmsArticleVo> page,
                                 @Param("param") CmsArticleQuery cmsArticleQuery,
-                                @Param("flag") boolean flag,
-                                @Param("deptId") Long deptId);
+                                @Param("deptIds") List<Long> deptIds);
 
     /**
      * 文章详情
