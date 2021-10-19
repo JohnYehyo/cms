@@ -57,7 +57,7 @@ public interface ICmsColumnService extends IService<CmsColumn> {
     List<CmsColumnTreeVo> tree(CmsColumnQuery cmsColumnQuery);
 
     /**
-     * 获取站点下的栏目树
+     * 获取站点下部门拥有的栏目树
      * @param siteId 站点Id
      * @return 栏目树
      */
