@@ -19,8 +19,8 @@ spring:
   servlet:
     multipart:
       resolve-lazily: true
-      max-file-size: 50MB
-      max-request-size: 50MB
+      max-file-size: 500MB
+      max-request-size: 500MB
 
 server:
   tomcat:
@@ -34,7 +34,7 @@ file:
   upload: /upload
   # 文件大小 /M
   maxSize: 100
-  avatarMaxSize: 5
+  avatarMaxSize: 50
   localUrl: http://127.0.0.1:8088
   static:
     folder: D://study/frame/cms/html/path
