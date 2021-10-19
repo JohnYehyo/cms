@@ -10,7 +10,6 @@ import com.rongji.rjsoft.query.content.CmsSiteQuery;
 import com.rongji.rjsoft.service.ICmsSiteService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.ResponseVo;
-import com.rongji.rjsoft.vo.content.CmsSiteTreeVo;
 import com.rongji.rjsoft.vo.content.CmsSiteVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -19,8 +18,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * <p>
