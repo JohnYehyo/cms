@@ -105,7 +105,7 @@ public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMappe
     }
 
     private void createArticle(CmsArticleContentVo article, List<CmsArticleContentVo> publishedList) {
-        Map<String, Object> map;
+
         String articleUrl = article.getArticleUrl();
         //文件生成路径
         String templateUrl = StringUtils.removeStart(Constants.FILES_DESC_URL, File.separator);
@@ -119,10 +119,10 @@ public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMappe
         }
         File file = new File(fileUrl);
 
+        Context context = new Context();
+        Map<String, Object> map;
         map = new HashMap<>();
         map.put("article", article);
-
-        Context context = new Context();
         context.setVariables(map);
 
         try (PrintWriter writer = new

@@ -28,6 +28,9 @@
             <if test="param.columnName != null and param.columnName != ''">
                 and column_name like concat ('%', #{param.columnName}, '%')
             </if>
+            <if test="1==1">
+                and del_flag = 0
+            </if>
         </where>
     </select>
 

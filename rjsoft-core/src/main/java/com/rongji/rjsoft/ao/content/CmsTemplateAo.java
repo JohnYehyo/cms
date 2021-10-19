@@ -49,7 +49,7 @@ public class CmsTemplateAo {
     /**
      * 模板缩略图
      */
-    @ApiModelProperty(value = "模板缩略图")
+    @ApiModelProperty(value = "模板缩略图", required = true)
     @NotNull(
             groups = {CmsTemplateAo.add.class, CmsTemplateAo.update.class},
             message = "模板缩略图不能为空"
@@ -59,7 +59,7 @@ public class CmsTemplateAo {
     /**
      * 栏目模板
      */
-    @ApiModelProperty(value = "栏目模板")
+    @ApiModelProperty(value = "栏目模板", required = true)
     @NotNull(
             groups = {CmsTemplateAo.add.class, CmsTemplateAo.update.class},
             message = "栏目模板不能为空"
@@ -69,7 +69,7 @@ public class CmsTemplateAo {
     /**
      * 文章模板
      */
-    @ApiModelProperty(value = "文章模板")
+    @ApiModelProperty(value = "文章模板", required = true)
     @NotNull(
             groups = {CmsTemplateAo.add.class, CmsTemplateAo.update.class},
             message = "文章模板不能为空"

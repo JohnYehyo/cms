@@ -12,19 +12,19 @@
         <result column="update_time" property="updateTime" />
     </resultMap>
 
-    <select id="getPage" resultType="com.rongji.rjsoft.vo.content.CmsTemplateVo">
+    <select id="getList" parameterType="com.rongji.rjsoft.query.content.CmsTemplateQuery" resultType="com.rongji.rjsoft.vo.content.CmsTemplateVo">
         select
         t1.template_id as templateId,
         t1.template_name as templateName,
-        t2.file_url as templateImg
+        t2.file_url,
+        t2.file_type
         from
         cms_template as t1
         inner join sys_common_file as t2 on
         t1.template_id = t2.table_id
         <where>
-            t2.file_type = 0
-            <if test="null != param.templateName and param.templateName != ''">
-              and t1.templateName like concat('%', #{param.templateName}, '%')
+            <if test="null != templateName and templateName != ''">
+              and t1.templateName like concat('%', #{templateName}, '%')
             </if>
         </where>
     </select>

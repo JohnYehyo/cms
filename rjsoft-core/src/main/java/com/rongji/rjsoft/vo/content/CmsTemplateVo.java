@@ -29,4 +29,24 @@ public class CmsTemplateVo implements Serializable {
      */
     private String templateImg;
 
+    /**
+     * 栏目模板
+     */
+    private String templateColumn;
+
+    /**
+     * 文章模板
+     */
+    private String templateArticle;
+
+    /**
+     * 模板类型
+     */
+    private int fileType;
+
+    /**
+     * 模板路径
+     */
+    private String fileUrl;
+
 }

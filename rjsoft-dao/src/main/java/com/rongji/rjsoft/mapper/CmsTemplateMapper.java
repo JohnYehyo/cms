@@ -7,6 +7,8 @@ import com.rongji.rjsoft.query.content.CmsTemplateQuery;
 import com.rongji.rjsoft.vo.content.CmsTemplateVo;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * <p>
  * 模板表 Mapper 接口
@@ -19,9 +21,8 @@ public interface CmsTemplateMapper extends BaseMapper<CmsTemplate> {
 
     /**
      * 模板分页查询
-     * @param page 分页对象
      * @param cmsTemplateQuery 查询对象
      * @return 模板分页查询结果
      */
-    IPage<CmsTemplateVo> getPage(IPage<CmsTemplateVo> page, @Param("param") CmsTemplateQuery cmsTemplateQuery);
+    List<CmsTemplateVo> getList(CmsTemplateQuery cmsTemplateQuery);
 }

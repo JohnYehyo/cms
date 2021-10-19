@@ -3,11 +3,8 @@ package com.rongji.rjsoft.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.ao.content.CmsTemplateAo;
-import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.entity.content.CmsColumn;
 import com.rongji.rjsoft.entity.content.CmsTemplate;
 import com.rongji.rjsoft.entity.system.SysCommonFile;
@@ -142,7 +139,7 @@ public class CmsTemplateServiceImpl extends ServiceImpl<CmsTemplateMapper, CmsTe
             throw new BusinessException(ResponseEnum.TAKE_UP);
         }
         deleteFiles(templateId);
-        return columnMapper.deleteById(templateId) > 0;
+        return cmsTemplateMapper.deleteById(templateId) > 0;
     }
 
     /**
@@ -153,24 +150,83 @@ public class CmsTemplateServiceImpl extends ServiceImpl<CmsTemplateMapper, CmsTe
      */
     @Override
     public CommonPage<CmsTemplateVo> getPage(CmsTemplateQuery cmsTemplateQuery) {
-        IPage<CmsTemplateVo> page = new Page<>();
-        page = cmsTemplateMapper.getPage(page, cmsTemplateQuery);
+        List<CmsTemplateVo> list = cmsTemplateMapper.getList(cmsTemplateQuery);
+        CommonPage<CmsTemplateVo> page = reorganization(list, cmsTemplateQuery.getCurrent(), cmsTemplateQuery.getPageSize());
+        return page;
+    }
+
+    /**
+     * 重组分页结果
+     *
+     * @param recordsTemp 总记录
+     * @param current     当前页
+     * @param pageSize    分页数目
+     * @return
+     */
+    private CommonPage<CmsTemplateVo> reorganization(List<CmsTemplateVo> recordsTemp, int current, int pageSize) {
         List<CmsTemplateVo> records = new ArrayList<>();
-        List<CmsTemplateVo> recordsTemp = page.getRecords();
         Map<String, List<CmsTemplateVo>> map = recordsTemp.stream().collect(Collectors.groupingBy(CmsTemplateVo::getTemplateId));
         CmsTemplateVo cmsTemplateVo;
-        String imgStr = "";
         for (Map.Entry<String, List<CmsTemplateVo>> entry : map.entrySet()) {
             cmsTemplateVo = new CmsTemplateVo();
-            for (CmsTemplateVo cms: entry.getValue()) {
+            String imgStr = "";
+            for (CmsTemplateVo cms : entry.getValue()) {
                 cmsTemplateVo.setTemplateId(cms.getTemplateId());
                 cmsTemplateVo.setTemplateName(cms.getTemplateName());
-                imgStr = imgStr + "," + cms.getTemplateImg();
+                //缩略图
+                if (cms.getFileType() == TableFileTypeEnum.TEMPLATE_IMG.getCode()) {
+                    imgStr = imgStr + "," + cms.getFileUrl();
+                    continue;
+                }
+                //栏目模板
+                if (cms.getFileType() == TableFileTypeEnum.TEMPLATE_HTML_COLUMN.getCode()) {
+                    cmsTemplateVo.setTemplateColumn(cms.getFileUrl());
+                    continue;
+                }
+                //文章模板
+                if (cms.getFileType() == TableFileTypeEnum.TEMPLATE_HTML_ARTICLE.getCode()) {
+                    cmsTemplateVo.setTemplateArticle(cms.getFileUrl());
+                    continue;
+                }
             }
-            cmsTemplateVo.setTemplateImg(imgStr.substring(1));
+            cmsTemplateVo.setTemplateImg(imgStr.length() > 0 ? imgStr.substring(1) : imgStr);
             records.add(cmsTemplateVo);
         }
-        page.setRecords(records);
-        return CommonPageUtils.assemblyPage(page);
+        return assemblyPage(current, pageSize, records);
+    }
+
+    /**
+     * 组装分页
+     *
+     * @param current  当前页
+     * @param pageSize 每页数量
+     * @param records  总记录
+     * @return
+     */
+    private CommonPage<CmsTemplateVo> assemblyPage(int current, int pageSize, List<CmsTemplateVo> records) {
+        CommonPage<CmsTemplateVo> page = new CommonPage<>();
+        int totalPage = 0;
+        if ((records.size() / pageSize) == 0) {
+            totalPage = records.size() / pageSize;
+        } else {
+            totalPage = records.size() / pageSize + 1;
+
+        }
+        page.setTotalPage((long) totalPage);
+        page.setTotal((long) records.size());
+        page.setCurrent((long) current);
+        page.setPageSize((long) pageSize);
+
+        int startIndex = (current - 1) * pageSize;
+        int endIndex = startIndex + pageSize;
+
+        if (endIndex > records.size()) {
+            endIndex = records.size();
+        }
+
+        List<CmsTemplateVo> pageList = records.subList(startIndex, endIndex);
+
+        page.setList(pageList);
+        return page;
     }
 }
