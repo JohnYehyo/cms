@@ -15,6 +15,11 @@ import java.io.Serializable;
 public class CmsTemplateVo implements Serializable {
 
     /**
+     * 模板id
+     */
+    private String templateId;
+
+    /**
      * 模板名称
      */
     private String templateName;
@@ -24,8 +29,4 @@ public class CmsTemplateVo implements Serializable {
      */
     private String templateImg;
 
-    /**
-     * 删除标记
-     */
-    private int delFlag;
 }

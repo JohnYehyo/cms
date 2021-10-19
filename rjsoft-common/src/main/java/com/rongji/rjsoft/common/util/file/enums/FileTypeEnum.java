@@ -216,7 +216,9 @@ public enum FileTypeEnum {
     /**
      * FLV.
      */
-    FLV("464C5601050000000900");
+    FLV("464C5601050000000900"),
+
+    HTML_TEMPLATE("3C21646F6");
     private String value;
 
 }

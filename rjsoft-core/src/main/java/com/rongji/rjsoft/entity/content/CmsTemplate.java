@@ -37,16 +37,6 @@ public class CmsTemplate implements Serializable {
     private String templateName;
 
     /**
-     * 模板缩略图
-     */
-    private String templateImg;
-
-    /**
-     * 删除标记
-     */
-    private String delFlag;
-
-    /**
      * 创建者
      */
     @TableField(fill = FieldFill.INSERT)

@@ -6,8 +6,6 @@
     <resultMap id="BaseResultMap" type="com.rongji.rjsoft.entity.content.CmsTemplate">
         <id column="template_id" property="templateId" />
         <result column="template_name" property="templateName" />
-        <result column="template_img" property="templateImg" />
-        <result column="del_flag" property="delFlag" />
         <result column="create_by" property="createBy" />
         <result column="create_time" property="createTime" />
         <result column="update_by" property="updateBy" />
@@ -15,10 +13,18 @@
     </resultMap>
 
     <select id="getPage" resultType="com.rongji.rjsoft.vo.content.CmsTemplateVo">
-        select template_name as templateName, template_img as templateImg, del_flag as delFlag from cms_template
+        select
+        t1.template_id as templateId,
+        t1.template_name as templateName,
+        t2.file_url as templateImg
+        from
+        cms_template as t1
+        inner join sys_common_file as t2 on
+        t1.template_id = t2.table_id
         <where>
+            t2.file_type = 0
             <if test="null != param.templateName and param.templateName != ''">
-                templateName like concat('%', #{param.templateName}, '%')
+              and t1.templateName like concat('%', #{param.templateName}, '%')
             </if>
         </where>
     </select>
