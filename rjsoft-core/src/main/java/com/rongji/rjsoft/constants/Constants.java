@@ -85,6 +85,16 @@ public class Constants {
     public static final String CMS_ADMIN = "cms_admin";
 
     /**
+     * 文章管理员
+     */
+    public static final String ARTICLE_ADMIN = "article_admin";
+
+    /**
+     * 文章审核管理员
+     */
+    public static final String ARTICLE_AUDIT_ADMIN = "article_audit_admin";
+
+    /**
      * 敏感词
      */
     public static final String SENSITIVE_WORDS = "sensitive_words";

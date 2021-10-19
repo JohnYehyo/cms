@@ -126,7 +126,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
                 + "-" + SecureUtil.md5(String.valueOf(cmsArticle.getArticleId() + cmsArticle.getAuthorId())));
         //判断是否需要审核
         if (cmsArticleAo.getState() == CmsArticleStateEnum.TO_AUDIT.getState()
-                && SecurityUtils.getLoginUser().getRoles().contains(Constants.CMS_ADMIN)) {
+                && SecurityUtils.getLoginUser().getRoles().contains(Constants.ARTICLE_AUDIT_ADMIN)) {
             cmsArticle.setState(3);
         } else {
             cmsArticle.setState(cmsArticleAo.getState());
@@ -255,8 +255,11 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     @Override
     public CommonPage<CmsArticleVo> getPage(CmsArticleQuery cmsArticleQuery) {
         //判断是否为内容管理员
-        boolean flag = SecurityUtils.getLoginUser().getRoles().contains(Constants.CMS_ADMIN);
-        if(flag && CmsArticleStateEnum.DRAFT.getState().equals(cmsArticleQuery.getState())){
+        boolean flag = SecurityUtils.getLoginUser().getRoles().contains(Constants.ARTICLE_ADMIN);
+        if(!flag){
+            throw new BusinessException(ResponseEnum.NO_PERMISSION);
+        }
+        if(CmsArticleStateEnum.DRAFT.getState().equals(cmsArticleQuery.getState())){
             throw new BusinessException(ResponseEnum.NO_PERMISSION.getCode(), "不能查看未提交的文章");
         }
         Long deptId = SecurityUtils.getLoginUser().getSysDept().getDeptId();
