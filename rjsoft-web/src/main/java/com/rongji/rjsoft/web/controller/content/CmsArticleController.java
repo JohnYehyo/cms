@@ -48,6 +48,7 @@ public class CmsArticleController {
      * @param cmsArticleAo 文章表单信息
      * @return 添加结果
      */
+    @PreAuthorize("@permissionIdentify.hasRole('articel_admin')")
     @ApiOperation(value = "添加文章")
     @PostMapping(value = "article")
     @LogAction(module = "文章管理", method = "添加文章", logType = LogTypeEnum.INSERT, operatorType = OperatorTypeEnum.WEB)
@@ -64,6 +65,7 @@ public class CmsArticleController {
      * @param cmsArticleAo 文章表单信息
      * @return 添加结果
      */
+    @PreAuthorize("@permissionIdentify.hasRole('articel_admin')")
     @ApiOperation(value = "编辑文章")
     @PutMapping(value = "article")
     @LogAction(module = "文章管理", method = "编辑文章", logType = LogTypeEnum.UPDATE, operatorType = OperatorTypeEnum.WEB)
@@ -80,6 +82,7 @@ public class CmsArticleController {
      * @param list 删除条件
      * @return 删除结果
      */
+    @PreAuthorize("@permissionIdentify.hasRole('articel_admin')")
     @ApiOperation(value = "删除文章")
     @DeleteMapping(value = "article")
     @LogAction(module = "文章管理", method = "删除文章", logType = LogTypeEnum.DELETE, operatorType = OperatorTypeEnum.WEB)
@@ -96,8 +99,7 @@ public class CmsArticleController {
      * @param cmsArticleAuditAo 文章状态信息
      * @return 审核结果
      */
-//    @PreAuthorize("@permissionIdentify.hasPermi('cms:article:audit')")
-    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
+    @PreAuthorize("@permissionIdentify.hasRole('articel_audit_admin')")
     @ApiOperation(value = "审核文章")
     @PutMapping(value = "audit")
     @LogAction(module = "文章管理", method = "审核文章", logType = LogTypeEnum.UPDATE, operatorType = OperatorTypeEnum.WEB)
@@ -114,8 +116,7 @@ public class CmsArticleController {
      * @param cmsArticleQuery 查询对象
      * @return 文章列表
      */
-//    @PreAuthorize("@permissionIdentify.hasPermi('cms:article:list')")
-    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
+    @PreAuthorize("@permissionIdentify.hasRole('articel_admin')")
     @ApiOperation(value = "文章列表")
     @GetMapping(value = "list")
     public Object list(CmsArticleQuery cmsArticleQuery) {
@@ -129,8 +130,7 @@ public class CmsArticleController {
      * @param articleId 文章id
      * @return 文章详情
      */
-//    @PreAuthorize("@permissionIdentify.hasPermi('cms:article:query')")
-    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
+    @PreAuthorize("@permissionIdentify.hasRole('articel_admin')")
     @ApiOperation(value = "文章详情")
     @ApiImplicitParam(name = "articleId", value = "文章ID", required = true)
     @GetMapping(value = "article/{articleId}")
@@ -145,7 +145,7 @@ public class CmsArticleController {
      * @param cmsArticleForWardingAo 转发文章参数体
      * @return 转发结果
      */
-    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
+    @PreAuthorize("@permissionIdentify.hasRole('articel_admin')")
     @ApiOperation(value = "转发文章")
     @PostMapping(value = "forwarding")
     public Object forwarding(@Valid @RequestBody CmsArticleForWardingAo cmsArticleForWardingAo){
