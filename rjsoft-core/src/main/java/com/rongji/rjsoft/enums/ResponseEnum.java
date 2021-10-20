@@ -56,7 +56,10 @@ public enum ResponseEnum {
     NO_ALLOW_WORD(4005, "检测文章标题、描述活内容中包含敏感词:"),
     STATIC_HTML_EXCEPTION(4006, "文章静态化异常"),
     CANT_GET_SITES(4007, "未能获取到站点信息"),
-    TAKE_UP(4008, "数据已被使用");
+    TAKE_UP(4008, "数据已被使用"),
+    CONNECTION_EXCEPTION(11111, "连接异常, 请尽快上线查看!"),
+    DATABASE_EXCEPTION(22222, "连接数据库异常, 请尽快上线查看!"),
+    REDIS_EXCEPTION(33332, "连接REDIS异常, 请尽快上线查看!");
 
     private Integer code;
     private String value;
