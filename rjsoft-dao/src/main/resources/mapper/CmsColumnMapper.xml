@@ -19,17 +19,25 @@
     </resultMap>
 
     <select id="getPage" resultType="com.rongji.rjsoft.vo.content.CmsColumnVo">
-        select column_id, column_name, parent_id
-        from cms_column
+        select
+        t1.column_id,
+        t1.column_name,
+        t2.column_name as parentName,
+        t1.image_url,
+        t1.dept_id
+        from
+        cms_column as t1
+        inner join cms_column as t2 on
+        t1.parent_id = t2.column_id
         <where>
             <if test="param.columnId != null">
-                column_id = #{param.columnId}
+                t1.column_id = #{param.columnId}
             </if>
             <if test="param.columnName != null and param.columnName != ''">
-                and column_name like concat ('%', #{param.columnName}, '%')
+                and t1.column_name like concat ('%', #{param.columnName}, '%')
             </if>
             <if test="1==1">
-                and del_flag = 0
+                and t1.del_flag = 0
             </if>
         </where>
     </select>

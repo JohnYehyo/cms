@@ -108,4 +108,13 @@
         order by parent_id
     </select>
 
+    <select id="selectDeptsByIds" resultType="com.rongji.rjsoft.vo.system.dept.SysDeptTreeVo">
+        select dept_id, dept_name, parent_id
+        from sys_dept
+        where dept_id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
 </mapper>

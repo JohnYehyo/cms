@@ -29,4 +29,15 @@
         </where>
     </select>
 
+    <select id="getTemplateByColumnId" resultType="com.rongji.rjsoft.entity.content.CmsTemplate">
+        select
+            t1.template_id,
+            t1.template_name
+        from
+            cms_template as t1
+                inner join cms_column as t2 on
+                t1.template_id = t2.template_id
+        where t2.column_id = #{columnId}
+    </select>
+
 </mapper>

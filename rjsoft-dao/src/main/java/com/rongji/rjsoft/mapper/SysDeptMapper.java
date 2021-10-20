@@ -64,4 +64,11 @@ public interface SysDeptMapper extends BaseMapper<SysDept> {
      * @return 下属部门信息
      */
     List<SysDeptAllTreeVo> selectAllTreeNode(Long deptId);
+
+    /**
+     * 通过部门id集合查询部门信息
+     * @param deptIds 部门id集合
+     * @return 部门系信息
+     */
+    List<SysDeptTreeVo> selectDeptsByIds(List<Long> deptIds);
 }

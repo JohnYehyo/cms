@@ -25,4 +25,11 @@ public interface CmsTemplateMapper extends BaseMapper<CmsTemplate> {
      * @return 模板分页查询结果
      */
     List<CmsTemplateVo> getList(CmsTemplateQuery cmsTemplateQuery);
+
+    /**
+     * 通过栏目id获取模板信息
+     * @param columnId 栏目id
+     * @return 模板信息
+     */
+    CmsTemplate getTemplateByColumnId(Long columnId);
 }

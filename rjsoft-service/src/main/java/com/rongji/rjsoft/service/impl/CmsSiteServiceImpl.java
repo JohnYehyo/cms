@@ -222,17 +222,17 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         //查询所有下属节点
         List<CmsSiteAllTreeVo> treeList = cmsSiteMapper.selectAllTree(cmsSite.getSiteId());
 
+        CmsSiteAllTreeVo topNode = new CmsSiteAllTreeVo();
+        BeanUtil.copyProperties(cmsSite, topNode);
+
         //树结构组装
         if(CollectionUtil.isNotEmpty(treeList)){
-            CmsSiteAllTreeVo topNode = new CmsSiteAllTreeVo();
-            BeanUtil.copyProperties(cmsSite, topNode);
-
             List<CmsSiteAllTreeVo> tree = new ArrayList<>();
             tree.add(topNode);
             assembly(tree, treeList);
             return topNode;
         }
-        return null;
+        return topNode;
     }
 
     private void assembly(List<CmsSiteAllTreeVo> tree, List<CmsSiteAllTreeVo> treeList) {

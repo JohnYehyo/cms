@@ -65,4 +65,16 @@
         order by parent_id
     </select>
 
+
+    <select id="getSitesByColumn" resultType="com.rongji.rjsoft.vo.content.CmsSiteTreeVo">
+        select
+            t2.site_id,
+            t2.site_name,
+            t2.parent_id
+        from
+            cms_site_column as t1
+                inner join cms_site as t2 on t1.site_id = t2.site_id
+        where t1.column_id = #{columnId}
+    </select>
+
 </mapper>

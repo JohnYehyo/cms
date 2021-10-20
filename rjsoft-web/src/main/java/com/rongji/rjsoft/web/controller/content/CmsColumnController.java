@@ -119,4 +119,16 @@ public class CmsColumnController {
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsColumnService.getColumnTreeBySite(siteId));
     }
 
+    /**
+     * 栏目详情
+     * @param columnId 栏目id
+     * @return 栏目详情
+     */
+    @ApiOperation(value = "栏目详情")
+    @ApiImplicitParam(name = "columnId", value = "栏目id", required = true)
+    @GetMapping(value = "/{columnId}")
+    public Object details(@PathVariable Long columnId){
+        return ResponseVo.response(ResponseEnum.SUCCESS, cmsColumnService.getDetails(columnId));
+    }
+
 }

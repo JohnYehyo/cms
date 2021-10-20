@@ -12,22 +12,29 @@ import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.entity.content.CmsColumn;
 import com.rongji.rjsoft.entity.content.CmsSiteColumn;
+import com.rongji.rjsoft.entity.content.CmsTemplate;
 import com.rongji.rjsoft.enums.DelFlagEnum;
-import com.rongji.rjsoft.mapper.CmsColumnMapper;
-import com.rongji.rjsoft.mapper.CmsSiteColumnMapper;
+import com.rongji.rjsoft.enums.ResponseEnum;
+import com.rongji.rjsoft.enums.TableTypeEnum;
+import com.rongji.rjsoft.exception.BusinessException;
+import com.rongji.rjsoft.mapper.*;
+import com.rongji.rjsoft.query.common.SysCommonFileQuery;
 import com.rongji.rjsoft.query.content.CmsColumnQuery;
 import com.rongji.rjsoft.service.ICmsColumnService;
+import com.rongji.rjsoft.service.ISysCommonFileService;
 import com.rongji.rjsoft.vo.CommonPage;
-import com.rongji.rjsoft.vo.content.CmsColumnAllTree;
-import com.rongji.rjsoft.vo.content.CmsColumnTreeVo;
-import com.rongji.rjsoft.vo.content.CmsColumnVo;
+import com.rongji.rjsoft.vo.common.SysCommonFileVo;
+import com.rongji.rjsoft.vo.content.*;
+import com.rongji.rjsoft.vo.system.dept.SysDeptTreeVo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -45,6 +52,14 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
 
     private final CmsSiteColumnMapper cmsSiteColumnMapper;
 
+    private final SysDeptMapper sysDeptMapper;
+
+    private final CmsSiteMapper cmsSiteMapper;
+
+    private final CmsTemplateMapper cmsTemplateMapper;
+
+    private final ISysCommonFileService sysCommonFileService;
+
     /**
      * 添加栏目信息
      *
@@ -58,7 +73,7 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         CmsColumn parent = cmsColumnMapper.selectById(cmsColumnAo.getParentId());
         CmsColumn cmsColumn = new CmsColumn();
         BeanUtil.copyProperties(cmsColumnAo, cmsColumn);
-        cmsColumn.setAncestors(parent.getAncestors() + "," + parent.getParentId());
+        cmsColumn.setAncestors(parent.getAncestors() + "," + parent.getColumnId());
         boolean result = cmsColumnMapper.insert(cmsColumn) > 0;
 
         //保存站点关系
@@ -101,7 +116,7 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
 
         CmsColumn cmsColumn = new CmsColumn();
         BeanUtil.copyProperties(cmsColumnAo, cmsColumn);
-        cmsColumn.setAncestors(parent.getAncestors() + "," + parent.getParentId());
+        cmsColumn.setAncestors(parent.getAncestors() + "," + parent.getColumnId());
 
         if (null != parent && null != old) {
             String newAncestors = parent.getAncestors() + "," + parent.getColumnId();
@@ -162,6 +177,22 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
     public CommonPage<CmsColumnVo> pageList(CmsColumnQuery cmsColumnQuery) {
         IPage<CmsColumnVo> page = new Page<>(cmsColumnQuery.getCurrent(), cmsColumnQuery.getPageSize());
         page = cmsColumnMapper.getPage(page, cmsColumnQuery);
+        if (CollectionUtil.isNotEmpty(page.getRecords())) {
+            for (CmsColumnVo cmsColumnVo : page.getRecords()) {
+                if (null == cmsColumnVo.getDeptId()) {
+                    continue;
+                }
+                List<Long> deptIds = Arrays
+                        .stream(cmsColumnVo.getDeptId().split(","))
+                        .map(k -> Long.parseLong(k))
+                        .collect(Collectors.toList());
+                List<SysDeptTreeVo> sysDepts = sysDeptMapper.selectDeptsByIds(deptIds);
+                if (null == sysDepts) {
+                    continue;
+                }
+                cmsColumnVo.setDepts(sysDepts);
+            }
+        }
         return CommonPageUtils.assemblyPage(page);
     }
 
@@ -211,14 +242,14 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         Long deptId = SecurityUtils.getLoginUser().getSysDept().getDeptId();
         List<CmsColumnAllTree> list = cmsColumnMapper.getColumnTreeBySite(siteId, deptId);
 
-        if (CollectionUtil.isNotEmpty(list)) {
-            List<CmsColumnAllTree> tree = new ArrayList<>();
-            CmsColumnAllTree top = list.remove(0);
-            tree.add(top);
-            assembly(tree, list);
-            return top;
+        if (CollectionUtil.isEmpty(list)) {
+            throw new BusinessException(ResponseEnum.NO_DATA);
         }
-        return null;
+        List<CmsColumnAllTree> tree = new ArrayList<>();
+        CmsColumnAllTree top = list.remove(0);
+        tree.add(top);
+        assembly(tree, list);
+        return top;
     }
 
     private void assembly(List<CmsColumnAllTree> parentChildren, List<CmsColumnAllTree> list) {
@@ -241,4 +272,22 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         }
     }
 
+    /**
+     * 获取栏目详情
+     * @param columnId 栏目id
+     * @return 栏目详情
+     */
+    @Override
+    public CmsColumnDetailsVo getDetails(Long columnId) {
+        List<CmsSiteTreeVo> sites = cmsSiteMapper.getSitesByColumn(columnId);
+        CmsTemplate cmsTemplate = cmsTemplateMapper.getTemplateByColumnId(columnId);
+        SysCommonFileQuery query = new SysCommonFileQuery();
+        query.setTableId(cmsTemplate.getTemplateId());
+        query.setTableType(TableTypeEnum.CMS_TEMPLATE.getValue());
+        List<SysCommonFileVo> files = sysCommonFileService.getFiles(query);
+        CmsColumnDetailsVo cmsColumnDetailsVo = new CmsColumnDetailsVo();
+        cmsColumnDetailsVo.setSites(sites);
+        cmsColumnDetailsVo.setFiles(files);
+        return cmsColumnDetailsVo;
+    }
 }

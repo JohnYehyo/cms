@@ -15,7 +15,6 @@ import com.rongji.rjsoft.exception.BusinessException;
 import com.rongji.rjsoft.mapper.SysDeptMapper;
 import com.rongji.rjsoft.query.system.dept.DeptQuey;
 import com.rongji.rjsoft.service.ISysDeptService;
-import com.rongji.rjsoft.vo.content.CmsSiteAllTreeVo;
 import com.rongji.rjsoft.vo.system.dept.SysDeptAllTreeVo;
 import com.rongji.rjsoft.vo.system.dept.SysDeptTreeVo;
 import com.rongji.rjsoft.vo.system.dept.SysDeptVo;
@@ -204,21 +203,23 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
     public SysDeptAllTreeVo allTree(Long deptId) {
         //当前顶级节点
         SysDept sysDept = getTopNode(deptId);
+        if (null == sysDept) {
+            throw new BusinessException(ResponseEnum.NO_DATA);
+        }
 
         //获取所有下级节点
         List<SysDeptAllTreeVo> treeList = sysDeptMapper.selectAllTreeNode(sysDept.getDeptId());
 
+        SysDeptAllTreeVo topNode = new SysDeptAllTreeVo();
+        BeanUtil.copyProperties(sysDept, topNode);
         //树结构组装
         if(CollectionUtil.isNotEmpty(treeList)){
-            SysDeptAllTreeVo topNode = new SysDeptAllTreeVo();
-            BeanUtil.copyProperties(sysDept, topNode);
-
             List<SysDeptAllTreeVo> tree = new ArrayList<>();
             tree.add(topNode);
             assembly(tree, treeList);
             return topNode;
         }
-        return null;
+        return topNode;
     }
 
     private SysDept getTopNode(Long deptId) {

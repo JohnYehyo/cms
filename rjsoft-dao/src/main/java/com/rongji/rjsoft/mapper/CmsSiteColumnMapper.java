@@ -2,6 +2,7 @@ package com.rongji.rjsoft.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.rongji.rjsoft.entity.content.CmsSiteColumn;
+import com.rongji.rjsoft.vo.content.CmsSiteTreeVo;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public interface CmsSiteColumnMapper extends BaseMapper<CmsSiteColumn> {
 
     /**
      * 保存站点栏目关系
-     * @param list 站点纤细
+     * @param list 站点信息
      * @return 保存结果
      */
     boolean batchInsert(List<CmsSiteColumn> list);
@@ -35,4 +36,5 @@ public interface CmsSiteColumnMapper extends BaseMapper<CmsSiteColumn> {
      * @return 删除结果
      */
     int deleteSiteColumnBySiteId(Long[] siteId);
+
 }
