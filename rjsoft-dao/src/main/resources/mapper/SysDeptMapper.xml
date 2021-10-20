@@ -45,24 +45,26 @@
           and del_flag = 0
     </select>
 
-    <select id="getAsynchDeptTreeByIds" parameterType="long" resultType="com.rongji.rjsoft.vo.system.dept.SysDeptTreeVo">
+    <select id="getAsynchDeptTreeByIds" parameterType="long"
+            resultType="com.rongji.rjsoft.vo.system.dept.SysDeptTreeVo">
         select dept_id,
                parent_id,
                dept_name
         from sys_dept
         where parent_id = #{deptId}
-        and status = 0
-        and del_flag = 0
+          and status = 0
+          and del_flag = 0
     </select>
 
-    <select id="getSimpleAsynchTreeById" parameterType="long" resultType="com.rongji.rjsoft.vo.system.dept.SysDeptTreeVo">
+    <select id="getSimpleAsynchTreeById" parameterType="long"
+            resultType="com.rongji.rjsoft.vo.system.dept.SysDeptTreeVo">
         select dept_id,
                parent_id,
                dept_name
         from sys_dept
         where dept_id = #{deptId}
-        and status = 0
-        and del_flag = 0
+          and status = 0
+          and del_flag = 0
     </select>
 
     <select id="listByCondition" parameterType="com.rongji.rjsoft.query.system.dept.DeptQuey"
@@ -98,5 +100,12 @@
             #{item.deptId}
         </foreach>
     </update>
+
+    <select id="selectAllTreeNode" resultType="com.rongji.rjsoft.vo.system.dept.SysDeptAllTreeVo">
+        select dept_id, dept_name, parent_id
+        from sys_dept
+        where find_in_set(#{deptId}, ancestors)
+        order by parent_id
+    </select>
 
 </mapper>
