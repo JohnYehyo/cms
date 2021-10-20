@@ -5,6 +5,7 @@ import com.rongji.rjsoft.ao.content.CmsSiteAo;
 import com.rongji.rjsoft.entity.content.CmsSite;
 import com.rongji.rjsoft.query.content.CmsSiteQuery;
 import com.rongji.rjsoft.vo.CommonPage;
+import com.rongji.rjsoft.vo.content.CmsSiteAllTreeVo;
 import com.rongji.rjsoft.vo.content.CmsSiteTreeVo;
 import com.rongji.rjsoft.vo.content.CmsSiteVo;
 
@@ -59,4 +60,11 @@ public interface ICmsSiteService extends IService<CmsSite> {
      * 刷新站点缓存
      */
     void refreshCache();
+
+    /**
+     * 站点同步树
+     * @param cmsSiteQuery 查询条件
+     * @return 站点树
+     */
+    CmsSiteAllTreeVo allTree(CmsSiteQuery cmsSiteQuery);
 }

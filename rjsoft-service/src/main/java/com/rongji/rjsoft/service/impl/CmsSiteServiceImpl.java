@@ -1,6 +1,7 @@
 package com.rongji.rjsoft.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -13,18 +14,23 @@ import com.rongji.rjsoft.common.util.RedisCache;
 import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.content.CmsSite;
 import com.rongji.rjsoft.enums.DelFlagEnum;
+import com.rongji.rjsoft.enums.ResponseEnum;
+import com.rongji.rjsoft.exception.BusinessException;
 import com.rongji.rjsoft.mapper.CmsSiteColumnMapper;
 import com.rongji.rjsoft.mapper.CmsSiteMapper;
 import com.rongji.rjsoft.query.content.CmsSiteQuery;
 import com.rongji.rjsoft.service.ICmsSiteService;
 import com.rongji.rjsoft.vo.CommonPage;
+import com.rongji.rjsoft.vo.content.CmsSiteAllTreeVo;
 import com.rongji.rjsoft.vo.content.CmsSiteTreeVo;
 import com.rongji.rjsoft.vo.content.CmsSiteVo;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -56,10 +62,10 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         CmsSite parent = cmsSiteMapper.selectById(cmsSiteAo.getParentId());
         CmsSite cmsSite = new CmsSite();
         BeanUtil.copyProperties(cmsSiteAo, cmsSite);
-        if(null == parent){
+        if (null == parent) {
             cmsSite.setAncestors("0");
-        }else{
-            cmsSite.setAncestors(parent.getAncestors() + "," + parent.getParentId());
+        } else {
+            cmsSite.setAncestors(parent.getAncestors() + "," + parent.getSiteId());
         }
 
         boolean result = cmsSiteMapper.insert(cmsSite) > 0;
@@ -84,10 +90,10 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         CmsSite cmsSite = new CmsSite();
         BeanUtil.copyProperties(cmsSiteAo, cmsSite);
 
-        if(null == parent){
+        if (null == parent) {
             cmsSite.setAncestors("0");
-        }else{
-            cmsSite.setAncestors(parent.getAncestors() + "," + parent.getParentId());
+        } else {
+            cmsSite.setAncestors(parent.getAncestors() + "," + parent.getSiteId());
         }
 
         if (null != parent && null != old) {
@@ -198,5 +204,67 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         for (CmsSite cmsSite : cmsSites) {
             redisCache.setCacheMapValue(Constants.SITE_DICT, String.valueOf(cmsSite.getSiteId()), cmsSite.getSiteFile());
         }
+    }
+
+    /**
+     * 站点树(异步实现)
+     *
+     * @param cmsSiteQuery 查询条件
+     * @return 站点树
+     */
+    @Override
+    public CmsSiteAllTreeVo allTree(CmsSiteQuery cmsSiteQuery) {
+        //查询最上层节点
+        CmsSite cmsSite = getTopNode(cmsSiteQuery);
+        if (null == cmsSite) {
+            throw new BusinessException(ResponseEnum.NO_DATA);
+        }
+        //查询所有下属节点
+        List<CmsSiteAllTreeVo> treeList = cmsSiteMapper.selectAllTree(cmsSite.getSiteId());
+
+        if(CollectionUtil.isNotEmpty(treeList)){
+            CmsSiteAllTreeVo topNode = new CmsSiteAllTreeVo();
+            BeanUtil.copyProperties(cmsSite, topNode);
+
+            List<CmsSiteAllTreeVo> tree = new ArrayList<>();
+            tree.add(topNode);
+            assembly(tree, treeList);
+            return topNode;
+        }
+        return null;
+    }
+
+    private void assembly(List<CmsSiteAllTreeVo> tree, List<CmsSiteAllTreeVo> treeList) {
+        for (CmsSiteAllTreeVo cmsSiteAllTreeVo : tree) {
+            List<CmsSiteAllTreeVo> children = new ArrayList<>();
+            Iterator<CmsSiteAllTreeVo> iterator = treeList.iterator();
+            CmsSiteAllTreeVo next;
+            while (iterator.hasNext()) {
+                next = iterator.next();
+                if(next.getParentId().longValue() == cmsSiteAllTreeVo.getSiteId().longValue()){
+                    children.add(next);
+                    iterator.remove();
+                }
+            }
+            cmsSiteAllTreeVo.setChildren(children);
+            if(CollectionUtil.isNotEmpty(treeList)){
+                assembly(cmsSiteAllTreeVo.getChildren(), treeList);
+            }
+        }
+    }
+
+    private CmsSite getTopNode(CmsSiteQuery cmsSiteQuery) {
+        Long deptId = SecurityUtils.getLoginUser().getSysDept().getDeptId();
+        LambdaQueryWrapper<CmsSite> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(CmsSite::getDeptId, deptId);
+        if (null != cmsSiteQuery.getSiteId()) {
+            wrapper.eq(CmsSite::getSiteId, cmsSiteQuery.getSiteId());
+        }
+        if (StringUtils.isNotEmpty(cmsSiteQuery.getSiteName())) {
+            wrapper.eq(CmsSite::getSiteName, cmsSiteQuery.getSiteName());
+        }
+        wrapper.eq(CmsSite::getDelFlag, 0);
+        wrapper.last(" limit 0, 1");
+        return cmsSiteMapper.selectOne(wrapper);
     }
 }

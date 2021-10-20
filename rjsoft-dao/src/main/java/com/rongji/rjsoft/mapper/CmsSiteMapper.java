@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.rongji.rjsoft.entity.content.CmsSite;
 import com.rongji.rjsoft.query.content.CmsSiteQuery;
+import com.rongji.rjsoft.vo.content.CmsSiteAllTreeVo;
 import com.rongji.rjsoft.vo.content.CmsSiteVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -44,8 +45,15 @@ public interface CmsSiteMapper extends BaseMapper<CmsSite> {
 
     /**
      * 删除站点
-     * @param siteId
-     * @return
+     * @param siteId 站点id
+     * @return 删除结果
      */
     int deleteSites(Long[] siteId);
+
+    /**
+     * 查询站点节点
+     * @param siteId 顶级站点id
+     * @return 站点节点信息
+     */
+    List<CmsSiteAllTreeVo> selectAllTree(Long siteId);
 }

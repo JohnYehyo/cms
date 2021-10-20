@@ -58,4 +58,11 @@
         </foreach>
     </update>
 
+    <select id="selectAllTree" resultType="com.rongji.rjsoft.vo.content.CmsSiteAllTreeVo">
+        select site_id, site_name, description, parent_id
+        from cms_site
+        where find_in_set(#{siteId}, ancestors)
+        order by parent_id
+    </select>
+
 </mapper>

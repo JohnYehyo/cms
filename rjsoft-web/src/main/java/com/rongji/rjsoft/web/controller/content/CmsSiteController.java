@@ -107,4 +107,15 @@ public class CmsSiteController {
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsSiteService.tree(cmsSiteQuery));
     }
 
+    /**
+     * 站点树
+     * @param cmsSiteQuery 查询条件
+     * @return 站点树
+     */
+    @ApiOperation(value = "站点同步树")
+    @GetMapping(value = "allTree")
+    public Object allTree(CmsSiteQuery cmsSiteQuery){
+        return ResponseVo.response(ResponseEnum.SUCCESS, cmsSiteService.allTree(cmsSiteQuery));
+    }
+
 }
