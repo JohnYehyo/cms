@@ -222,6 +222,7 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         //查询所有下属节点
         List<CmsSiteAllTreeVo> treeList = cmsSiteMapper.selectAllTree(cmsSite.getSiteId());
 
+        //树结构组装
         if(CollectionUtil.isNotEmpty(treeList)){
             CmsSiteAllTreeVo topNode = new CmsSiteAllTreeVo();
             BeanUtil.copyProperties(cmsSite, topNode);
