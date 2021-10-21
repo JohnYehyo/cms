@@ -46,8 +46,7 @@ public class CmsColumnAo {
     /**
      * 栏目父级id
      */
-    @ApiModelProperty(value = "父级ID", required = true)
-    @NotNull(groups = {CmsColumnAo.insert.class, CmsColumnAo.update.class}, message = "父级ID不能为空")
+    @ApiModelProperty(value = "父级ID")
     private Long parentId;
 
     /**
@@ -55,13 +54,6 @@ public class CmsColumnAo {
      */
     @ApiModelProperty(value = "栏目图片地址")
     private String imageUrl;
-
-    /**
-     * 站点
-     */
-    @ApiModelProperty(value = "站点", required = true)
-    @NotNull(groups = {CmsColumnAo.insert.class, CmsColumnAo.update.class}, message = "站点不能为空")
-    private Long[] siteId;
 
     /**
      * 部门id

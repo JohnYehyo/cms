@@ -76,25 +76,7 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         cmsColumn.setAncestors(parent.getAncestors() + "," + parent.getColumnId());
         boolean result = cmsColumnMapper.insert(cmsColumn) > 0;
 
-        //保存站点关系
-        cmsColumnAo.setColumnId(cmsColumn.getColumnId());
-        boolean result1 = saveSiteWithColumn(cmsColumnAo);
-
-        return result && result1;
-    }
-
-    private boolean saveSiteWithColumn(CmsColumnAo cmsColumnAo) {
-        CmsSiteColumn cmsSiteColumn;
-        List<CmsSiteColumn> list = new ArrayList<>();
-        Long[] siteIds = cmsColumnAo.getSiteId();
-        for (int i = 0; i < siteIds.length; i++) {
-            cmsSiteColumn = new CmsSiteColumn();
-            cmsSiteColumn.setSiteId(siteIds[i]);
-            cmsSiteColumn.setColumnId(cmsColumnAo.getColumnId());
-            list.add(cmsSiteColumn);
-        }
-        boolean result1 = cmsSiteColumnMapper.batchInsert(list);
-        return result1;
+        return result;
     }
 
     /**
@@ -106,9 +88,6 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean edit(CmsColumnAo cmsColumnAo) {
-
-        //编辑站点栏目关系
-        boolean result = updateSiteWithColumn(cmsColumnAo);
 
         //编辑栏目信息
         CmsColumn parent = cmsColumnMapper.selectById(cmsColumnAo.getParentId());
@@ -127,16 +106,9 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
             updateSiteChildren(old.getColumnId(), newAncestors, oldAncestors);
         }
 
-        boolean result1 = cmsColumnMapper.updateById(cmsColumn) > 0;
+        boolean result = cmsColumnMapper.updateById(cmsColumn) > 0;
 
-        return result && result1;
-    }
-
-    private boolean updateSiteWithColumn(CmsColumnAo cmsColumnAo) {
-        LambdaUpdateWrapper<CmsSiteColumn> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(CmsSiteColumn::getColumnId, cmsColumnAo.getColumnId());
-        cmsSiteColumnMapper.delete(wrapper);
-        return saveSiteWithColumn(cmsColumnAo);
+        return result;
     }
 
     private void updateSiteChildren(Long columnId, String newAncestors, String oldAncestors) {

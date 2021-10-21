@@ -77,4 +77,11 @@ public class CmsSiteAo {
     @NotNull
     private String siteFile;
 
+    /**
+     * 栏目
+     */
+    @ApiModelProperty(value = "栏目", required = true)
+    @NotNull(groups = {CmsSiteAo.insert.class, CmsSiteAo.update.class}, message = "栏目不能为空")
+    private Long[] columnId;
+
 }

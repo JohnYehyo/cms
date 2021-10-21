@@ -4,15 +4,18 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.rongji.rjsoft.ao.content.CmsColumnAo;
 import com.rongji.rjsoft.ao.content.CmsSiteAo;
 import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.common.util.RedisCache;
 import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.content.CmsSite;
+import com.rongji.rjsoft.entity.content.CmsSiteColumn;
 import com.rongji.rjsoft.enums.DelFlagEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.exception.BusinessException;
@@ -72,7 +75,11 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         if (result) {
             ThreadUtil.execute(() -> refreshCache());
         }
-        return result;
+
+        //保存站点关系
+        cmsSiteAo.setSiteId(cmsSite.getSiteId());
+        boolean result1 = saveSiteWithColumn(cmsSiteAo);
+        return result && result1;
     }
 
     /**
@@ -84,6 +91,11 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean edit(CmsSiteAo cmsSiteAo) {
+
+        //更新站点栏目关系
+        boolean result = updateSiteWithColumn(cmsSiteAo);
+
+        //更新站点信息
         CmsSite parent = cmsSiteMapper.selectById(cmsSiteAo.getParentId());
         CmsSite old = cmsSiteMapper.selectById(cmsSiteAo.getSiteId());
 
@@ -104,11 +116,11 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
             //修改该节点下所有节点的ancestors
             updateSiteChildren(old.getSiteId(), newAncestors, oldAncestors);
         }
-        boolean result = cmsSiteMapper.updateById(cmsSite) > 0;
+        boolean result1 = cmsSiteMapper.updateById(cmsSite) > 0;
         if (result) {
             ThreadUtil.execute(() -> refreshCache());
         }
-        return result;
+        return result && result1;
     }
 
     private void updateSiteChildren(Long siteId, String newAncestors, String oldAncestors) {
@@ -267,5 +279,26 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         wrapper.eq(CmsSite::getDelFlag, 0);
         wrapper.last(" limit 0, 1");
         return cmsSiteMapper.selectOne(wrapper);
+    }
+
+    private boolean saveSiteWithColumn(CmsSiteAo cmsSiteAo) {
+        CmsSiteColumn cmsSiteColumn;
+        List<CmsSiteColumn> list = new ArrayList<>();
+        Long[] columnIds = cmsSiteAo.getColumnId();
+        for (int i = 0; i < columnIds.length; i++) {
+            cmsSiteColumn = new CmsSiteColumn();
+            cmsSiteColumn.setSiteId(cmsSiteAo.getSiteId());
+            cmsSiteColumn.setColumnId(columnIds[i]);
+            list.add(cmsSiteColumn);
+        }
+        boolean result1 = cmsSiteColumnMapper.batchInsert(list);
+        return result1;
+    }
+
+    private boolean updateSiteWithColumn(CmsSiteAo cmsSiteAo) {
+        LambdaUpdateWrapper<CmsSiteColumn> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(CmsSiteColumn::getSiteId, cmsSiteAo.getSiteId());
+        cmsSiteColumnMapper.delete(wrapper);
+        return saveSiteWithColumn(cmsSiteAo);
     }
 }
