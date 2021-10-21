@@ -25,6 +25,7 @@ import com.rongji.rjsoft.query.content.CmsSiteQuery;
 import com.rongji.rjsoft.service.ICmsSiteService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.content.CmsSiteAllTreeVo;
+import com.rongji.rjsoft.vo.content.CmsSiteDetailsVo;
 import com.rongji.rjsoft.vo.content.CmsSiteTreeVo;
 import com.rongji.rjsoft.vo.content.CmsSiteVo;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -300,5 +302,25 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         wrapper.eq(CmsSiteColumn::getSiteId, cmsSiteAo.getSiteId());
         cmsSiteColumnMapper.delete(wrapper);
         return saveSiteWithColumn(cmsSiteAo);
+    }
+
+    /**
+     * 站点详情
+     * @param siteId 站点id
+     * @return 站点详情
+     */
+    @Override
+    public CmsSiteDetailsVo getDetails(Long siteId) {
+        CmsSite cmsSite = cmsSiteMapper.selectById(siteId);
+        CmsSiteDetailsVo cmsSiteDetailsVo = new CmsSiteDetailsVo();
+        BeanUtil.copyProperties(cmsSite, cmsSiteDetailsVo);
+        LambdaQueryWrapper<CmsSiteColumn> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(CmsSiteColumn::getSiteId, siteId);
+        List<CmsSiteColumn> siteColumns = cmsSiteColumnMapper.selectList(wrapper);
+        if(null != siteColumns){
+            List<Long> columnIds = siteColumns.stream().map(k -> k.getColumnId()).collect(Collectors.toList());
+            cmsSiteDetailsVo.setColumnIds(columnIds);
+        }
+        return cmsSiteDetailsVo;
     }
 }

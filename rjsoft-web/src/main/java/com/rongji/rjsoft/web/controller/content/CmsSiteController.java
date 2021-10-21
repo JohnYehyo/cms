@@ -118,4 +118,16 @@ public class CmsSiteController {
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsSiteService.allTree(cmsSiteQuery));
     }
 
+    /**
+     * 站点信息详情
+     * @param siteId 查询条件
+     * @return 站点信息分页列表
+     */
+    @ApiOperation(value = "站点信息详情")
+    @ApiImplicitParam(name = "siteId", value = "站点id", required = true)
+    @GetMapping(value = "/{siteId}")
+    public Object details(@PathVariable Long siteId){
+        return ResponseVo.response(ResponseEnum.SUCCESS, cmsSiteService.getDetails(siteId));
+    }
+
 }

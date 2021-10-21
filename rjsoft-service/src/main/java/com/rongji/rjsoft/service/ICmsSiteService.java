@@ -6,6 +6,7 @@ import com.rongji.rjsoft.entity.content.CmsSite;
 import com.rongji.rjsoft.query.content.CmsSiteQuery;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.content.CmsSiteAllTreeVo;
+import com.rongji.rjsoft.vo.content.CmsSiteDetailsVo;
 import com.rongji.rjsoft.vo.content.CmsSiteTreeVo;
 import com.rongji.rjsoft.vo.content.CmsSiteVo;
 
@@ -67,4 +68,11 @@ public interface ICmsSiteService extends IService<CmsSite> {
      * @return 站点树
      */
     CmsSiteAllTreeVo allTree(CmsSiteQuery cmsSiteQuery);
+
+    /**
+     * 获取站点详情
+     * @param siteId 站点id
+     * @return 站点详情
+     */
+    CmsSiteDetailsVo getDetails(Long siteId);
 }

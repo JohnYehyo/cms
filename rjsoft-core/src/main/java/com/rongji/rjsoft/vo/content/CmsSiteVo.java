@@ -1,13 +1,8 @@
 package com.rongji.rjsoft.vo.content;
 
-import com.rongji.rjsoft.ao.content.CmsSiteAo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.Value;
-import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -67,4 +62,5 @@ public class CmsSiteVo implements Serializable {
      */
     @ApiModelProperty(value = "删除标记")
     private Integer delFlag;
+
 }
