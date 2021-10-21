@@ -29,7 +29,6 @@ public class AgentControlle {
 
         try {
             Object test = redisCache.getCacheObject("test");
-            int a = 1/0;
         } catch (Exception e) {
             throw new BusinessException(ResponseEnum.REDIS_EXCEPTION);
         }
