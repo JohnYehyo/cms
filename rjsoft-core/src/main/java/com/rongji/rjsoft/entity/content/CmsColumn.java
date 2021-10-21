@@ -60,7 +60,7 @@ public class CmsColumn implements Serializable {
     /**
      * 部门id
      */
-    private Long deptId;
+    private String deptId;
 
     /**
      * 模板id

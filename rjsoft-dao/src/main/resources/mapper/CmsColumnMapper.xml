@@ -27,7 +27,7 @@
         t1.dept_id
         from
         cms_column as t1
-        inner join cms_column as t2 on
+        left join cms_column as t2 on
         t1.parent_id = t2.column_id
         <where>
             <if test="param.columnId != null">

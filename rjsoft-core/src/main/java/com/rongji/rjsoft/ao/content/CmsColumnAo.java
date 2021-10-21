@@ -59,14 +59,20 @@ public class CmsColumnAo {
      * 部门id
      */
     @ApiModelProperty(value = "部门id", required = true)
-    @NotNull(message = "部门不能为空")
-    private Long deptId;
+    @NotNull(
+            groups = {CmsColumnAo.insert.class, CmsColumnAo.update.class},
+            message = "部门不能为空"
+    )
+    private Long[] deptIds;
 
     /**
      * 模板id
      */
     @ApiModelProperty(value = "模板id", required = true)
-    @NotNull(message = "模板不能为空")
+    @NotNull(
+            groups = {CmsColumnAo.insert.class, CmsColumnAo.update.class},
+            message = "模板不能为空"
+    )
     private Long tempId;
 
 }

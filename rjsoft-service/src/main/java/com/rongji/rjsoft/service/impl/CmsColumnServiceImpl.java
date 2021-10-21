@@ -27,6 +27,7 @@ import com.rongji.rjsoft.vo.common.SysCommonFileVo;
 import com.rongji.rjsoft.vo.content.*;
 import com.rongji.rjsoft.vo.system.dept.SysDeptTreeVo;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,7 +74,12 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         CmsColumn parent = cmsColumnMapper.selectById(cmsColumnAo.getParentId());
         CmsColumn cmsColumn = new CmsColumn();
         BeanUtil.copyProperties(cmsColumnAo, cmsColumn);
-        cmsColumn.setAncestors(parent.getAncestors() + "," + parent.getColumnId());
+        if (null == parent) {
+            cmsColumn.setAncestors("0");
+        } else {
+            cmsColumn.setAncestors(parent.getAncestors() + "," + parent.getColumnId());
+        }
+        cmsColumn.setDeptId(StringUtils.join(cmsColumnAo.getDeptIds(), ","));
         boolean result = cmsColumnMapper.insert(cmsColumn) > 0;
 
         return result;
@@ -93,18 +99,27 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         CmsColumn parent = cmsColumnMapper.selectById(cmsColumnAo.getParentId());
         CmsColumn old = cmsColumnMapper.selectById(cmsColumnAo.getColumnId());
 
+        if (null == old) {
+            throw new BusinessException(ResponseEnum.FAIL.getCode(), "请联系管理员!");
+        }
+
         CmsColumn cmsColumn = new CmsColumn();
         BeanUtil.copyProperties(cmsColumnAo, cmsColumn);
-        cmsColumn.setAncestors(parent.getAncestors() + "," + parent.getColumnId());
-
-        if (null != parent && null != old) {
-            String newAncestors = parent.getAncestors() + "," + parent.getColumnId();
-            String oldAncestors = old.getAncestors();
-            old.setAncestors(newAncestors);
-            cmsColumn.setAncestors(newAncestors);
-            //修改该节点下所有节点的ancestors
-            updateSiteChildren(old.getColumnId(), newAncestors, oldAncestors);
+        cmsColumn.setDeptId(StringUtils.join(cmsColumnAo.getDeptIds(), ","));
+        if (null == cmsColumnAo.getParentId()) {
+            cmsColumn.setParentId(0L);
         }
+
+        String newAncestors = "0";
+        if (null != parent) {
+            newAncestors = parent.getAncestors() + "," + parent.getColumnId();
+        }
+        cmsColumn.setAncestors(newAncestors);
+        String oldAncestors = old.getAncestors();
+        old.setAncestors(newAncestors);
+        cmsColumn.setAncestors(newAncestors);
+        //修改该节点下所有节点的ancestors
+        updateSiteChildren(old.getColumnId(), newAncestors, oldAncestors);
 
         boolean result = cmsColumnMapper.updateById(cmsColumn) > 0;
 
@@ -246,20 +261,23 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
 
     /**
      * 获取栏目详情
+     *
      * @param columnId 栏目id
      * @return 栏目详情
      */
     @Override
     public CmsColumnDetailsVo getDetails(Long columnId) {
-        List<CmsSiteTreeVo> sites = cmsSiteMapper.getSitesByColumn(columnId);
+        CmsColumnDetailsVo cmsColumnDetailsVo = new CmsColumnDetailsVo();
         CmsTemplate cmsTemplate = cmsTemplateMapper.getTemplateByColumnId(columnId);
         SysCommonFileQuery query = new SysCommonFileQuery();
-        query.setTableId(cmsTemplate.getTemplateId());
+        if(null != cmsTemplate) {
+            query.setTableId(cmsTemplate.getTemplateId());
+            cmsColumnDetailsVo.setTemplateId(cmsTemplate.getTemplateId());
+        }
         query.setTableType(TableTypeEnum.CMS_TEMPLATE.getValue());
         List<SysCommonFileVo> files = sysCommonFileService.getFiles(query);
-        CmsColumnDetailsVo cmsColumnDetailsVo = new CmsColumnDetailsVo();
-        cmsColumnDetailsVo.setSites(sites);
         cmsColumnDetailsVo.setFiles(files);
         return cmsColumnDetailsVo;
     }
+
 }
