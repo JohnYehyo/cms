@@ -14,10 +14,13 @@ import com.rongji.rjsoft.enums.TableTypeEnum;
 import com.rongji.rjsoft.exception.BusinessException;
 import com.rongji.rjsoft.mapper.CmsColumnMapper;
 import com.rongji.rjsoft.mapper.CmsTemplateMapper;
+import com.rongji.rjsoft.query.content.CmsTemplateListQuery;
 import com.rongji.rjsoft.query.content.CmsTemplateQuery;
 import com.rongji.rjsoft.service.ICmsTemplateService;
 import com.rongji.rjsoft.service.ISysCommonFileService;
 import com.rongji.rjsoft.vo.CommonPage;
+import com.rongji.rjsoft.vo.common.FileVo;
+import com.rongji.rjsoft.vo.content.CmsTemplateListVo;
 import com.rongji.rjsoft.vo.content.CmsTemplateVo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -170,6 +173,7 @@ public class CmsTemplateServiceImpl extends ServiceImpl<CmsTemplateMapper, CmsTe
         for (Map.Entry<String, List<CmsTemplateVo>> entry : map.entrySet()) {
             cmsTemplateVo = new CmsTemplateVo();
             String imgStr = "";
+            FileVo fileVo;
             for (CmsTemplateVo cms : entry.getValue()) {
                 cmsTemplateVo.setTemplateId(cms.getTemplateId());
                 cmsTemplateVo.setTemplateName(cms.getTemplateName());
@@ -180,12 +184,18 @@ public class CmsTemplateServiceImpl extends ServiceImpl<CmsTemplateMapper, CmsTe
                 }
                 //栏目模板
                 if (cms.getFileType() == TableFileTypeEnum.TEMPLATE_HTML_COLUMN.getCode()) {
-                    cmsTemplateVo.setTemplateColumn(cms.getFileUrl());
+                    fileVo = new FileVo();
+                    fileVo.setFileUrl(cms.getFileUrl());
+                    fileVo.setFileName(cms.getFileName());
+                    cmsTemplateVo.setTemplateColumn(fileVo);
                     continue;
                 }
                 //文章模板
                 if (cms.getFileType() == TableFileTypeEnum.TEMPLATE_HTML_ARTICLE.getCode()) {
-                    cmsTemplateVo.setTemplateArticle(cms.getFileUrl());
+                    fileVo = new FileVo();
+                    fileVo.setFileUrl(cms.getFileUrl());
+                    fileVo.setFileName(cms.getFileName());
+                    cmsTemplateVo.setTemplateArticle(fileVo);
                     continue;
                 }
             }
@@ -229,4 +239,43 @@ public class CmsTemplateServiceImpl extends ServiceImpl<CmsTemplateMapper, CmsTe
         page.setList(pageList);
         return page;
     }
+
+    /**
+     * 模板列表查询
+     *
+     * @param cmsTemplateListQuery 模板列表查询条件
+     * @return 模板分页查询结果
+     */
+    @Override
+    public List<CmsTemplateListVo> listOfTemplate(CmsTemplateListQuery cmsTemplateListQuery) {
+        CmsTemplateQuery cmsTemplateQuery = new CmsTemplateQuery();
+        BeanUtil.copyProperties(cmsTemplateListQuery, cmsTemplateQuery);
+        List<CmsTemplateVo> list = cmsTemplateMapper.getList(cmsTemplateQuery);
+        return reorganization(list);
+    }
+
+    private List<CmsTemplateListVo> reorganization(List<CmsTemplateVo> recordsTemp) {
+        List<CmsTemplateListVo> records = new ArrayList<>();
+        Map<String, List<CmsTemplateVo>> map = recordsTemp.stream().collect(Collectors.groupingBy(CmsTemplateVo::getTemplateId));
+        CmsTemplateListVo cmsTemplateListVo;
+        for (Map.Entry<String, List<CmsTemplateVo>> entry : map.entrySet()) {
+            cmsTemplateListVo = new CmsTemplateListVo();
+            String imgStr = "";
+            for (CmsTemplateVo cms : entry.getValue()) {
+                cmsTemplateListVo.setTemplateId(cms.getTemplateId());
+                cmsTemplateListVo.setTemplateName(cms.getTemplateName());
+                //缩略图
+                if (cms.getFileType() == TableFileTypeEnum.TEMPLATE_IMG.getCode()) {
+                    imgStr = imgStr + "," + cms.getFileUrl();
+                    continue;
+                }
+
+            }
+            cmsTemplateListVo.setTemplateImg(imgStr.length() > 0 ? imgStr.substring(1) : imgStr);
+            records.add(cmsTemplateListVo);
+        }
+        return records;
+    }
+
+
 }

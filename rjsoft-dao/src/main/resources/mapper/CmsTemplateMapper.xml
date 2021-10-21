@@ -17,6 +17,7 @@
         t1.template_id as templateId,
         t1.template_name as templateName,
         t2.file_url,
+        t2.file_Name,
         t2.file_type
         from
         cms_template as t1
@@ -24,7 +25,7 @@
         t1.template_id = t2.table_id
         <where>
             <if test="null != templateName and templateName != ''">
-              and t1.templateName like concat('%', #{templateName}, '%')
+              and t1.template_name like concat('%', #{templateName}, '%')
             </if>
         </where>
     </select>

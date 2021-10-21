@@ -1,12 +1,12 @@
 package com.rongji.rjsoft.web.controller.content;
 
 
-import com.rongji.rjsoft.ao.content.CmsTagsAo;
 import com.rongji.rjsoft.ao.content.CmsTemplateAo;
 import com.rongji.rjsoft.common.annotation.LogAction;
 import com.rongji.rjsoft.enums.LogTypeEnum;
 import com.rongji.rjsoft.enums.OperatorTypeEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
+import com.rongji.rjsoft.query.content.CmsTemplateListQuery;
 import com.rongji.rjsoft.query.content.CmsTemplateQuery;
 import com.rongji.rjsoft.service.ICmsTemplateService;
 import com.rongji.rjsoft.vo.ResponseVo;
@@ -92,5 +92,16 @@ public class CmsTemplateController {
     @GetMapping(value = "page")
     public Object page(CmsTemplateQuery cmsTemplateQuery){
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsTemplateService.getPage(cmsTemplateQuery));
+    }
+
+    /**
+     * 模板列表
+     * @param cmsTemplateListQuery 模板列表查询条件
+     * @return 模板列表
+     */
+    @ApiOperation(value = "模板列表查询")
+    @GetMapping(value = "list")
+    public Object list(CmsTemplateListQuery cmsTemplateListQuery){
+        return ResponseVo.response(ResponseEnum.SUCCESS, cmsTemplateService.listOfTemplate(cmsTemplateListQuery));
     }
 }

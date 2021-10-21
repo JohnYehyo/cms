@@ -3,9 +3,13 @@ package com.rongji.rjsoft.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.rongji.rjsoft.ao.content.CmsTemplateAo;
 import com.rongji.rjsoft.entity.content.CmsTemplate;
+import com.rongji.rjsoft.query.content.CmsTemplateListQuery;
 import com.rongji.rjsoft.query.content.CmsTemplateQuery;
 import com.rongji.rjsoft.vo.CommonPage;
+import com.rongji.rjsoft.vo.content.CmsTemplateListVo;
 import com.rongji.rjsoft.vo.content.CmsTemplateVo;
+
+import java.util.List;
 
 /**
  * <p>
@@ -44,4 +48,11 @@ public interface ICmsTemplateService extends IService<CmsTemplate> {
      * @return 模板分页查询结果
      */
     CommonPage<CmsTemplateVo> getPage(CmsTemplateQuery cmsTemplateQuery);
+
+    /**
+     * 模板分列表查询
+     * @param cmsTemplateListQuery 模板列表查询条件
+     * @return 模板列表查询结果
+     */
+    List<CmsTemplateListVo> listOfTemplate(CmsTemplateListQuery cmsTemplateListQuery);
 }

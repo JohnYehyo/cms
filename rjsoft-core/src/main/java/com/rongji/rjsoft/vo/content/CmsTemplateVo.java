@@ -1,5 +1,6 @@
 package com.rongji.rjsoft.vo.content;
 
+import com.rongji.rjsoft.vo.common.FileVo;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
@@ -32,12 +33,12 @@ public class CmsTemplateVo implements Serializable {
     /**
      * 栏目模板
      */
-    private String templateColumn;
+    private FileVo templateColumn;
 
     /**
      * 文章模板
      */
-    private String templateArticle;
+    private FileVo templateArticle;
 
     /**
      * 模板类型
@@ -45,8 +46,13 @@ public class CmsTemplateVo implements Serializable {
     private int fileType;
 
     /**
-     * 模板路径
+     * 附件路径
      */
     private String fileUrl;
+
+    /**
+     * 附件名字
+     */
+    private String fileName;
 
 }
