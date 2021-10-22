@@ -12,6 +12,7 @@
         <result column="del_flag" property="delFlag"/>
         <result column="dept_id" property="deptId"/>
         <result column="template_id" property="templateId"/>
+        <result column="order_num" property="orderNum"/>
         <result column="create_by" property="createBy"/>
         <result column="create_time" property="createTime"/>
         <result column="update_by" property="updateBy"/>
@@ -41,6 +42,7 @@
                 and t1.del_flag = 0
             </if>
         </where>
+        order by t1.orderNum
     </select>
 
     <select id="selectChildrenByColumnId" resultMap="BaseResultMap">

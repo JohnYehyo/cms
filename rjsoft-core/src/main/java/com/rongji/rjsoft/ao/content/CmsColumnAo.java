@@ -73,6 +73,16 @@ public class CmsColumnAo {
             groups = {CmsColumnAo.insert.class, CmsColumnAo.update.class},
             message = "模板不能为空"
     )
-    private Long tempId;
+    private Long templateId;
+
+    /**
+     * 排序
+     */
+    @ApiModelProperty(value = "排序", required = true)
+    @NotNull(
+            groups = {CmsColumnAo.insert.class, CmsColumnAo.update.class},
+            message = "排序不能为空"
+    )
+    private int orderNum;
 
 }
