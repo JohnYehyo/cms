@@ -101,23 +101,27 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         CmsSite parent = cmsSiteMapper.selectById(cmsSiteAo.getParentId());
         CmsSite old = cmsSiteMapper.selectById(cmsSiteAo.getSiteId());
 
+        if (null == old) {
+            throw new BusinessException(ResponseEnum.FAIL.getCode(), "请联系管理员!");
+        }
+
         CmsSite cmsSite = new CmsSite();
         BeanUtil.copyProperties(cmsSiteAo, cmsSite);
-
-        if (null == parent) {
-            cmsSite.setAncestors("0");
-        } else {
-            cmsSite.setAncestors(parent.getAncestors() + "," + parent.getSiteId());
+        if (null == cmsSiteAo.getParentId()) {
+            cmsSite.setParentId(0L);
         }
 
-        if (null != parent && null != old) {
-            String newAncestors = parent.getAncestors() + "," + parent.getSiteId();
-            String oldAncestors = old.getAncestors();
-            old.setAncestors(newAncestors);
-            cmsSite.setAncestors(newAncestors);
-            //修改该节点下所有节点的ancestors
-            updateSiteChildren(old.getSiteId(), newAncestors, oldAncestors);
+        String newAncestors = "0";
+        if (null != parent) {
+            newAncestors = parent.getAncestors() + "," + parent.getSiteId();
         }
+
+        String oldAncestors = old.getAncestors();
+        old.setAncestors(newAncestors);
+        cmsSite.setAncestors(newAncestors);
+        //修改该节点下所有节点的ancestors
+        updateSiteChildren(old.getSiteId(), newAncestors, oldAncestors);
+
         boolean result1 = cmsSiteMapper.updateById(cmsSite) > 0;
         if (result) {
             ThreadUtil.execute(() -> refreshCache());

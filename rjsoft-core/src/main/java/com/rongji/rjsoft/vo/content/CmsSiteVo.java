@@ -63,4 +63,10 @@ public class CmsSiteVo implements Serializable {
     @ApiModelProperty(value = "删除标记")
     private Integer delFlag;
 
+    /**
+     * 部门id
+     */
+    @ApiModelProperty(value = "deptId")
+    private Long deptId;
+
 }
