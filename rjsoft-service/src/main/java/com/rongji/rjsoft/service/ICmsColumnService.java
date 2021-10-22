@@ -60,9 +60,10 @@ public interface ICmsColumnService extends IService<CmsColumn> {
     /**
      * 获取站点下部门拥有的栏目树
      * @param siteId 站点Id
+     * @param deptId 部门Id
      * @return 栏目树
      */
-    CmsColumnAllTree getColumnTreeBySite(Long siteId);
+    List<CmsColumnAllTree> getColumnTreeBySite(Long siteId, Long deptId);
 
     /**
      * 获取栏目详情
@@ -70,4 +71,5 @@ public interface ICmsColumnService extends IService<CmsColumn> {
      * @return 栏目详情
      */
     CmsColumnDetailsVo getDetails(Long columnId);
+
 }

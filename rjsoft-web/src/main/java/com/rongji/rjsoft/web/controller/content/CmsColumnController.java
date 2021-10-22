@@ -3,6 +3,7 @@ package com.rongji.rjsoft.web.controller.content;
 
 import com.rongji.rjsoft.ao.content.CmsColumnAo;
 import com.rongji.rjsoft.common.annotation.LogAction;
+import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.enums.LogTypeEnum;
 import com.rongji.rjsoft.enums.OperatorTypeEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
@@ -108,15 +109,16 @@ public class CmsColumnController {
     }
 
     /**
-     * 栏目同步树
+     * 通过部门获取栏目同步树
      * @param siteId 查询条件
      * @return 栏目树
      */
-    @ApiOperation(value = "栏目同步树")
+    @ApiOperation(value = "通过部门获取栏目同步树")
     @ApiImplicitParam(name = "siteId", value = "站点id")
-    @GetMapping(value = "columnTree")
-    public Object columnTree(Long siteId){
-        return ResponseVo.response(ResponseEnum.SUCCESS, cmsColumnService.getColumnTreeBySite(siteId));
+    @GetMapping(value = "columnTreeBySite")
+    public Object columnTreeBySite(Long siteId){
+        Long deptId = SecurityUtils.getLoginUser().getSysDept().getDeptId();
+        return ResponseVo.response(ResponseEnum.SUCCESS, cmsColumnService.getColumnTreeBySite(siteId, deptId));
     }
 
     /**
@@ -129,6 +131,17 @@ public class CmsColumnController {
     @GetMapping(value = "/{columnId}")
     public Object details(@PathVariable Long columnId){
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsColumnService.getDetails(columnId));
+    }
+
+    /**
+     * 栏目同步树
+     * @return 栏目树
+     */
+    @ApiOperation(value = "栏目同步树")
+    @ApiImplicitParam(name = "siteId", value = "站点id")
+    @GetMapping(value = "columnTree")
+    public Object columnTree(){
+        return ResponseVo.response(ResponseEnum.SUCCESS, cmsColumnService.getColumnTreeBySite(null, null));
     }
 
 }

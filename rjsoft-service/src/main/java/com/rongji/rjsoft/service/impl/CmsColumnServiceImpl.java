@@ -220,24 +220,41 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
      * 获取站点下部门拥有的栏目树
      *
      * @param siteId 站点Id
+     * @param deptId 部门Id
      * @return 栏目树
      */
     @Override
-    public CmsColumnAllTree getColumnTreeBySite(Long siteId) {
+    public List<CmsColumnAllTree> getColumnTreeBySite(Long siteId, Long deptId) {
 
         //获取站点下部门拥有的栏目树
-        Long deptId = SecurityUtils.getLoginUser().getSysDept().getDeptId();
         List<CmsColumnAllTree> list = cmsColumnMapper.getColumnTreeBySite(siteId, deptId);
 
         if (CollectionUtil.isEmpty(list)) {
             throw new BusinessException(ResponseEnum.NO_DATA);
         }
-        List<CmsColumnAllTree> tree = new ArrayList<>();
-        CmsColumnAllTree top = list.remove(0);
-        tree.add(top);
-        assembly(tree, list);
+
+        //筛选出最上层的节点集合和其它节点集合
+        List<Long> columnIds = list.stream().map(CmsColumnAllTree::getColumnId).collect(Collectors.toList());
+        List<CmsColumnAllTree> top = new ArrayList<>();
+        List<CmsColumnAllTree> other = new ArrayList<>();
+        for (CmsColumnAllTree cms : list) {
+            if (columnIds.contains(cms.getParentId())) {
+                other.add(cms);
+                continue;
+            }
+            top.add(cms);
+        }
+
+        //对上层节点依次处理填入children
+        for (CmsColumnAllTree parent : top) {
+            List<CmsColumnAllTree> tree = new ArrayList<>();
+            tree.add(parent);
+            assembly(tree, other);
+        }
+
         return top;
     }
+
 
     private void assembly(List<CmsColumnAllTree> parentChildren, List<CmsColumnAllTree> list) {
 
@@ -270,7 +287,7 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         CmsColumnDetailsVo cmsColumnDetailsVo = new CmsColumnDetailsVo();
         CmsTemplate cmsTemplate = cmsTemplateMapper.getTemplateByColumnId(columnId);
         SysCommonFileQuery query = new SysCommonFileQuery();
-        if(null != cmsTemplate) {
+        if (null != cmsTemplate) {
             query.setTableId(cmsTemplate.getTemplateId());
             cmsColumnDetailsVo.setTemplateId(cmsTemplate.getTemplateId());
         }
@@ -279,5 +296,4 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         cmsColumnDetailsVo.setFiles(files);
         return cmsColumnDetailsVo;
     }
-
 }
