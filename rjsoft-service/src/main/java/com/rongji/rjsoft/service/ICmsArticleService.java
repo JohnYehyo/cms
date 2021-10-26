@@ -1,10 +1,7 @@
 package com.rongji.rjsoft.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.rongji.rjsoft.ao.content.CmsArticleAo;
-import com.rongji.rjsoft.ao.content.CmsArticleAuditAo;
-import com.rongji.rjsoft.ao.content.CmsArticleDeleteAo;
-import com.rongji.rjsoft.ao.content.CmsArticleForWardingAo;
+import com.rongji.rjsoft.ao.content.*;
 import com.rongji.rjsoft.entity.content.CmsArticle;
 import com.rongji.rjsoft.query.content.*;
 import com.rongji.rjsoft.vo.CommonPage;
@@ -108,4 +105,11 @@ public interface ICmsArticleService extends IService<CmsArticle> {
      * @return 转发结果
      */
     boolean forwarding(CmsArticleForWardingAo cmsArticleForWardingAo);
+
+    /**
+     * 移动文章
+     * @param cmsArticleForMoveAo 移动文章参数体
+     * @return 移动结果
+     */
+    boolean move(CmsArticleForMoveAo cmsArticleForMoveAo);
 }
