@@ -54,7 +54,7 @@
             #{item}
         </foreach>
         AND t1.del_flag = 0
-        ORDER BY t2.top, t2.order_num
+        ORDER BY t2.top, t2.order_num, t2.create_by desc
     </select>
 
     <select id="getArticlePageByTag" resultType="com.rongji.rjsoft.vo.content.CmsArticlePortalVo">
@@ -73,7 +73,7 @@
             #{item}
         </foreach>
         AND t1.del_flag = 0
-        ORDER BY t2.top, t2.order_num
+        ORDER BY t2.top, t2.order_num, t2.create_by desc
     </select>
 
     <select id="getArticlesByCategory" resultType="com.rongji.rjsoft.vo.content.CmsArticlePortalVo">
@@ -89,7 +89,7 @@
         AND t1.published = 1
         AND t2.category_id = #{param.categoryId}
         AND t1.del_flag = 0
-        ORDER BY t2.top, t2.order_num
+        ORDER BY t2.top, t2.order_num, t2.create_by desc
     </select>
 
     <select id="getArticlesBySlider" parameterType="com.rongji.rjsoft.query.content.CmsSliderArticleQuery" resultType="com.rongji.rjsoft.vo.content.CmsArticlePortalVo">
@@ -101,11 +101,11 @@
             cms_final_article AS t1
                 INNER JOIN cms_article AS t2 ON t1.article_id = t2.article_id
         WHERE
-            t1.site_id = #{siteId}
+            t1.site_id = #{param.siteId}
           AND t1.published = 1
           AND t2.slider = 1
           AND t1.del_flag = 0
-        ORDER BY t2.top, t2.order_num
+        ORDER BY t2.top, t2.order_num, t2.create_by desc
     </select>
 
     <select id="getPublishArticel" parameterType="string" resultType="com.rongji.rjsoft.vo.content.CmsArticleContentVo">
