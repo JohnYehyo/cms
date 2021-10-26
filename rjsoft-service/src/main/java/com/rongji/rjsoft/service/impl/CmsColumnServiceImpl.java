@@ -83,6 +83,7 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         //保存站点栏目关系
         CmsSiteColumn cmsSiteColumn = new CmsSiteColumn();
         BeanUtil.copyProperties(cmsColumnAo, cmsSiteColumn);
+        cmsSiteColumn.setColumnId(cmsColumn.getColumnId());
         boolean result1 = cmsSiteColumnMapper.insert(cmsSiteColumn) > 0;
         return result && result1;
     }

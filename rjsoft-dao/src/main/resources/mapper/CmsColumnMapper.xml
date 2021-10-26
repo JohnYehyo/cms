@@ -82,13 +82,13 @@
         t1.parent_id
         FROM
         cms_column AS t1
-        INNER JOIN cms_column_dept AS t3 ON t3.column_id = t1.column_id
+        LEFT JOIN cms_column_dept AS t3 ON t3.column_id = t1.column_id
         <if test="siteId != null">
-            INNER JOIN cms_site_column AS t2 ON t1.column_id = t2.column_id
+            LEFT JOIN cms_site_column AS t2 ON t1.column_id = t2.column_id
         </if>
         <where>
             <if test="siteId != null">
-                t2.site_id = #{siteId}
+                t2.site_id = #{siteId} and t2.del_flag = 0
             </if>
             <if test="deptId != null">
                 and t3.deptId = #{deptId}

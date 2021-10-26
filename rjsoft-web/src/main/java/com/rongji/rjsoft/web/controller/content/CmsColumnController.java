@@ -115,7 +115,7 @@ public class CmsColumnController {
      */
     @ApiOperation(value = "通过部门获取栏目同步树")
     @ApiImplicitParam(name = "siteId", value = "站点id")
-    @GetMapping(value = "columnTreeBySite")
+    @GetMapping(value = "columnTreeByDept")
     public Object columnTreeBySite(Long siteId){
         Long deptId = SecurityUtils.getLoginUser().getSysDept().getDeptId();
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsColumnService.getColumnTreeBySite(siteId, deptId));
@@ -139,9 +139,9 @@ public class CmsColumnController {
      */
     @ApiOperation(value = "栏目同步树")
     @ApiImplicitParam(name = "siteId", value = "站点id")
-    @GetMapping(value = "columnTree")
-    public Object columnTree(){
-        return ResponseVo.response(ResponseEnum.SUCCESS, cmsColumnService.getColumnTreeBySite(null, null));
+    @GetMapping(value = "columnTree/{siteId}")
+    public Object columnTree(@PathVariable Long siteId){
+        return ResponseVo.response(ResponseEnum.SUCCESS, cmsColumnService.getColumnTreeBySite(siteId, null));
     }
 
 }
