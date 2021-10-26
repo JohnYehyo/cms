@@ -138,8 +138,10 @@ public class CmsSiteController {
      * @param cmsSiteColumnAo 站点栏目关系表单数据
      * @return 维护结果
      */
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "维护站点栏目关系")
     @PutMapping(value = "maintainSiteWithColumn")
+    @LogAction(module = "站点信息管理", method = "维护站点栏目关系", logType = LogTypeEnum.INSERT, operatorType = OperatorTypeEnum.WEB)
     public Object maintainSiteWithColumn(@Valid @RequestBody CmsSiteColumnAo cmsSiteColumnAo){
         if(cmsSiteService.maintainSiteWithColumn(cmsSiteColumnAo)){
             return ResponseVo.success("维护站点栏目关系成功");
