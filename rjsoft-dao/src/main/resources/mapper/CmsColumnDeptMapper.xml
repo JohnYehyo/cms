@@ -18,13 +18,16 @@
     <select id="getPage" resultType="com.rongji.rjsoft.vo.content.CmsColumnDeptVo">
         select
         t2.column_name as columnName,
-        t3.dept_name as deptName
+        t3.dept_name as deptName,
+        t4.site_name
         from
         cms_column_dept as t1
         left join cms_column as t2 on
         t1.column_id = t2.column_id
         left join sys_dept as t3 on
         t1.dept_id = t3.dept_id
+        left join cms_site as t4 on
+        t2.site_id = t4.site_id
         <where>
             t1.dept_id = #{param.deptId}
             <if test=" null != param.columnId">

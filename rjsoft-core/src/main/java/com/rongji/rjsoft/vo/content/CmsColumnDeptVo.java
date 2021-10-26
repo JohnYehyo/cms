@@ -39,5 +39,11 @@ public class CmsColumnDeptVo implements Serializable {
     @ApiModelProperty(value = "部门名称")
     private String deptName;
 
+    /**
+     * 站点名称
+     */
+    @ApiModelProperty(value = "站点名称")
+    private String siteName;
+
 
 }
