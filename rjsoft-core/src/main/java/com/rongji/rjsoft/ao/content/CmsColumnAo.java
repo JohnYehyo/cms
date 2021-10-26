@@ -56,16 +56,6 @@ public class CmsColumnAo {
     private String imageUrl;
 
     /**
-     * 部门id
-     */
-    @ApiModelProperty(value = "部门id", required = true)
-    @NotNull(
-            groups = {CmsColumnAo.insert.class, CmsColumnAo.update.class},
-            message = "部门不能为空"
-    )
-    private Long[] deptIds;
-
-    /**
      * 模板id
      */
     @ApiModelProperty(value = "模板id", required = true)

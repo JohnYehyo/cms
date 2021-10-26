@@ -58,11 +58,6 @@ public class CmsColumn implements Serializable {
     private Integer delFlag;
 
     /**
-     * 部门id
-     */
-    private String deptId;
-
-    /**
      * 模板id
      */
     private Long templateId;

@@ -78,7 +78,6 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         } else {
             cmsColumn.setAncestors(parent.getAncestors() + "," + parent.getColumnId());
         }
-        cmsColumn.setDeptId(StringUtils.join(cmsColumnAo.getDeptIds(), ","));
         boolean result = cmsColumnMapper.insert(cmsColumn) > 0;
 
         //保存站点栏目关系
@@ -108,7 +107,6 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
 
         CmsColumn cmsColumn = new CmsColumn();
         BeanUtil.copyProperties(cmsColumnAo, cmsColumn);
-        cmsColumn.setDeptId(StringUtils.join(cmsColumnAo.getDeptIds(), ","));
         if (null == cmsColumnAo.getParentId()) {
             cmsColumn.setParentId(0L);
         }

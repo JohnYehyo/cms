@@ -16,6 +16,7 @@ import com.rongji.rjsoft.service.ICmsSiteService;
 import com.rongji.rjsoft.vo.content.CmsArticleContentVo;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -53,6 +54,7 @@ public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMappe
     @Override
     public void generateArticle() {
         if (StringUtils.isBlank(FileConfig.getFolder())) {
+            LogUtils.error("请先在Yml配置静态页面生成路径");
             throw new IllegalArgumentException("请先在Yml配置静态页面生成路径");
         }
 

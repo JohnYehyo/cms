@@ -10,7 +10,6 @@
         <result column="ancestors" property="ancestors"/>
         <result column="image_url" property="imageUrl"/>
         <result column="del_flag" property="delFlag"/>
-        <result column="dept_id" property="deptId"/>
         <result column="template_id" property="templateId"/>
         <result column="order_num" property="orderNum"/>
         <result column="create_by" property="createBy"/>
@@ -83,6 +82,7 @@
         t1.parent_id
         FROM
         cms_column AS t1
+        INNER JOIN cms_column_dept AS t3 ON t3.column_id = t1.column_id
         <if test="siteId != null">
             INNER JOIN cms_site_column AS t2 ON t1.column_id = t2.column_id
         </if>
@@ -91,7 +91,7 @@
                 t2.site_id = #{siteId}
             </if>
             <if test="deptId != null">
-                and find_in_set(#{deptId}, t1.dept_id)
+                and deptId = #{deptId}
             </if>
         </where>
         order by t1.parent_id
