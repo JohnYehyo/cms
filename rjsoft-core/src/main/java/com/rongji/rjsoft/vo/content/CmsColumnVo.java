@@ -59,4 +59,10 @@ public class CmsColumnVo implements Serializable {
     @ApiModelProperty(value = "部门")
     private List<SysDeptTreeVo> depts;
 
+    /**
+     * 排序
+     */
+    @ApiModelProperty(value = "排序")
+    private int orderNum;
+
 }

@@ -2,6 +2,7 @@ package com.rongji.rjsoft.web.controller.content;
 
 
 import com.rongji.rjsoft.ao.content.CmsSiteAo;
+import com.rongji.rjsoft.ao.content.CmsSiteColumnAo;
 import com.rongji.rjsoft.common.annotation.LogAction;
 import com.rongji.rjsoft.enums.LogTypeEnum;
 import com.rongji.rjsoft.enums.OperatorTypeEnum;
@@ -18,6 +19,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /**
  * <p>
@@ -128,6 +131,20 @@ public class CmsSiteController {
     @GetMapping(value = "/{siteId}")
     public Object details(@PathVariable Long siteId){
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsSiteService.getDetails(siteId));
+    }
+
+    /**
+     * 维护站点栏目关系
+     * @param cmsSiteColumnAo 站点栏目关系表单数据
+     * @return 维护结果
+     */
+    @ApiOperation(value = "维护站点栏目关系")
+    @PutMapping(value = "maintainSiteWithColumn")
+    public Object maintainSiteWithColumn(@Valid @RequestBody CmsSiteColumnAo cmsSiteColumnAo){
+        if(cmsSiteService.maintainSiteWithColumn(cmsSiteColumnAo)){
+            return ResponseVo.success("维护站点栏目关系成功");
+        }
+        return ResponseVo.error("维护站点栏目关系成功");
     }
 
 }

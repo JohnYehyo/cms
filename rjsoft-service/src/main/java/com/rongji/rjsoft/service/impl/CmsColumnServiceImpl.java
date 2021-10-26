@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.ao.content.CmsColumnAo;
+import com.rongji.rjsoft.ao.content.CmsColumnDeleteAo;
 import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.entity.content.CmsColumn;
@@ -55,8 +56,6 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
 
     private final SysDeptMapper sysDeptMapper;
 
-    private final CmsSiteMapper cmsSiteMapper;
-
     private final CmsTemplateMapper cmsTemplateMapper;
 
     private final ISysCommonFileService sysCommonFileService;
@@ -82,7 +81,11 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         cmsColumn.setDeptId(StringUtils.join(cmsColumnAo.getDeptIds(), ","));
         boolean result = cmsColumnMapper.insert(cmsColumn) > 0;
 
-        return result;
+        //保存站点栏目关系
+        CmsSiteColumn cmsSiteColumn = new CmsSiteColumn();
+        BeanUtil.copyProperties(cmsColumnAo, cmsSiteColumn);
+        boolean result1 = cmsSiteColumnMapper.insert(cmsSiteColumn) > 0;
+        return result && result1;
     }
 
     /**
@@ -141,16 +144,16 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
     /**
      * 删除栏目
      *
-     * @param columnId 栏目id
+     * @param cmsColumnDeleteAo 删除栏目参数
      * @return 删除结果
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean delete(Long[] columnId) {
+    public boolean delete(CmsColumnDeleteAo cmsColumnDeleteAo) {
         //删除站点栏目关系
-        boolean result = cmsSiteColumnMapper.deleteSiteColumnByColumnId(columnId) > 0;
+        boolean result = cmsSiteColumnMapper.deleteSiteColumnByColumnId(cmsColumnDeleteAo) > 0;
         //删除栏目
-        boolean result1 = cmsColumnMapper.batchDeleteColumn(columnId) > 0;
+        boolean result1 = cmsColumnMapper.batchDeleteColumn(cmsColumnDeleteAo.getColumnIds()) > 0;
         return result && result1;
     }
 

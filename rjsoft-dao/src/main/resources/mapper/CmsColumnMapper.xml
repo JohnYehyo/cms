@@ -26,7 +26,8 @@
         t2.column_id as parentId,
         t2.column_name as parentName,
         t1.image_url,
-        t1.dept_id
+        t1.dept_id,
+        t1.order_num
         from
         cms_column as t1
         left join cms_column as t2 on
@@ -42,7 +43,7 @@
                 and t1.del_flag = 0
             </if>
         </where>
-        order by t1.orderNum
+        order by t1.order_num, t1.create_by desc
     </select>
 
     <select id="selectChildrenByColumnId" resultMap="BaseResultMap">

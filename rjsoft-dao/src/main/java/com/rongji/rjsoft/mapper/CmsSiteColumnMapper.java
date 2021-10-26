@@ -1,6 +1,7 @@
 package com.rongji.rjsoft.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.rongji.rjsoft.ao.content.CmsColumnDeleteAo;
 import com.rongji.rjsoft.entity.content.CmsSiteColumn;
 import com.rongji.rjsoft.vo.content.CmsSiteTreeVo;
 
@@ -25,10 +26,10 @@ public interface CmsSiteColumnMapper extends BaseMapper<CmsSiteColumn> {
 
     /**
      * 通过栏目id删除站点栏目关系
-     * @param columnId 站点id
+     * @param cmsColumnDeleteAo 删除栏目参数
      * @return 删除结果
      */
-    int deleteSiteColumnByColumnId(Long[] columnId);
+    int deleteSiteColumnByColumnId(CmsColumnDeleteAo cmsColumnDeleteAo);
 
     /**
      * 通过站点id删除站点栏目关系

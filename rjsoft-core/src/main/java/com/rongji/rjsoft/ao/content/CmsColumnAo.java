@@ -85,4 +85,9 @@ public class CmsColumnAo {
     )
     private int orderNum;
 
+    /**
+     * 站点id
+     */
+    private Long siteId;
+
 }

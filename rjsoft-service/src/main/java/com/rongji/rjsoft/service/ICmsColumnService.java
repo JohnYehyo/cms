@@ -2,6 +2,7 @@ package com.rongji.rjsoft.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.rongji.rjsoft.ao.content.CmsColumnAo;
+import com.rongji.rjsoft.ao.content.CmsColumnDeleteAo;
 import com.rongji.rjsoft.entity.content.CmsColumn;
 import com.rongji.rjsoft.query.content.CmsColumnQuery;
 import com.rongji.rjsoft.vo.CommonPage;
@@ -38,10 +39,10 @@ public interface ICmsColumnService extends IService<CmsColumn> {
 
     /**
      * 删除栏目
-     * @param columnId 栏目id
+     * @param cmsColumnDeleteAo 删除栏目参数
      * @return 删除结果
      */
-    boolean delete(Long[] columnId);
+    boolean delete(CmsColumnDeleteAo cmsColumnDeleteAo);
 
     /**
      * 栏目分页列表

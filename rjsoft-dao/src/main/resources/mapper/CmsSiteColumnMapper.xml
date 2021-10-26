@@ -4,9 +4,9 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.rongji.rjsoft.entity.content.CmsSiteColumn">
-        <id column="site_id" property="siteId" />
-        <result column="column_id" property="columnId" />
-        <result column="del_flag" property="delFlag" />
+        <id column="site_id" property="siteId"/>
+        <result column="column_id" property="columnId"/>
+        <result column="del_flag" property="delFlag"/>
     </resultMap>
 
     <insert id="batchInsert">
@@ -17,8 +17,10 @@
     </insert>
 
     <update id="deleteSiteColumnByColumnId">
-        update cms_site_column set del_flag = 1 where column_id in
-        <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
+        update cms_site_column set del_flag = 1 where
+        site_id = #{siteId}
+        and column_id in
+        <foreach collection="columnIds" item="item" index="index" open="(" separator="," close=")">
             #{item}
         </foreach>
     </update>
