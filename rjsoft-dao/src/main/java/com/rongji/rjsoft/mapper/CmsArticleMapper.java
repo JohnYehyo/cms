@@ -33,11 +33,13 @@ public interface CmsArticleMapper extends BaseMapper<CmsArticle> {
      * @param page 分页对象
      * @param cmsArticleQuery 查询对象
      * @param deptIds 拥有的部门id
+     * @param deptId 本部门id
      * @return 文章列表
      */
     IPage<CmsArticleVo> getPage(IPage<CmsArticleVo> page,
                                 @Param("param") CmsArticleQuery cmsArticleQuery,
-                                @Param("deptIds") List<Long> deptIds);
+                                @Param("deptIds") List<Long> deptIds,
+                                @Param("deptId") Long deptId);
 
     /**
      * 文章详情

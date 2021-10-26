@@ -2,7 +2,7 @@ package com.rongji.rjsoft.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.crypto.SecureUtil;
+import cn.hutool.core.lang.UUID;
 import cn.hutool.dfa.WordTree;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -14,9 +14,12 @@ import com.rongji.rjsoft.ao.content.CmsArticleAo;
 import com.rongji.rjsoft.ao.content.CmsArticleAuditAo;
 import com.rongji.rjsoft.ao.content.CmsArticleDeleteAo;
 import com.rongji.rjsoft.ao.content.CmsArticleForWardingAo;
+import com.rongji.rjsoft.common.security.entity.LoginUser;
 import com.rongji.rjsoft.common.security.util.SecurityUtils;
+import com.rongji.rjsoft.common.security.util.TokenUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.common.util.RedisCache;
+import com.rongji.rjsoft.common.util.ServletUtils;
 import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.content.*;
 import com.rongji.rjsoft.entity.system.SysDept;
@@ -37,7 +40,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +72,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     private final CmsColumnMapper cmsColumnMapper;
 
     private final SysDeptMapper sysDeptMapper;
+
+    private final TokenUtils tokenUtils;
 
     /**
      * 添加文章
@@ -126,7 +130,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         BeanUtil.copyProperties(cmsArticleAo, cmsArticle);
         cmsArticle.setFiles(JSON.toJSONString(cmsArticleAo.getFiles()));
         cmsArticle.setArticleUrl(dateTimeFormatter.format(cmsArticle.getPublishTime())
-                + "-" + SecureUtil.md5(String.valueOf(cmsArticle.getArticleId() + cmsArticle.getAuthorId())));
+                + "-" + UUID.fastUUID().toString().replace("-", ""));
         //判断是否需要审核
         if (cmsArticleAo.getState() == CmsArticleStateEnum.TO_AUDIT.getState()
                 && SecurityUtils.getLoginUser().getRoles().contains(Constants.ARTICLE_AUDIT_ADMIN)) {
@@ -257,14 +261,15 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
      */
     @Override
     public CommonPage<CmsArticleVo> getPage(CmsArticleQuery cmsArticleQuery) {
-        if(CmsArticleStateEnum.DRAFT.getState().equals(cmsArticleQuery.getState())){
-            throw new BusinessException(ResponseEnum.NO_PERMISSION.getCode(), "不能查看未提交的文章");
-        }
+//        if(CmsArticleStateEnum.DRAFT.getState().equals(cmsArticleQuery.getState())){
+//            throw new BusinessException(ResponseEnum.NO_PERMISSION.getCode(), "不能查看未提交的文章");
+//        }
         //查询用户的部门及所有下属部门
+        Long deptId = SecurityUtils.getLoginUser().getSysDept().getDeptId();
         List<Long> deptIds = getOwnDepts();
 
         IPage<CmsArticleVo> page = new Page<>();
-        page = cmsArticleMapper.getPage(page, cmsArticleQuery, deptIds);
+        page = cmsArticleMapper.getPage(page, cmsArticleQuery, deptIds, deptId);
         List<CmsArticleVo> records = page.getRecords();
         for (CmsArticleVo cmsArticleVo : records) {
             cmsArticleVo.setTags(cmsArticleTagsMapper.getTagsByArticleId(cmsArticleVo.getArticleId()));
@@ -319,9 +324,22 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     public CommonPage<CmsArticlePortalVo> getArticlesByColumn(CmsColumnArticleQuery cmsColumnArticleQuery) {
         List<CmsColumn> cmsColumns = cmsColumnMapper.selectChildrenByColumnId(cmsColumnArticleQuery.getColumnId());
         List<Long> columns = cmsColumns.stream().map(k -> k.getColumnId()).collect(Collectors.toList());
+        Long deptId = getDeptId();
         IPage<CmsArticlePortalVo> page = new Page<>();
-        page = cmsFinalArticleMapper.getArticlePageByColumn(page, columns, cmsColumnArticleQuery.getSiteId());
+        page = cmsFinalArticleMapper.getArticlePageByColumn(page, columns, cmsColumnArticleQuery.getSiteId(), deptId);
         return CommonPageUtils.assemblyPage(page);
+    }
+
+    /**
+     * 从登录信息获取部门id
+     * @return 部门id
+     */
+    private Long getDeptId() {
+        LoginUser loginUser = tokenUtils.getLoginUser(ServletUtils.getRequest());
+        if(null != loginUser){
+            return loginUser.getSysDept().getDeptId();
+        }
+        return null;
     }
 
     /**
@@ -335,8 +353,9 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         wrapper.eq(CmsArticleTags::getTagId, cmsTagArticleQuery.getTagId());
         List<CmsArticleTags> cmsArticleTags = cmsArticleTagsMapper.selectList(wrapper);
         List<Long> articles = cmsArticleTags.stream().map(k -> k.getArticleId()).collect(Collectors.toList());
+        Long deptId = getDeptId();
         IPage<CmsArticlePortalVo> page = new Page<>();
-        page = cmsFinalArticleMapper.getArticlePageByTag(page, articles, cmsTagArticleQuery.getSiteId());
+        page = cmsFinalArticleMapper.getArticlePageByTag(page, articles, cmsTagArticleQuery.getSiteId(), deptId);
         return CommonPageUtils.assemblyPage(page);
     }
 
@@ -347,8 +366,9 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
      */
     @Override
     public CommonPage<CmsArticlePortalVo> getArticlesByCategory(CmsCategoryArticleQuery cmsCategoryArticleQuery) {
+        Long deptId = getDeptId();
         IPage<CmsArticlePortalVo> page = new Page<>();
-        page = cmsFinalArticleMapper.getArticlesByCategory(page, cmsCategoryArticleQuery);
+        page = cmsFinalArticleMapper.getArticlesByCategory(page, cmsCategoryArticleQuery, deptId);
         return CommonPageUtils.assemblyPage(page);
     }
 
@@ -359,7 +379,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
      */
     @Override
     public List<CmsArticlePortalVo> getArticlesBySlider(CmsSliderArticleQuery cmsSliderArticleQuery) {
-        return cmsFinalArticleMapper.getArticlesBySlider(cmsSliderArticleQuery);
+        Long deptId = getDeptId();
+        return cmsFinalArticleMapper.getArticlesBySlider(cmsSliderArticleQuery, deptId);
     }
 
     /**

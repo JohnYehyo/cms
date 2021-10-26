@@ -141,5 +141,8 @@ public class CmsArticle implements Serializable {
     @TableField(fill = FieldFill.UPDATE)
     private LocalDateTime updateTime;
 
-
+//    /**
+//     * 是否需要登录查看 0 否  1 是
+//     */
+//    private int afterLogin;
 }
