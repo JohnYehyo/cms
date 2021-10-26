@@ -1,20 +1,16 @@
 package com.rongji.rjsoft.web.controller.content;
 
 
-import com.rongji.rjsoft.ao.content.CmsArticleAo;
-import com.rongji.rjsoft.ao.content.CmsArticleAuditAo;
-import com.rongji.rjsoft.ao.content.CmsArticleDeleteAo;
-import com.rongji.rjsoft.ao.content.CmsArticleForWardingAo;
+import com.rongji.rjsoft.ao.content.*;
 import com.rongji.rjsoft.common.annotation.LogAction;
 import com.rongji.rjsoft.enums.LogTypeEnum;
 import com.rongji.rjsoft.enums.OperatorTypeEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
-import com.rongji.rjsoft.query.content.*;
+import com.rongji.rjsoft.query.content.CmsArticleQuery;
 import com.rongji.rjsoft.service.ICmsArticleService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.ResponseVo;
 import com.rongji.rjsoft.vo.content.CmsArticleInfoVo;
-import com.rongji.rjsoft.vo.content.CmsArticlePortalVo;
 import com.rongji.rjsoft.vo.content.CmsArticleVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -148,11 +144,28 @@ public class CmsArticleController {
     @PreAuthorize("@permissionIdentify.hasRole('articel_admin')")
     @ApiOperation(value = "转发文章")
     @PostMapping(value = "forwarding")
+    @LogAction(module = "文章管理", method = "转发文章", logType = LogTypeEnum.FORWARDING, operatorType = OperatorTypeEnum.WEB)
     public Object forwarding(@Valid @RequestBody CmsArticleForWardingAo cmsArticleForWardingAo){
         if(cmsArticleService.forwarding(cmsArticleForWardingAo)){
             return ResponseVo.success("转发成功");
         }
         return ResponseVo.error("转发失败,请重试");
+    }
+
+    /**
+     * 移动文章
+     * @param cmsArticleForMoveAo 移动文章参数体
+     * @return 转发结果
+     */
+    @PreAuthorize("@permissionIdentify.hasRole('articel_admin')")
+    @ApiOperation(value = "移动文章")
+    @PostMapping(value = "move")
+    @LogAction(module = "文章管理", method = "移动文章", logType = LogTypeEnum.MOVE, operatorType = OperatorTypeEnum.WEB)
+    public Object move(@Valid @RequestBody CmsArticleForMoveAo cmsArticleForMoveAo){
+        if(cmsArticleService.move(cmsArticleForMoveAo)){
+            return ResponseVo.success("移动成功");
+        }
+        return ResponseVo.error("移动失败,请重试");
     }
 
 }

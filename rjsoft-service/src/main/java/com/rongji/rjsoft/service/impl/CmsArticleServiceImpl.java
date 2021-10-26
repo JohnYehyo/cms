@@ -11,16 +11,14 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.rongji.rjsoft.ao.content.CmsArticleAo;
-import com.rongji.rjsoft.ao.content.CmsArticleAuditAo;
-import com.rongji.rjsoft.ao.content.CmsArticleDeleteAo;
-import com.rongji.rjsoft.ao.content.CmsArticleForWardingAo;
+import com.rongji.rjsoft.ao.content.*;
 import com.rongji.rjsoft.common.security.entity.LoginUser;
 import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.security.util.TokenUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.common.util.RedisCache;
 import com.rongji.rjsoft.common.util.ServletUtils;
+import com.rongji.rjsoft.common.util.bean.SpringBeanUtil;
 import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.content.*;
 import com.rongji.rjsoft.entity.system.SysDept;
@@ -45,7 +43,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -408,5 +405,26 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         List<CmsSiteColumn> list = cmsArticleForWardingAo.getList();
         Long articleId = cmsArticleForWardingAo.getArticleId();
         return saveArticleWithColumn(list, articleId, CmsOriginalEnum.FORWARDING.getCode());
+    }
+
+    /**
+     * 移动文章
+     *
+     * @param cmsArticleForMoveAo 移动文章参数体
+     * @return 移动文章结果
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean move(CmsArticleForMoveAo cmsArticleForMoveAo) {
+        LambdaUpdateWrapper<CmsFinalArticle> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(CmsFinalArticle::getSiteId, cmsArticleForMoveAo.getSiteId())
+                .eq(CmsFinalArticle::getColumnId, cmsArticleForMoveAo.getColumnId())
+                .eq(CmsFinalArticle::getArticleId, cmsArticleForMoveAo.getArticleId());
+        cmsFinalArticleMapper.delete(wrapper);
+        ICmsArticleService bean = SpringBeanUtil.getBean(ICmsArticleService.class);
+        if (null != bean) {
+            return bean.forwarding(cmsArticleForMoveAo);
+        }
+        return false;
     }
 }
