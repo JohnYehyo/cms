@@ -65,7 +65,17 @@ public enum LogTypeEnum {
     /**
      * 其它
      */
-    OTHER(0, "其它");
+    OTHER(0, "其它"),
+
+    /**
+     * 转发
+     */
+    FORWARDING(11, "转发"),
+
+    /**
+     * 移动
+     */
+    MOVE(12, "移动");
 
     private int code;
 
