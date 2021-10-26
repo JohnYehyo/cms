@@ -2,7 +2,6 @@ package com.rongji.rjsoft.web.controller.content;
 
 
 import com.rongji.rjsoft.ao.content.CmsSiteAo;
-import com.rongji.rjsoft.ao.content.CmsSiteColumnAo;
 import com.rongji.rjsoft.common.annotation.LogAction;
 import com.rongji.rjsoft.enums.LogTypeEnum;
 import com.rongji.rjsoft.enums.OperatorTypeEnum;
@@ -131,22 +130,6 @@ public class CmsSiteController {
     @GetMapping(value = "/{siteId}")
     public Object details(@PathVariable Long siteId){
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsSiteService.getDetails(siteId));
-    }
-
-    /**
-     * 维护站点栏目关系
-     * @param cmsSiteColumnAo 站点栏目关系表单数据
-     * @return 维护结果
-     */
-    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
-    @ApiOperation(value = "维护站点栏目关系")
-    @PutMapping(value = "maintainSiteWithColumn")
-    @LogAction(module = "站点信息管理", method = "维护站点栏目关系", logType = LogTypeEnum.INSERT, operatorType = OperatorTypeEnum.WEB)
-    public Object maintainSiteWithColumn(@Valid @RequestBody CmsSiteColumnAo cmsSiteColumnAo){
-        if(cmsSiteService.maintainSiteWithColumn(cmsSiteColumnAo)){
-            return ResponseVo.success("维护站点栏目关系成功");
-        }
-        return ResponseVo.error("维护站点栏目关系成功");
     }
 
 }

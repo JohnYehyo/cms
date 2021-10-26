@@ -12,6 +12,7 @@
         <result column="del_flag" property="delFlag"/>
         <result column="template_id" property="templateId"/>
         <result column="order_num" property="orderNum"/>
+        <result column="site_id" property="siteId"/>
         <result column="create_by" property="createBy"/>
         <result column="create_time" property="createTime"/>
         <result column="update_by" property="updateBy"/>
@@ -96,5 +97,12 @@
         </where>
         order by t1.parent_id, t1.order_num
     </select>
+
+    <delete id="deleteBySiteId">
+        update cms_column set del_flag = 1 where site_id in
+        <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
 
 </mapper>

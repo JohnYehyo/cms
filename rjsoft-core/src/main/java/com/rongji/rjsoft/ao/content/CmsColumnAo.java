@@ -78,6 +78,11 @@ public class CmsColumnAo {
     /**
      * 站点id
      */
+    @ApiModelProperty(value = "排序", required = true)
+    @NotNull(
+            groups = {CmsColumnAo.insert.class, CmsColumnAo.update.class},
+            message = "站点不能为空"
+    )
     private Long siteId;
 
 }

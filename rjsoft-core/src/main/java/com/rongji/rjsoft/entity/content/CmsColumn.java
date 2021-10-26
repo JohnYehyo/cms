@@ -68,6 +68,11 @@ public class CmsColumn implements Serializable {
     private int orderNum;
 
     /**
+     * 站点id
+     */
+    private Long siteId;
+
+    /**
      * 创建者
      */
     @TableField(fill = FieldFill.INSERT)

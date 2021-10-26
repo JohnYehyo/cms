@@ -2,7 +2,6 @@ package com.rongji.rjsoft.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.rongji.rjsoft.ao.content.CmsSiteAo;
-import com.rongji.rjsoft.ao.content.CmsSiteColumnAo;
 import com.rongji.rjsoft.entity.content.CmsSite;
 import com.rongji.rjsoft.query.content.CmsSiteQuery;
 import com.rongji.rjsoft.vo.CommonPage;
@@ -76,11 +75,4 @@ public interface ICmsSiteService extends IService<CmsSite> {
      * @return 站点详情
      */
     CmsSiteDetailsVo getDetails(Long siteId);
-
-    /**
-     * 维护站点栏目数据
-     * @param cmsSiteColumnAo 站点栏目表单
-     * @return 维护结果
-     */
-    boolean maintainSiteWithColumn(CmsSiteColumnAo cmsSiteColumnAo);
 }

@@ -9,17 +9,16 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.ao.content.CmsSiteAo;
-import com.rongji.rjsoft.ao.content.CmsSiteColumnAo;
 import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.common.util.RedisCache;
 import com.rongji.rjsoft.constants.Constants;
+import com.rongji.rjsoft.entity.content.CmsColumn;
 import com.rongji.rjsoft.entity.content.CmsSite;
-import com.rongji.rjsoft.entity.content.CmsSiteColumn;
 import com.rongji.rjsoft.enums.DelFlagEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.exception.BusinessException;
-import com.rongji.rjsoft.mapper.CmsSiteColumnMapper;
+import com.rongji.rjsoft.mapper.CmsColumnMapper;
 import com.rongji.rjsoft.mapper.CmsSiteMapper;
 import com.rongji.rjsoft.query.content.CmsSiteQuery;
 import com.rongji.rjsoft.service.ICmsSiteService;
@@ -52,7 +51,7 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
 
     private final CmsSiteMapper cmsSiteMapper;
 
-    private final CmsSiteColumnMapper cmsSiteColumnMapper;
+    private final CmsColumnMapper cmsColumnMapper;
 
     private final RedisCache redisCache;
 
@@ -143,7 +142,7 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
     @Override
     public boolean delete(Long[] siteId) {
         //删除站点栏目关系
-        boolean result = cmsSiteColumnMapper.deleteSiteColumnBySiteId(siteId) > 0;
+        boolean result = cmsColumnMapper.deleteBySiteId(siteId) > 0;
         //删除站点
         boolean result1 = cmsSiteMapper.deleteSites(siteId) > 0;
         if (result1) {
@@ -281,20 +280,6 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         return cmsSiteMapper.selectOne(wrapper);
     }
 
-    private boolean saveSiteWithColumn(CmsSiteColumnAo cmsSiteColumnAo) {
-        CmsSiteColumn cmsSiteColumn;
-        List<CmsSiteColumn> list = new ArrayList<>();
-        Long[] columnIds = cmsSiteColumnAo.getColumnId();
-        for (int i = 0; i < columnIds.length; i++) {
-            cmsSiteColumn = new CmsSiteColumn();
-            cmsSiteColumn.setSiteId(cmsSiteColumnAo.getSiteId());
-            cmsSiteColumn.setColumnId(columnIds[i]);
-            list.add(cmsSiteColumn);
-        }
-        boolean result1 = cmsSiteColumnMapper.batchInsert(list);
-        return result1;
-    }
-
     /**
      * 站点详情
      * @param siteId 站点id
@@ -305,9 +290,9 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         CmsSite cmsSite = cmsSiteMapper.selectById(siteId);
         CmsSiteDetailsVo cmsSiteDetailsVo = new CmsSiteDetailsVo();
         BeanUtil.copyProperties(cmsSite, cmsSiteDetailsVo);
-        LambdaQueryWrapper<CmsSiteColumn> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(CmsSiteColumn::getSiteId, siteId);
-        List<CmsSiteColumn> siteColumns = cmsSiteColumnMapper.selectList(wrapper);
+        LambdaQueryWrapper<CmsColumn> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(CmsColumn::getSiteId, siteId);
+        List<CmsColumn> siteColumns = cmsColumnMapper.selectList(wrapper);
         if(null != siteColumns){
             List<Long> columnIds = siteColumns.stream().map(k -> k.getColumnId()).collect(Collectors.toList());
             cmsSiteDetailsVo.setColumnIds(columnIds);
@@ -315,16 +300,4 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         return cmsSiteDetailsVo;
     }
 
-    /**
-     * 维护部门栏目关系
-     * @param cmsSiteColumnAo 部门栏目表单
-     * @return 维护结果
-     */
-    @Override
-    public boolean maintainSiteWithColumn(CmsSiteColumnAo cmsSiteColumnAo) {
-        LambdaUpdateWrapper<CmsSiteColumn> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.eq(CmsSiteColumn::getSiteId, cmsSiteColumnAo.getSiteId());
-        cmsSiteColumnMapper.delete(wrapper);
-        return saveSiteWithColumn(cmsSiteColumnAo);
-    }
 }

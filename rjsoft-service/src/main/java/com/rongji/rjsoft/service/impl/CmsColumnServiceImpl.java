@@ -3,16 +3,13 @@ package com.rongji.rjsoft.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.ao.content.CmsColumnAo;
 import com.rongji.rjsoft.ao.content.CmsColumnDeleteAo;
-import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.entity.content.CmsColumn;
-import com.rongji.rjsoft.entity.content.CmsSiteColumn;
 import com.rongji.rjsoft.entity.content.CmsTemplate;
 import com.rongji.rjsoft.enums.DelFlagEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
@@ -28,7 +25,6 @@ import com.rongji.rjsoft.vo.common.SysCommonFileVo;
 import com.rongji.rjsoft.vo.content.*;
 import com.rongji.rjsoft.vo.system.dept.SysDeptTreeVo;
 import lombok.AllArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,8 +47,6 @@ import java.util.stream.Collectors;
 public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn> implements ICmsColumnService {
 
     private final CmsColumnMapper cmsColumnMapper;
-
-    private final CmsSiteColumnMapper cmsSiteColumnMapper;
 
     private final SysDeptMapper sysDeptMapper;
 
@@ -78,14 +72,7 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         } else {
             cmsColumn.setAncestors(parent.getAncestors() + "," + parent.getColumnId());
         }
-        boolean result = cmsColumnMapper.insert(cmsColumn) > 0;
-
-        //保存站点栏目关系
-        CmsSiteColumn cmsSiteColumn = new CmsSiteColumn();
-        BeanUtil.copyProperties(cmsColumnAo, cmsSiteColumn);
-        cmsSiteColumn.setColumnId(cmsColumn.getColumnId());
-        boolean result1 = cmsSiteColumnMapper.insert(cmsSiteColumn) > 0;
-        return result && result1;
+        return cmsColumnMapper.insert(cmsColumn) > 0;
     }
 
     /**
@@ -97,7 +84,7 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean edit(CmsColumnAo cmsColumnAo) {
-        if(cmsColumnAo.getParentId().longValue() == cmsColumnAo.getColumnId().longValue()){
+        if (cmsColumnAo.getParentId().longValue() == cmsColumnAo.getColumnId().longValue()) {
             throw new BusinessException(ResponseEnum.FAIL.getCode(), "父节点不能选择自身!");
         }
 
@@ -126,9 +113,7 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         //修改该节点下所有节点的ancestors
         updateSiteChildren(old.getColumnId(), newAncestors, oldAncestors);
 
-        boolean result = cmsColumnMapper.updateById(cmsColumn) > 0;
-
-        return result;
+        return cmsColumnMapper.updateById(cmsColumn) > 0;
     }
 
     private void updateSiteChildren(Long columnId, String newAncestors, String oldAncestors) {
@@ -152,11 +137,7 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean delete(CmsColumnDeleteAo cmsColumnDeleteAo) {
-        //删除站点栏目关系
-        boolean result = cmsSiteColumnMapper.deleteSiteColumnByColumnId(cmsColumnDeleteAo) > 0;
-        //删除栏目
-        boolean result1 = cmsColumnMapper.batchDeleteColumn(cmsColumnDeleteAo.getColumnIds()) > 0;
-        return result && result1;
+        return cmsColumnMapper.batchDeleteColumn(cmsColumnDeleteAo.getColumnIds()) > 0;
     }
 
     /**

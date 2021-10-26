@@ -64,4 +64,10 @@ public interface CmsColumnMapper extends BaseMapper<CmsColumn> {
      */
     List<CmsColumnAllTree> getColumnTreeBySite(Long siteId, Long deptId);
 
+    /**
+     * 通过站点删除栏目
+     * @param siteId 站点id
+     * @return 删除结果
+     */
+    int deleteBySiteId(Long[] siteId);
 }
