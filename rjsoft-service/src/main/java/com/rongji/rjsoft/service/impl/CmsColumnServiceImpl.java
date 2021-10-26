@@ -97,6 +97,9 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean edit(CmsColumnAo cmsColumnAo) {
+        if(cmsColumnAo.getParentId().longValue() == cmsColumnAo.getColumnId().longValue()){
+            throw new BusinessException(ResponseEnum.FAIL.getCode(), "父节点不能选择自身!");
+        }
 
         //编辑栏目信息
         CmsColumn parent = cmsColumnMapper.selectById(cmsColumnAo.getParentId());
