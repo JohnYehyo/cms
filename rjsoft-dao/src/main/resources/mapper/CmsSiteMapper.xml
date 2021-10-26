@@ -31,6 +31,7 @@
                 and site_name like concat ('%', #{param.siteName}, '%')
             </if>
         </where>
+        order by order_num, create_by desc
     </select>
 
     <select id="selectChildrenBySiteId" resultMap="BaseResultMap">
