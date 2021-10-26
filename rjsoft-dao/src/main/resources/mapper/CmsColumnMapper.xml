@@ -91,10 +91,10 @@
                 t2.site_id = #{siteId}
             </if>
             <if test="deptId != null">
-                and deptId = #{deptId}
+                and t3.deptId = #{deptId}
             </if>
         </where>
-        order by t1.parent_id
+        order by t1.parent_id, t1.order_num
     </select>
 
 </mapper>
