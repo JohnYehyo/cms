@@ -1,6 +1,7 @@
 package com.rongji.rjsoft.vo.content;
 
-import com.rongji.rjsoft.entity.content.CmsSiteColumn;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.rongji.rjsoft.vo.common.FileVo;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -24,7 +25,13 @@ public class CmsArticleInfoVo extends CmsArticleVo implements Serializable {
     /**
      * 附件地址
      */
+    @JsonIgnore
     private String files;
+
+    /**
+     * 附件地址
+     */
+    private List<FileVo> file;
 
     /**
      * 轮播图地址

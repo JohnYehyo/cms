@@ -5,6 +5,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.dfa.WordTree;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -32,16 +33,19 @@ import com.rongji.rjsoft.query.content.*;
 import com.rongji.rjsoft.service.ICmsArticleService;
 import com.rongji.rjsoft.service.ICmsSensitiveWordsService;
 import com.rongji.rjsoft.vo.CommonPage;
+import com.rongji.rjsoft.vo.common.FileVo;
 import com.rongji.rjsoft.vo.content.CmsArticleInfoVo;
 import com.rongji.rjsoft.vo.content.CmsArticlePortalVo;
 import com.rongji.rjsoft.vo.content.CmsArticleRefVo;
 import com.rongji.rjsoft.vo.content.CmsArticleVo;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -282,7 +286,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         LambdaQueryWrapper<SysDept> wrapper = new LambdaQueryWrapper<>();
         wrapper.likeRight(SysDept::getBranchCode, branchCode);
         List<SysDept> sysDepts = sysDeptMapper.selectList(wrapper);
-        if(null == sysDepts){
+        if (null == sysDepts) {
             throw new BusinessException(ResponseEnum.NO_DATA);
         }
         List<Long> deptIds = sysDepts.stream().map(SysDept::getDeptId).collect(Collectors.toList());
@@ -298,6 +302,12 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     @Override
     public CmsArticleInfoVo getInfo(Long articleId) {
         CmsArticleInfoVo cmsArticleInfoVo = cmsArticleMapper.getInfo(articleId);
+        if (null == cmsArticleInfoVo) {
+            throw new BusinessException(ResponseEnum.NO_DATA);
+        }
+        if (StringUtils.isNotEmpty(cmsArticleInfoVo.getFiles())) {
+            cmsArticleInfoVo.setFile(JSONArray.parseArray(cmsArticleInfoVo.getFiles(), FileVo.class));
+        }
         cmsArticleInfoVo.setTags(cmsArticleTagsMapper.getTagsByArticleId(cmsArticleInfoVo.getArticleId()));
         cmsArticleInfoVo.setSiteColumns(cmsFinalArticleMapper.listOfArticleRef(articleId));
         return cmsArticleInfoVo;
@@ -332,11 +342,12 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
 
     /**
      * 从登录信息获取部门id
+     *
      * @return 部门id
      */
     private Long getDeptId() {
         LoginUser loginUser = tokenUtils.getLoginUser(ServletUtils.getRequest());
-        if(null != loginUser){
+        if (null != loginUser) {
             return loginUser.getSysDept().getDeptId();
         }
         return null;
@@ -344,6 +355,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
 
     /**
      * 通过标签获取文章列表
+     *
      * @param cmsTagArticleQuery 查询对象
      * @return 文章列表
      */
@@ -361,6 +373,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
 
     /**
      * 通过标签获取文章列表
+     *
      * @param cmsCategoryArticleQuery 查询对象
      * @return 文章列表
      */
@@ -374,6 +387,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
 
     /**
      * 获取轮播文章
+     *
      * @param cmsSliderArticleQuery 查询对象
      * @return 轮播文章
      */
@@ -385,6 +399,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
 
     /**
      * 转发文章
+     *
      * @param cmsArticleForWardingAo 转发文章参数体
      * @return 转发文章结果
      */
