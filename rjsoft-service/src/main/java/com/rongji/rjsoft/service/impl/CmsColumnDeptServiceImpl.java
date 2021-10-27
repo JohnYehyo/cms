@@ -115,7 +115,7 @@ public class CmsColumnDeptServiceImpl extends ServiceImpl<CmsColumnDeptMapper, C
         if (null == cmsColumnDeptQuery.getDeptId()) {
             cmsColumnDeptQuery.setDeptId(tokenUtils.getLoginUser(ServletUtils.getRequest()).getSysDept().getDeptId());
         }
-        List<Long> deptIds = sysDeptMapper.selectDeptIdSByDeptId(cmsColumnDeptQuery.getDeptId());
+        List<Long> deptIds = sysDeptMapper.selectDeptIdsByDeptId(cmsColumnDeptQuery.getDeptId());
         deptIds.add(cmsColumnDeptQuery.getDeptId());
 
         //处理栏目部门关系列表数据
