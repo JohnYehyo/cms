@@ -1,6 +1,9 @@
 package com.rongji.rjsoft.entity.content;
 
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -19,6 +22,12 @@ import lombok.experimental.Accessors;
 public class CmsFinalArticle implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 主键
+     */
+    @TableId(type = IdType.AUTO)
+    private Long id;
 
     /**
      * 站点id
