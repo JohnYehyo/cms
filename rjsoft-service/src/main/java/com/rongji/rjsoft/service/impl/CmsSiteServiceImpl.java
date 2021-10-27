@@ -4,13 +4,14 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.ao.content.CmsSiteAo;
 import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
+import com.rongji.rjsoft.common.util.LanguageUtil;
+import com.rongji.rjsoft.common.util.LogUtils;
 import com.rongji.rjsoft.common.util.RedisCache;
 import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.content.CmsColumn;
@@ -28,6 +29,7 @@ import com.rongji.rjsoft.vo.content.CmsSiteDetailsVo;
 import com.rongji.rjsoft.vo.content.CmsSiteTreeVo;
 import com.rongji.rjsoft.vo.content.CmsSiteVo;
 import lombok.AllArgsConstructor;
+import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,10 +73,16 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         } else {
             cmsSite.setAncestors(parent.getAncestors() + "," + parent.getSiteId());
         }
-
+        String siteFile = null;
+        try {
+            siteFile = LanguageUtil.hanToPinyin(cmsSiteAo.getSiteName());
+        } catch (BadHanyuPinyinOutputFormatCombination e) {
+            LogUtils.error("{}:汉语转拼音失败", cmsSiteAo.getSiteName(), e);
+        }
+        cmsSite.setSiteFile(siteFile);
         boolean result = cmsSiteMapper.insert(cmsSite) > 0;
         if (result) {
-            ThreadUtil.execute(() -> refreshCache());
+            ThreadUtil.execute(this::refreshCache);
         }
 
         return result;
@@ -115,16 +123,24 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         //修改该节点下所有节点的ancestors
         updateSiteChildren(old.getSiteId(), newAncestors, oldAncestors);
 
+        String siteFile = null;
+        try {
+            siteFile = LanguageUtil.hanToPinyin(cmsSiteAo.getSiteName());
+        } catch (BadHanyuPinyinOutputFormatCombination e) {
+            LogUtils.error("{}:汉语转拼音失败", cmsSiteAo.getSiteName(), e);
+        }
+        cmsSite.setSiteFile(siteFile);
+
         boolean result = cmsSiteMapper.updateById(cmsSite) > 0;
         if (result) {
-            ThreadUtil.execute(() -> refreshCache());
+            ThreadUtil.execute(this::refreshCache);
         }
         return result;
     }
 
     private void updateSiteChildren(Long siteId, String newAncestors, String oldAncestors) {
         List<CmsSite> list = cmsSiteMapper.selectChildrenBySiteId(siteId);
-        if (null == list || list.size() == 0) {
+        if (null == list || list.isEmpty()) {
             return;
         }
         for (CmsSite cmsSite : list) {
@@ -140,13 +156,14 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
      * @return 删除站点信息
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean delete(Long[] siteId) {
         //删除站点栏目关系
         boolean result = cmsColumnMapper.deleteBySiteId(siteId) > 0;
         //删除站点
         boolean result1 = cmsSiteMapper.deleteSites(siteId) > 0;
         if (result1) {
-            ThreadUtil.execute(() -> refreshCache());
+            ThreadUtil.execute(this::refreshCache);
         }
         return result1;
     }
@@ -201,7 +218,7 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         LambdaQueryWrapper<CmsSite> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(CmsSite::getParentId, cmsSiteTreeVo.getSiteId());
         Integer count = cmsSiteMapper.selectCount(wrapper);
-        return count > 0 ? false : true;
+        return count <= 0;
     }
 
     /**
@@ -237,7 +254,7 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         BeanUtil.copyProperties(cmsSite, topNode);
 
         //树结构组装
-        if(CollectionUtil.isNotEmpty(treeList)){
+        if (CollectionUtil.isNotEmpty(treeList)) {
             List<CmsSiteAllTreeVo> tree = new ArrayList<>();
             tree.add(topNode);
             assembly(tree, treeList);
@@ -253,13 +270,13 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
             CmsSiteAllTreeVo next;
             while (iterator.hasNext()) {
                 next = iterator.next();
-                if(next.getParentId().longValue() == cmsSiteAllTreeVo.getSiteId().longValue()){
+                if (next.getParentId().longValue() == cmsSiteAllTreeVo.getSiteId().longValue()) {
                     children.add(next);
                     iterator.remove();
                 }
             }
             cmsSiteAllTreeVo.setChildren(children);
-            if(CollectionUtil.isNotEmpty(treeList)){
+            if (CollectionUtil.isNotEmpty(treeList)) {
                 assembly(cmsSiteAllTreeVo.getChildren(), treeList);
             }
         }
@@ -282,6 +299,7 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
 
     /**
      * 站点详情
+     *
      * @param siteId 站点id
      * @return 站点详情
      */
@@ -293,8 +311,8 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         LambdaQueryWrapper<CmsColumn> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(CmsColumn::getSiteId, siteId);
         List<CmsColumn> siteColumns = cmsColumnMapper.selectList(wrapper);
-        if(null != siteColumns){
-            List<Long> columnIds = siteColumns.stream().map(k -> k.getColumnId()).collect(Collectors.toList());
+        if (null != siteColumns) {
+            List<Long> columnIds = siteColumns.stream().map(CmsColumn::getColumnId).collect(Collectors.toList());
             cmsSiteDetailsVo.setColumnIds(columnIds);
         }
         return cmsSiteDetailsVo;

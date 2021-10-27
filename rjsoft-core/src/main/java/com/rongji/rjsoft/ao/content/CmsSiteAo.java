@@ -52,12 +52,6 @@ public class CmsSiteAo {
     private Long parentId;
 
     /**
-     * 站点地址
-     */
-    @ApiModelProperty(value = "站点地址")
-    private String siteUrl;
-
-    /**
      * 排序
      */
     @ApiModelProperty(value = "排序")
