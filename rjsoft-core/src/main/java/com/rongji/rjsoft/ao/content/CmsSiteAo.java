@@ -67,7 +67,14 @@ public class CmsSiteAo {
      * 站点存放目录
      */
     @ApiModelProperty(value = "站点存放目录", required = true, example = "henan")
-    @NotNull
+    @NotEmpty(message = "站点存放目录不能为空")
     private String siteFile;
+
+    /**
+     * 部门id
+     */
+    @ApiModelProperty(value = "部门id", required = true)
+    @NotNull(message = "部门不能为空")
+    private Long deptId;
 
 }
