@@ -52,17 +52,16 @@ public class CmsSiteAo {
     private Long parentId;
 
     /**
+     * 站点地址
+     */
+    @ApiModelProperty(value = "站点地址")
+    private String siteUrl;
+
+    /**
      * 排序
      */
     @ApiModelProperty(value = "排序")
     private Integer orderNum;
-
-    /**
-     * 站点存放目录
-     */
-    @ApiModelProperty(value = "站点存放目录", required = true, example = "henan")
-    @NotEmpty(message = "站点存放目录不能为空")
-    private String siteFile;
 
     /**
      * 部门id
