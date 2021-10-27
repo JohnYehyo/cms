@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rongji.rjsoft.mapper.CmsArticleActionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.rongji.rjsoft.entity.content.CmsArticleAction">
+        <id column="id" property="id" />
+        <result column="article_id" property="articleId" />
+        <result column="user_id" property="userId" />
+        <result column="type" property="type" />
+        <result column="create_by" property="createBy" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <select id="getActionCount" resultType="com.rongji.rjsoft.vo.content.CmsArticleActionSimpleVo">
+        select type, count(*) as count from cms_article_action where article_id  = #{articleId} group by type
+    </select>
+
+</mapper>
