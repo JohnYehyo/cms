@@ -5,7 +5,6 @@ import com.rongji.rjsoft.ao.content.CmsColumnDeptAo;
 import com.rongji.rjsoft.entity.content.CmsColumnDept;
 import com.rongji.rjsoft.query.content.CmsColumnDeptQuery;
 import com.rongji.rjsoft.vo.CommonPage;
-import com.rongji.rjsoft.vo.content.CmsColumnDeptDetailVo;
 import com.rongji.rjsoft.vo.content.CmsColumnDeptVo;
 
 /**

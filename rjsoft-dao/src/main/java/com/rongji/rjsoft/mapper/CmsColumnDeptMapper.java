@@ -4,12 +4,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.rongji.rjsoft.entity.content.CmsColumnDept;
 import com.rongji.rjsoft.query.content.CmsColumnDeptQuery;
-import com.rongji.rjsoft.vo.content.CmsColumnDeptDetailVo;
 import com.rongji.rjsoft.vo.content.CmsColumnDeptVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * <p>
