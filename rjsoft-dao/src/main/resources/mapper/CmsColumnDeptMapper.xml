@@ -8,6 +8,13 @@
         <result column="dept_id" property="deptId"/>
     </resultMap>
 
+    <insert id="batchInsert">
+        insert into cms_column_dept (column_id, dept_id) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.columnId}, #{item.deptId})
+        </foreach>
+    </insert>
+
     <delete id="deleteBatch">
         delete from cms_column_dept where column_id in
         <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
@@ -17,6 +24,7 @@
 
     <select id="getPage" resultType="com.rongji.rjsoft.vo.content.CmsColumnDeptVo">
         select
+        t1.column_id as columnId,
         t2.column_name as columnName,
         t3.dept_name as deptName,
         t4.site_name
@@ -32,6 +40,31 @@
             t1.dept_id = #{param.deptId}
             <if test=" null != param.columnId">
                 and t1.column_id = #{columnId}
+            </if>
+        </where>
+    </select>
+
+    <select id="getList" resultType="com.rongji.rjsoft.vo.content.CmsColumnDeptVo">
+        select
+        t1.column_id as columnId,
+        t1.dept_id,
+        t2.column_name as columnName,
+        t3.site_name as siteName
+        from
+        cms_column_dept as t1
+        left join cms_column as t2 on
+        t1.column_id = t2.column_id
+        left join cms_site as t3 on
+        t3.site_id = t2.site_id
+        <where>
+            <if test="null != param1.columnId">
+                t1.column_id = #{param1.columnId}
+            </if>
+            <if test="null != param2">
+                and t1.dept_id in
+                <foreach collection="param2" index="index" item="deptId" open="(" separator="," close=")">
+                    #{deptId}
+                </foreach>
             </if>
         </where>
     </select>

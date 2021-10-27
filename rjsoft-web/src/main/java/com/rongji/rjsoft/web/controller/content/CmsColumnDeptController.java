@@ -13,11 +13,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import lombok.extern.java.Log;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.stereotype.Controller;
 
 import javax.validation.Valid;
 
@@ -46,7 +43,7 @@ public class CmsColumnDeptController {
     @ApiOperation(value = "添加栏目部门关系")
     @PostMapping
     @LogAction(module = "栏目部门维护", method = "添加栏目部门关系", logType = LogTypeEnum.INSERT, operatorType = OperatorTypeEnum.WEB)
-    public Object add(@Valid CmsColumnDeptAo cmsColumnDeptAo){
+    public Object add(@Valid @RequestBody CmsColumnDeptAo cmsColumnDeptAo){
         if(cmsColumnDeptService.add(cmsColumnDeptAo)){
             return ResponseVo.success("添加成功");
         }
@@ -62,7 +59,7 @@ public class CmsColumnDeptController {
     @ApiOperation(value = "编辑栏目部门关系")
     @PutMapping
     @LogAction(module = "栏目部门维护", method = "编辑栏目部门关系", logType = LogTypeEnum.UPDATE, operatorType = OperatorTypeEnum.WEB)
-    public Object update(@Valid CmsColumnDeptAo cmsColumnDeptAo){
+    public Object update(@Valid @RequestBody CmsColumnDeptAo cmsColumnDeptAo){
         if(cmsColumnDeptService.edit(cmsColumnDeptAo)){
             return ResponseVo.success("编辑成功");
         }

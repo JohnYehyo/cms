@@ -1,5 +1,6 @@
 package com.rongji.rjsoft.query.content;
 
+import com.rongji.rjsoft.query.common.PageQuery;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -11,7 +12,7 @@ import lombok.Data;
  */
 @ApiModel(value ="栏目部门关系查询对象")
 @Data
-public class CmsColumnDeptQuery {
+public class CmsColumnDeptQuery extends PageQuery {
 
     /**
      * 栏目名

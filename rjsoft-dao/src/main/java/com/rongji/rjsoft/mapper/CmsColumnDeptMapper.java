@@ -4,8 +4,12 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.rongji.rjsoft.entity.content.CmsColumnDept;
 import com.rongji.rjsoft.query.content.CmsColumnDeptQuery;
+import com.rongji.rjsoft.vo.content.CmsColumnDeptDetailVo;
 import com.rongji.rjsoft.vo.content.CmsColumnDeptVo;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -33,4 +37,20 @@ public interface CmsColumnDeptMapper extends BaseMapper<CmsColumnDept> {
      * @return 分页结果
      */
     IPage<CmsColumnDeptVo> getPage(IPage<CmsColumnDeptVo> page, @Param("param") CmsColumnDeptQuery cmsColumnDeptQuery);
+
+    /**
+     * 批量插入栏目部门关系
+     * @param list 栏目部门关系
+     * @return 插入结果
+     */
+    int batchInsert(List<CmsColumnDept> list);
+
+    /**
+     * 栏目部门列表查询
+     * @param cmsColumnDeptQuery 查询对象
+     * @param deptIds 下属部门id
+     * @return 栏目部门列表
+     */
+    List<CmsColumnDeptVo> getList(@Param("param1") CmsColumnDeptQuery cmsColumnDeptQuery, @Param("param2") List<Long> deptIds);
+
 }

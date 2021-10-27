@@ -5,6 +5,7 @@ import com.rongji.rjsoft.ao.content.CmsColumnDeptAo;
 import com.rongji.rjsoft.entity.content.CmsColumnDept;
 import com.rongji.rjsoft.query.content.CmsColumnDeptQuery;
 import com.rongji.rjsoft.vo.CommonPage;
+import com.rongji.rjsoft.vo.content.CmsColumnDeptDetailVo;
 import com.rongji.rjsoft.vo.content.CmsColumnDeptVo;
 
 /**
@@ -44,4 +45,5 @@ public interface ICmsColumnDeptService extends IService<CmsColumnDept> {
      * @return 分页结果
      */
     CommonPage<CmsColumnDeptVo> getPage(CmsColumnDeptQuery cmsColumnDeptQuery);
+
 }

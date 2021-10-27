@@ -1,10 +1,12 @@
 package com.rongji.rjsoft.vo.content;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @description: 栏目部门关系视图
@@ -22,28 +24,29 @@ public class CmsColumnDeptVo implements Serializable {
     private Long columnId;
 
     /**
-     * 部门id
-     */
-    @ApiModelProperty(value = "部门id")
-    private Long deptId;
-
-    /**
      * 栏目名称
      */
     @ApiModelProperty(value = "栏目名称")
     private String columnName;
 
     /**
-     * 部门名称
-     */
-    @ApiModelProperty(value = "部门名称")
-    private String deptName;
-
-    /**
      * 站点名称
      */
     @ApiModelProperty(value = "站点名称")
     private String siteName;
+
+    /**
+     * 部门id
+     */
+    @JsonIgnore
+    @ApiModelProperty(value = "部门id")
+    private Long deptId;
+
+    /**
+     * 部门id集合
+     */
+    @ApiModelProperty(value = "部门id集合")
+    private List<Long> deptIds;
 
 
 }

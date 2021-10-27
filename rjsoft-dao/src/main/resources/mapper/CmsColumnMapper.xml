@@ -83,13 +83,15 @@
         t1.parent_id
         FROM
         cms_column AS t1
-        LEFT JOIN cms_column_dept AS t2 ON t2.column_id = t1.column_id
+        <if test="deptId != null">
+            LEFT JOIN cms_column_dept AS t2 ON t2.column_id = t1.column_id
+        </if>
         <where>
             <if test="siteId != null">
                 t1.site_id = #{siteId} and t1.del_flag = 0
             </if>
             <if test="deptId != null">
-                and t2.deptId = #{deptId}
+                and t2.dept_id = #{deptId}
             </if>
         </where>
         order by t1.parent_id, t1.order_num

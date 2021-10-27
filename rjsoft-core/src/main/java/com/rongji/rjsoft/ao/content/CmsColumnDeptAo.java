@@ -18,14 +18,14 @@ public class CmsColumnDeptAo {
     /**
      * 栏目id
      */
-    @ApiModelProperty(value = "栏目id")
+    @ApiModelProperty(value = "栏目id", required = true)
     @NotNull(message = "栏目不能为空")
     private Long columnId;
 
     /**
      * 部门id
      */
-    @ApiModelProperty(value = "部门id集合")
+    @ApiModelProperty(value = "部门id集合", required = true)
     @NotNull(message = "部门不能为空")
     private Long[] deptId;
 }
