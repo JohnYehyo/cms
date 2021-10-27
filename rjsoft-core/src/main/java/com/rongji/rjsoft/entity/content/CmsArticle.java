@@ -141,8 +141,13 @@ public class CmsArticle implements Serializable {
     @TableField(fill = FieldFill.UPDATE)
     private LocalDateTime updateTime;
 
-//    /**
-//     * 是否需要登录查看 0 否  1 是
-//     */
-//    private int afterLogin;
+    /**
+     * 查看限制 0 无 1 登录 2 登录+部门
+     */
+    private int readType;
+
+    /**
+     * 发布方式 0 手动实时发布 1 定时发布
+     */
+    private int publishType;
 }
