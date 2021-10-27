@@ -7,14 +7,18 @@ import com.rongji.rjsoft.ao.content.CmsColumnDeptAo;
 import com.rongji.rjsoft.common.security.util.TokenUtils;
 import com.rongji.rjsoft.common.util.ServletUtils;
 import com.rongji.rjsoft.entity.content.CmsColumnDept;
+import com.rongji.rjsoft.entity.content.CmsSite;
 import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.exception.BusinessException;
 import com.rongji.rjsoft.mapper.CmsColumnDeptMapper;
 import com.rongji.rjsoft.mapper.SysDeptMapper;
 import com.rongji.rjsoft.query.content.CmsColumnDeptQuery;
 import com.rongji.rjsoft.service.ICmsColumnDeptService;
+import com.rongji.rjsoft.service.ICmsSiteService;
+import com.rongji.rjsoft.service.ISysDeptService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.content.CmsColumnDeptVo;
+import com.rongji.rjsoft.vo.system.dept.SysDeptAllTreeVo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +44,11 @@ public class CmsColumnDeptServiceImpl extends ServiceImpl<CmsColumnDeptMapper, C
 
     private final TokenUtils tokenUtils;
 
+    private final ISysDeptService sysDeptService;
+
     private final SysDeptMapper sysDeptMapper;
+
+    private final ICmsSiteService cmsSiteService;
 
     /**
      * 添加栏目部门关系
@@ -156,4 +164,12 @@ public class CmsColumnDeptServiceImpl extends ServiceImpl<CmsColumnDeptMapper, C
         return result;
     }
 
+    @Override
+    public SysDeptAllTreeVo allDeptTree(Long siteId) {
+        CmsSite cmsSite = cmsSiteService.getById(siteId);
+        if(null == cmsSite || null == cmsSite.getDeptId()){
+            throw new BusinessException(ResponseEnum.NO_DATA);
+        }
+        return sysDeptService.allTree(cmsSite.getDeptId());
+    }
 }

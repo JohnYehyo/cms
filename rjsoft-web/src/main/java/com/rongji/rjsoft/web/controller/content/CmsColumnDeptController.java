@@ -94,4 +94,16 @@ public class CmsColumnDeptController {
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsColumnDeptService.getPage(cmsColumnDeptQuery));
     }
 
+    /**
+     * 通过站点获取部门同步树
+     * @param siteId 站点id
+     * @return 部门信息
+     */
+    @ApiOperation(value = "通过站点获取部门同步树")
+    @ApiImplicitParam(name = "siteId", value = "站点id")
+    @GetMapping(value = "allTree")
+    public Object allTree(Long siteId){
+        return ResponseVo.response(ResponseEnum.SUCCESS, cmsColumnDeptService.allDeptTree(siteId));
+    }
+
 }

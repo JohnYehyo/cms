@@ -6,6 +6,7 @@ import com.rongji.rjsoft.entity.content.CmsColumnDept;
 import com.rongji.rjsoft.query.content.CmsColumnDeptQuery;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.content.CmsColumnDeptVo;
+import com.rongji.rjsoft.vo.system.dept.SysDeptAllTreeVo;
 
 /**
  * <p>
@@ -45,4 +46,10 @@ public interface ICmsColumnDeptService extends IService<CmsColumnDept> {
      */
     CommonPage<CmsColumnDeptVo> getPage(CmsColumnDeptQuery cmsColumnDeptQuery);
 
+    /**
+     * 通过站点获取部门同步树
+     * @param siteId 站点id
+     * @return 部门同步树
+     */
+    SysDeptAllTreeVo allDeptTree(Long siteId);
 }
