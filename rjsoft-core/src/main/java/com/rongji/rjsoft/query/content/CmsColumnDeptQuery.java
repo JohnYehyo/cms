@@ -17,11 +17,11 @@ public class CmsColumnDeptQuery {
      * 栏目名
      */
     @ApiModelProperty(value = "栏目id")
-    private String columnId;
+    private Long columnId;
 
     /**
      * 部门名
      */
     @ApiModelProperty(value = "部门id")
-    private String deptId;
+    private Long deptId;
 }

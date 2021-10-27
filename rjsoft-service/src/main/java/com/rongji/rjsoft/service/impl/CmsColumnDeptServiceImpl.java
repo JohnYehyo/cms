@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.ao.content.CmsColumnDeptAo;
+import com.rongji.rjsoft.common.security.util.TokenUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
+import com.rongji.rjsoft.common.util.ServletUtils;
 import com.rongji.rjsoft.entity.content.CmsColumnDept;
 import com.rongji.rjsoft.mapper.CmsColumnDeptMapper;
 import com.rongji.rjsoft.query.content.CmsColumnDeptQuery;
@@ -30,6 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class CmsColumnDeptServiceImpl extends ServiceImpl<CmsColumnDeptMapper, CmsColumnDept> implements ICmsColumnDeptService {
 
     private final CmsColumnDeptMapper cmsColumnDeptMapper;
+
+    private final TokenUtils tokenUtils;
 
     /**
      * 添加栏目部门关系
@@ -77,6 +81,9 @@ public class CmsColumnDeptServiceImpl extends ServiceImpl<CmsColumnDeptMapper, C
      */
     @Override
     public CommonPage<CmsColumnDeptVo> getPage(CmsColumnDeptQuery cmsColumnDeptQuery) {
+        if(null == cmsColumnDeptQuery.getDeptId()){
+            cmsColumnDeptQuery.setDeptId(tokenUtils.getLoginUser(ServletUtils.getRequest()).getSysDept().getDeptId());
+        }
         IPage<CmsColumnDeptVo> page = new Page<>();
         page = cmsColumnDeptMapper.getPage(page, cmsColumnDeptQuery);
         return CommonPageUtils.assemblyPage(page);
