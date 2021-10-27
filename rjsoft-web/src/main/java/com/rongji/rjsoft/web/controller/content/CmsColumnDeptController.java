@@ -74,7 +74,7 @@ public class CmsColumnDeptController {
     @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "删除栏目部门关系")
     @ApiImplicitParam(name = "columnIds", value = "栏目id集合", required = true)
-    @PutMapping("/{columnIds}")
+    @DeleteMapping("/{columnIds}")
     @LogAction(module = "栏目部门维护", method = "删除栏目部门关系", logType = LogTypeEnum.DELETE, operatorType = OperatorTypeEnum.WEB)
     public Object update(@PathVariable Long[] columnIds){
         if(cmsColumnDeptService.delete(columnIds)){
