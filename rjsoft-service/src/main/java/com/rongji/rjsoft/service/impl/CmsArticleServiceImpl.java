@@ -23,6 +23,7 @@ import com.rongji.rjsoft.common.util.bean.SpringBeanUtil;
 import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.content.*;
 import com.rongji.rjsoft.entity.system.SysDept;
+import com.rongji.rjsoft.enums.CmsArticlePublishTypeEnum;
 import com.rongji.rjsoft.enums.CmsArticleStateEnum;
 import com.rongji.rjsoft.enums.CmsOriginalEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
@@ -106,9 +107,10 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         Long articleId = cmsArticleAo.getArticleId();
         boolean result3 = saveArticleWithColumn(list, articleId, CmsOriginalEnum.ORIGINAL.getCode());
 
-        //具有文章审核管理员权限的用户提交的文章直接发布
+        //具有文章审核管理员权限的用户提交的文章且文章类型为直接发布时提交完毕直接发布
         if (cmsArticleAo.getState() == CmsArticleStateEnum.TO_AUDIT.getState()
-                && SecurityUtils.getLoginUser().getRoles().contains(Constants.ARTICLE_AUDIT_ADMIN)) {
+                && SecurityUtils.getLoginUser().getRoles().contains(Constants.ARTICLE_AUDIT_ADMIN)
+                && cmsArticleAo.getPublishType() == CmsArticlePublishTypeEnum.MANUAL.getCode()) {
             ThreadUtil.execute(() -> {
                 cmsFinalArticleService.generateArticle(cmsArticle.getArticleId());
             });
