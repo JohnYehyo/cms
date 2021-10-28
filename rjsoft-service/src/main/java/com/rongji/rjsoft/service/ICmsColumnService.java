@@ -2,7 +2,6 @@ package com.rongji.rjsoft.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.rongji.rjsoft.ao.content.CmsColumnAo;
-import com.rongji.rjsoft.ao.content.CmsColumnDeleteAo;
 import com.rongji.rjsoft.entity.content.CmsColumn;
 import com.rongji.rjsoft.query.content.CmsColumnQuery;
 import com.rongji.rjsoft.vo.CommonPage;
@@ -39,10 +38,10 @@ public interface ICmsColumnService extends IService<CmsColumn> {
 
     /**
      * 删除栏目
-     * @param cmsColumnDeleteAo 删除栏目参数
+     * @param columnIds 站点id集合
      * @return 删除结果
      */
-    boolean delete(CmsColumnDeleteAo cmsColumnDeleteAo);
+    boolean delete(Long[] columnIds);
 
     /**
      * 栏目分页列表
@@ -72,5 +71,10 @@ public interface ICmsColumnService extends IService<CmsColumn> {
      * @return 栏目详情
      */
     CmsColumnDetailsVo getDetails(Long columnId);
+
+    /**
+     * 刷新栏目缓存
+     */
+    void refreshCache();
 
 }
