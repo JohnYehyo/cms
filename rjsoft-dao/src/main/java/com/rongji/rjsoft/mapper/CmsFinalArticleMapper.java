@@ -105,4 +105,20 @@ public interface CmsFinalArticleMapper extends BaseMapper<CmsFinalArticle> {
      * @param publishedList 待更新发布标记文章
      */
     int batchPublished(List<CmsArticleContentVo> publishedList);
+
+
+    /**
+     * 获取待发布文章信息
+     * @param articleId 文章id
+     * @return 待发布文章信息
+     */
+    List<CmsArticleContentVo> getSingleCurrentPublishArticel(Long articleId);
+
+    /**
+     * 获取待发布文章信息
+     * @param articleIds 文章id集合
+     * @return 待发布文章信息
+     */
+    List<CmsArticleContentVo> getCurrentPublishArticel(List<Long> articleIds);
+
 }

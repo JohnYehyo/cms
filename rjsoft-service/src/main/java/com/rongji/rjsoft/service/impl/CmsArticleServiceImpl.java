@@ -3,6 +3,7 @@ package com.rongji.rjsoft.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.UUID;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.dfa.WordTree;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -29,6 +30,7 @@ import com.rongji.rjsoft.exception.BusinessException;
 import com.rongji.rjsoft.mapper.*;
 import com.rongji.rjsoft.query.content.*;
 import com.rongji.rjsoft.service.ICmsArticleService;
+import com.rongji.rjsoft.service.ICmsFinalArticleService;
 import com.rongji.rjsoft.service.ICmsSensitiveWordsService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.common.FileVo;
@@ -76,6 +78,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
 
     private final TokenUtils tokenUtils;
 
+    private final ICmsFinalArticleService cmsFinalArticleService;
+
     /**
      * 添加文章
      *
@@ -102,6 +106,13 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         Long articleId = cmsArticleAo.getArticleId();
         boolean result3 = saveArticleWithColumn(list, articleId, CmsOriginalEnum.ORIGINAL.getCode());
 
+        //具有文章审核管理员权限的用户提交的文章直接发布
+        if (cmsArticleAo.getState() == CmsArticleStateEnum.TO_AUDIT.getState()
+                && SecurityUtils.getLoginUser().getRoles().contains(Constants.ARTICLE_AUDIT_ADMIN)) {
+            ThreadUtil.execute(() -> {
+                cmsFinalArticleService.generateArticle(cmsArticle.getArticleId());
+            });
+        }
         return result && result1 && result2 && result3;
     }
 
@@ -251,7 +262,13 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
      */
     @Override
     public boolean audit(CmsArticleAuditAo cmsArticleAuditAo) {
-        return cmsArticleMapper.audit(cmsArticleAuditAo);
+        boolean result = cmsArticleMapper.audit(cmsArticleAuditAo);
+        if(cmsArticleAuditAo.getState() == CmsArticleStateEnum.ENABLE.getState()) {
+            ThreadUtil.execute(()->{
+                cmsFinalArticleService.generateArticle(cmsArticleAuditAo.getArticleIds());
+            });
+        }
+        return result;
     }
 
     /**
@@ -427,4 +444,5 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         }
         return false;
     }
+
 }

@@ -14,9 +14,9 @@ public enum CmsArticleStateEnum {
 
     DRAFT(0, "待提交"),
     TO_AUDIT(1, "待审核"),
-    ENABLE(2, "已发布"),
-    NO_PASS(3, "审核不通过"),
-    DISABLE(4, "警用");
+    NO_PASS(2, "审核不通过"),
+    ENABLE(3, "已发布"),
+    DISABLE(4, "禁用");
 
     private Integer state;
 

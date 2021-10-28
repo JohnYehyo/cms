@@ -59,7 +59,7 @@ public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMappe
     private final ISysCommonFileService sysCommonFileService;
 
     /**
-     * 生成文章
+     * 发布文章
      *
      * @return
      */
@@ -70,6 +70,7 @@ public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMappe
             throw new IllegalArgumentException("请先在Yml配置静态页面生成路径");
         }
 
+        //筛选待发布文章信息
         List<CmsArticleContentVo> articles =
                 cmsFinalArticleMapper.getPublishArticel(DateUtil.format(LocalDateTime.now(), "yyyy-MM-dd HH:mm:ss"));
         if(CollectionUtil.isEmpty(articles)){
@@ -77,13 +78,63 @@ public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMappe
         }
 
         //发布文章
+        publishArticle(articles);
+
+    }
+
+    private void publishArticle(List<CmsArticleContentVo> articles) {
+        //发布文章
         List<CmsArticleContentVo> publishedList = publishingArticles(articles);
 
         //更新发布标记
-        if(CollectionUtil.isEmpty(publishedList)){
+        if (CollectionUtil.isEmpty(publishedList)) {
             return;
         }
         cmsFinalArticleMapper.batchPublished(publishedList);
+    }
+
+    /**
+     * 发布文章
+     * @param articleId 文章id
+     */
+    @Override
+    public void generateArticle(Long articleId) {
+        if (StringUtils.isBlank(FileConfig.getFolder())) {
+            LogUtils.error("请先在Yml配置静态页面生成路径");
+            throw new IllegalArgumentException("请先在Yml配置静态页面生成路径");
+        }
+
+        //筛选待发布文章信息
+        List<CmsArticleContentVo> articles =
+                cmsFinalArticleMapper.getSingleCurrentPublishArticel(articleId);
+        if(CollectionUtil.isEmpty(articles)){
+            return;
+        }
+
+        //发布文章
+        publishArticle(articles);
+    }
+
+    /**
+     * 发布文章
+     * @param articleIds 文章集合
+     */
+    @Override
+    public void generateArticle(List<Long> articleIds) {
+        if (StringUtils.isBlank(FileConfig.getFolder())) {
+            LogUtils.error("请先在Yml配置静态页面生成路径");
+            throw new IllegalArgumentException("请先在Yml配置静态页面生成路径");
+        }
+
+        //筛选待发布文章信息
+        List<CmsArticleContentVo> articles =
+                cmsFinalArticleMapper.getCurrentPublishArticel(articleIds);
+        if(CollectionUtil.isEmpty(articles)){
+            return;
+        }
+
+        //发布文章
+        publishArticle(articles);
     }
 
     /**
