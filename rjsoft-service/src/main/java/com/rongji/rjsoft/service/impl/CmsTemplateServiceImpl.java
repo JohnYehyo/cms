@@ -82,8 +82,8 @@ public class CmsTemplateServiceImpl extends ServiceImpl<CmsTemplateMapper, CmsTe
         sysCommonFile.setFileType(TableFileTypeEnum.TEMPLATE_HTML_ARTICLE.getCode());
         sysCommonFileService.save(sysCommonFile);
         //保存栏目模板
-        sysCommonFile.setFileName(cmsTemplateAo.getArticleTemplate().getFileName());
-        sysCommonFile.setFileUrl(cmsTemplateAo.getArticleTemplate().getFileUrl());
+        sysCommonFile.setFileName(cmsTemplateAo.getColumnTemplate().getFileName());
+        sysCommonFile.setFileUrl(cmsTemplateAo.getColumnTemplate().getFileUrl());
         sysCommonFile.setFileType(TableFileTypeEnum.TEMPLATE_HTML_COLUMN.getCode());
         sysCommonFileService.save(sysCommonFile);
         //保存缩略图
