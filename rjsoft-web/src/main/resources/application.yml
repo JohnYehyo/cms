@@ -15,6 +15,9 @@ spring:
   thymeleaf:
     cache: false
     mode: HTML
+    # 模板URL访问模式时必填
+    url:
+      prefix: http://localhost:8088
   #jackson配置
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
