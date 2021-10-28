@@ -113,4 +113,14 @@ public class Constants {
      * 站点 redis key
      */
     public static final String SITE_DICT = "site:dict";
+
+    /**
+     *  栏目 redis key
+     */
+    public static final String COLUMN_DICT = "column:dict";
+
+    /**
+     * 栏目缓存信息-模板后缀
+     */
+    public static final String COLUMN_DICT_TEMPLATE = "_template";
 }
