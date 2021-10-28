@@ -2,7 +2,6 @@ package com.rongji.rjsoft.web.controller.content;
 
 
 import com.rongji.rjsoft.ao.content.CmsColumnAo;
-import com.rongji.rjsoft.ao.content.CmsColumnDeleteAo;
 import com.rongji.rjsoft.common.annotation.LogAction;
 import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.enums.LogTypeEnum;
@@ -71,15 +70,16 @@ public class CmsColumnController {
 
     /**
      * 删除栏目信息
-     * @param cmsColumnDeleteAo 删除栏目参数
+     * @param columnIds 站点id集合
      * @return 删除结果
      */
     @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "删除栏目信息")
-    @DeleteMapping(value = "column")
+    @ApiImplicitParam(name = "columnIds", value = "站点id集合", required = true)
+    @DeleteMapping(value = "column/{columnIds}")
     @LogAction(module = "栏目信息管理", method = "删除栏目信息", logType = LogTypeEnum.DELETE, operatorType = OperatorTypeEnum.WEB)
-    public Object delete(@RequestBody CmsColumnDeleteAo cmsColumnDeleteAo){
-        if(cmsColumnService.delete(cmsColumnDeleteAo)){
+    public Object delete(@PathVariable Long[] columnIds){
+        if(cmsColumnService.delete(columnIds)){
             return ResponseVo.success("删除成功");
         }
         return ResponseVo.error("删除失败");

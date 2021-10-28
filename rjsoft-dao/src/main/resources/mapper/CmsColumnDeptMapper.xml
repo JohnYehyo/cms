@@ -49,7 +49,8 @@
         t1.column_id as columnId,
         t1.dept_id,
         t2.column_name as columnName,
-        t3.site_name as siteName
+        t3.site_name as siteName,
+        t3.site_id as siteId
         from
         cms_column_dept as t1
         left join cms_column as t2 on

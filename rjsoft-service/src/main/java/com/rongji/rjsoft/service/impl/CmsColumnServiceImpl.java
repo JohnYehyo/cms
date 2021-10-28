@@ -2,27 +2,34 @@ package com.rongji.rjsoft.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.ao.content.CmsColumnAo;
-import com.rongji.rjsoft.ao.content.CmsColumnDeleteAo;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
+import com.rongji.rjsoft.common.util.RedisCache;
+import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.content.CmsColumn;
 import com.rongji.rjsoft.entity.content.CmsTemplate;
 import com.rongji.rjsoft.enums.DelFlagEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.enums.TableTypeEnum;
 import com.rongji.rjsoft.exception.BusinessException;
-import com.rongji.rjsoft.mapper.*;
+import com.rongji.rjsoft.mapper.CmsColumnMapper;
+import com.rongji.rjsoft.mapper.CmsTemplateMapper;
+import com.rongji.rjsoft.mapper.SysDeptMapper;
 import com.rongji.rjsoft.query.common.SysCommonFileQuery;
 import com.rongji.rjsoft.query.content.CmsColumnQuery;
 import com.rongji.rjsoft.service.ICmsColumnService;
 import com.rongji.rjsoft.service.ISysCommonFileService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.common.SysCommonFileVo;
-import com.rongji.rjsoft.vo.content.*;
+import com.rongji.rjsoft.vo.content.CmsColumnAllTree;
+import com.rongji.rjsoft.vo.content.CmsColumnDetailsVo;
+import com.rongji.rjsoft.vo.content.CmsColumnTreeVo;
+import com.rongji.rjsoft.vo.content.CmsColumnVo;
 import com.rongji.rjsoft.vo.system.dept.SysDeptTreeVo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -54,6 +61,8 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
 
     private final ISysCommonFileService sysCommonFileService;
 
+    private final RedisCache redisCache;
+
     /**
      * 添加栏目信息
      *
@@ -72,7 +81,11 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         } else {
             cmsColumn.setAncestors(parent.getAncestors() + "," + parent.getColumnId());
         }
-        return cmsColumnMapper.insert(cmsColumn) > 0;
+        boolean result = cmsColumnMapper.insert(cmsColumn) > 0;
+        if (result) {
+            ThreadUtil.execute(this::refreshCache);
+        }
+        return result;
     }
 
     /**
@@ -113,7 +126,11 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         //修改该节点下所有节点的ancestors
         updateSiteChildren(old.getColumnId(), newAncestors, oldAncestors);
 
-        return cmsColumnMapper.updateById(cmsColumn) > 0;
+        boolean result = cmsColumnMapper.updateById(cmsColumn) > 0;
+        if (result) {
+            ThreadUtil.execute(this::refreshCache);
+        }
+        return result;
     }
 
     private void updateSiteChildren(Long columnId, String newAncestors, String oldAncestors) {
@@ -131,13 +148,17 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
     /**
      * 删除栏目
      *
-     * @param cmsColumnDeleteAo 删除栏目参数
+     * @param columnIds 站点id集合
      * @return 删除结果
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean delete(CmsColumnDeleteAo cmsColumnDeleteAo) {
-        return cmsColumnMapper.batchDeleteColumn(cmsColumnDeleteAo.getColumnIds()) > 0;
+    public boolean delete(Long[] columnIds) {
+        boolean result = cmsColumnMapper.batchDeleteColumn(columnIds) > 0;
+        if (result) {
+            ThreadUtil.execute(this::refreshCache);
+        }
+        return result;
     }
 
     /**
@@ -281,5 +302,18 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         List<SysCommonFileVo> files = sysCommonFileService.getFiles(query);
         cmsColumnDetailsVo.setFiles(files);
         return cmsColumnDetailsVo;
+    }
+
+    /**
+     * 刷新栏目缓存
+     */
+    @Override
+    public void refreshCache() {
+        LambdaQueryWrapper<CmsColumn> wrapper = new LambdaQueryWrapper();
+        wrapper.eq(CmsColumn::getDelFlag, DelFlagEnum.EXIST.getCode());
+        List<CmsColumn> cmsColumns = cmsColumnMapper.selectList(wrapper);
+        for (CmsColumn cmsColumn : cmsColumns) {
+            redisCache.setCacheMapValue(Constants.COLUMN_DICT, cmsColumn.getColumnId() + Constants.COLUMN_DICT_TEMPLATE, cmsColumn.getTemplateId());
+        }
     }
 }

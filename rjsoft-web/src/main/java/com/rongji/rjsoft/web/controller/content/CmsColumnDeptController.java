@@ -100,9 +100,9 @@ public class CmsColumnDeptController {
      * @return 部门信息
      */
     @ApiOperation(value = "通过站点获取部门同步树")
-    @ApiImplicitParam(name = "siteId", value = "站点id")
-    @GetMapping(value = "allTree")
-    public Object allTree(Long siteId){
+    @ApiImplicitParam(name = "siteId", value = "站点id", required = true)
+    @GetMapping(value = "allTree/{siteId}")
+    public Object allTree(@PathVariable Long siteId){
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsColumnDeptService.allDeptTree(siteId));
     }
 

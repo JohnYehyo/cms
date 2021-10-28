@@ -144,6 +144,7 @@ public class CmsColumnDeptServiceImpl extends ServiceImpl<CmsColumnDeptMapper, C
                 ccdVo.setColumnId(cmsColumnDeptVo.getColumnId());
                 ccdVo.setColumnName(cmsColumnDeptVo.getColumnName());
                 ccdVo.setSiteName(cmsColumnDeptVo.getSiteName());
+                ccdVo.setSiteId(cmsColumnDeptVo.getSiteId());
                 deptIdList.add(cmsColumnDeptVo.getDeptId());
             }
             ccdVo.setDeptIds(deptIdList);
