@@ -135,7 +135,7 @@ public class FileTypeJudgeUtils {
 
         FileTypeEnum[] permits = {FileTypeEnum.JPEG, FileTypeEnum.PNG, FileTypeEnum.ZIP, FileTypeEnum.RAR, FileTypeEnum.PDF,
                 FileTypeEnum.XLS_DOC, FileTypeEnum.XLSX_DOCX, FileTypeEnum.WAV, FileTypeEnum.AVI, FileTypeEnum.MP4,
-                FileTypeEnum.FLV, FileTypeEnum.HTML_TEMPLATE};
+                FileTypeEnum.FLV, FileTypeEnum.HTML_TEMPLATE, FileTypeEnum.HTML};
 
         for (FileTypeEnum fileType : permits) {
             if (fileType.equals(type)) {

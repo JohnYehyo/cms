@@ -9,14 +9,19 @@ import com.rongji.rjsoft.common.util.RedisCache;
 import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.content.CmsFinalArticle;
 import com.rongji.rjsoft.enums.ResponseEnum;
+import com.rongji.rjsoft.enums.TableFileTypeEnum;
+import com.rongji.rjsoft.enums.TableTypeEnum;
 import com.rongji.rjsoft.exception.BusinessException;
 import com.rongji.rjsoft.mapper.CmsFinalArticleMapper;
+import com.rongji.rjsoft.query.common.SysCommonFileQuery;
+import com.rongji.rjsoft.service.ICmsColumnService;
 import com.rongji.rjsoft.service.ICmsFinalArticleService;
 import com.rongji.rjsoft.service.ICmsSiteService;
+import com.rongji.rjsoft.service.ISysCommonFileService;
+import com.rongji.rjsoft.vo.common.SysCommonFileVo;
 import com.rongji.rjsoft.vo.content.CmsArticleContentVo;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -42,9 +47,16 @@ import java.util.Map;
 public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMapper, CmsFinalArticle> implements ICmsFinalArticleService {
 
     private final CmsFinalArticleMapper cmsFinalArticleMapper;
+
     private final TemplateEngine templateEngine;
+
     private final ICmsSiteService cmsSiteService;
+
     private final RedisCache redisCache;
+
+    private final ICmsColumnService cmsColumnService;
+
+    private final ISysCommonFileService sysCommonFileService;
 
     /**
      * 生成文章
@@ -80,11 +92,13 @@ public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMappe
      * @return
      */
     private List<CmsArticleContentVo> publishingArticles(List<CmsArticleContentVo> articles) {
-        Map<String, String> map = getSiteMap();
+        Map<String, String> siteMap = getSiteMap();
+        Map<String, Object> columnMap = getColumnMap();
 
         List<CmsArticleContentVo> publishedList = new ArrayList<>();
         for (CmsArticleContentVo cmsArticleContentVo : articles) {
-            cmsArticleContentVo.setSiteFile(map.get(String.valueOf(cmsArticleContentVo.getSiteId())));
+            cmsArticleContentVo.setSiteFile(siteMap.get(String.valueOf(cmsArticleContentVo.getSiteId())));
+            cmsArticleContentVo.setTemplateId((Long) columnMap.get(cmsArticleContentVo.getColumnId() + Constants.COLUMN_DICT_TEMPLATE));
             createArticle(cmsArticleContentVo, publishedList);
         }
         return publishedList;
@@ -101,6 +115,22 @@ public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMappe
             map = redisCache.existsHash(Constants.SITE_DICT);
             if(CollectionUtil.isEmpty(map)){
                 throw new BusinessException(ResponseEnum.CANT_GET_SITES);
+            }
+        }
+        return map;
+    }
+
+    /**
+     * 获取栏目信息
+     * @return 站点信息
+     */
+    private Map<String, Object> getColumnMap() {
+        Map<String, Object> map = redisCache.existsHash(Constants.COLUMN_DICT);
+        if (CollectionUtil.isEmpty(map)) {
+            cmsColumnService.refreshCache();
+            map = redisCache.existsHash(Constants.SITE_DICT);
+            if(CollectionUtil.isEmpty(map)){
+                throw new BusinessException(ResponseEnum.CANT_GET_COLUMNS);
             }
         }
         return map;
@@ -127,14 +157,29 @@ public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMappe
         map.put("article", article);
         context.setVariables(map);
 
+        //获取模板
+        String template = getTemplate(article);
+
         try (PrintWriter writer = new
                 PrintWriter(file)) {
             // 执行页面静态化方法
-            templateEngine.process(article.getSiteFile() + File.separator + Constants.FILES_TEMPLATE_NAME, context, writer);
+            templateEngine.process(template, context, writer);
             publishedList.add(article);
             LogUtils.info("生成静态页面: {}成功", articleUrl);
         } catch (Exception e) {
             throw new BusinessException(ResponseEnum.STATIC_HTML_EXCEPTION.getCode(), e.getMessage());
         }
+    }
+
+    private String getTemplate(CmsArticleContentVo article) {
+        SysCommonFileQuery sysCommonFileQuery = new SysCommonFileQuery();
+        sysCommonFileQuery.setTableId(article.getArticleId());
+        sysCommonFileQuery.setTableType(TableTypeEnum.CMS_TEMPLATE.getValue());
+        sysCommonFileQuery.setFileType(TableFileTypeEnum.TEMPLATE_HTML_ARTICLE.getCode());
+        List<SysCommonFileVo> files = sysCommonFileService.getFiles(sysCommonFileQuery);
+        if(CollectionUtil.isEmpty(files)){
+            throw new BusinessException(ResponseEnum.FAIL.getCode(), "系统未查询到该模板");
+        }
+        return files.get(0).getFileUrl();
     }
 }

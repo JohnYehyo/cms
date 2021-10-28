@@ -88,4 +88,9 @@ public class CmsArticleContentVo {
      */
     private List<String> files;
 
+    /**
+     * 模板id
+     */
+    private Long templateId;
+
 }
