@@ -138,8 +138,9 @@ public class SysUserController {
      */
     @PreAuthorize("@permissionIdentify.hasRole('admin')")
     @ApiOperation(value = "重置密码")
-    @PostMapping(value = "restPwd")
-    public Object restPwd(Long userId){
+    @ApiImplicitParam(name = "userId", value = "用户id", required = true)
+    @PostMapping(value = "restPwd/{userId}")
+    public Object restPwd(@PathVariable Long userId){
         if(sysUserService.restPwd(userId)){
             return ResponseVo.success("重置用户密码成功");
         }
