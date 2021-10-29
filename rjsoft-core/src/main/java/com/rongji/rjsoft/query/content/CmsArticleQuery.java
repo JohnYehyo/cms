@@ -31,4 +31,16 @@ public class CmsArticleQuery {
      */
     @ApiModelProperty(value = "文章状态", notes = "2 审核不通过 3 已发布 4 取消发布")
     private Integer state;
+
+    /**
+     * 文章分类
+     */
+    @ApiModelProperty(value = "文章分类")
+    private Integer categoryId;
+
+    /**
+     * 作者
+     */
+    @ApiModelProperty(value = "作者")
+    private String authorName;
 }

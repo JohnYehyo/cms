@@ -69,8 +69,14 @@
                     and t1.state != 0
                 </otherwise>
             </choose>)
+            <if test="null != param.categoryId">
+                and t1.category_id = #{param.categoryId}
+            </if>
+            <if test="null != param.authorName and param.authorName != ''">
+                and t1.author_name like concat('%',#{param.authorName}, '%')
+            </if>
             <if test="null != param.articleTitle and param.articleTitle != ''">
-                and t1.article_title like concat('%', #{articleTitle}, '%')
+                and t1.article_title like concat('%', #{param.articleTitle}, '%')
             </if>
             <if test="null != param.keywords and param.keywords != ''">
                 and t1.keywords like concat('%', #{param.keywords}, '%')
@@ -97,7 +103,7 @@
         t1.state
         FROM cms_article AS t1
         LEFT JOIN cms_category AS t2 ON t1.category_id = t2.category_id
-        INNER JOIN cms_article_content AS t3 ON t1.article_id = t3.article_id
+        LEFT JOIN cms_article_content AS t3 ON t1.article_id = t3.article_id
         where t1.article_id = #{articleId}
     </select>
 
