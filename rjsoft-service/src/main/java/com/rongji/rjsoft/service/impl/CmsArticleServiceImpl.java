@@ -30,6 +30,7 @@ import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.exception.BusinessException;
 import com.rongji.rjsoft.mapper.*;
 import com.rongji.rjsoft.query.content.*;
+import com.rongji.rjsoft.service.ICmsArticleDeptService;
 import com.rongji.rjsoft.service.ICmsArticleService;
 import com.rongji.rjsoft.service.ICmsFinalArticleService;
 import com.rongji.rjsoft.service.ICmsSensitiveWordsService;
@@ -46,6 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,6 +83,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
 
     private final ICmsFinalArticleService cmsFinalArticleService;
 
+    private final ICmsArticleDeptService cmsArticleDeptService;
+
     /**
      * 添加文章
      *
@@ -107,7 +111,24 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         Long articleId = cmsArticleAo.getArticleId();
         boolean result3 = saveArticleWithColumn(list, articleId, CmsOriginalEnum.ORIGINAL.getCode());
 
+        //保存限制查看部门
+        boolean result4 = saveLimitDepts(cmsArticleAo);
+
         //具有文章审核管理员权限的用户提交的文章且文章类型为直接发布时提交完毕直接发布
+        publishArticle(cmsArticleAo, cmsArticle);
+
+        return result && result1 && result2 && result3 && result4;
+    }
+
+    private boolean saveLimitDepts(CmsArticleAo cmsArticleAo) {
+        if (null == cmsArticleAo.getDeptIds() || cmsArticleAo.getDeptIds().length == 0){
+            return true;
+        }
+        //保存文章部门关系
+        return saveArticleDepts(cmsArticleAo);
+    }
+
+    private void publishArticle(CmsArticleAo cmsArticleAo, CmsArticle cmsArticle) {
         if (cmsArticleAo.getState() == CmsArticleStateEnum.TO_AUDIT.getState()
                 && SecurityUtils.getLoginUser().getRoles().contains(Constants.ARTICLE_AUDIT_ADMIN)
                 && cmsArticleAo.getPublishType() == CmsArticlePublishTypeEnum.MANUAL.getCode()) {
@@ -115,7 +136,6 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
                 cmsFinalArticleService.generateArticle(cmsArticle.getArticleId());
             });
         }
-        return result && result1 && result2 && result3;
     }
 
     private void checkSensitiveWords(CmsArticleAo cmsArticleAo) {
@@ -208,7 +228,34 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         boolean result2 = updateArticleWithColumn(cmsArticleAo);
         //编辑文章内容
         boolean result3 = updateContent(cmsArticleAo);
-        return result && result1 && result2 && result3;
+        //更新限制查看部门
+        boolean result4 = updateLimitDepts(cmsArticleAo);
+
+        return result && result1 && result2 && result3 && result4;
+    }
+
+    private boolean updateLimitDepts(CmsArticleAo cmsArticleAo) {
+        if (null == cmsArticleAo.getDeptIds() || cmsArticleAo.getDeptIds().length == 0){
+            return true;
+        }
+        boolean result = cmsArticleDeptService.removeById(cmsArticleAo.getArticleId());
+        if(result){
+            //保存文章部门关系
+            return saveArticleDepts(cmsArticleAo);
+        }
+        return result;
+    }
+
+    private boolean saveArticleDepts(CmsArticleAo cmsArticleAo) {
+        CmsArticleDept cmsArticleDept;
+        List<CmsArticleDept> list = new ArrayList<>();
+        for (int i = 0; i < cmsArticleAo.getDeptIds().length - 1; i++) {
+            cmsArticleDept = new CmsArticleDept();
+            cmsArticleDept.setArticleId(cmsArticleAo.getArticleId());
+            cmsArticleDept.setDeptId(cmsArticleAo.getDeptIds()[i]);
+            list.add(cmsArticleDept);
+        }
+        return cmsArticleDeptService.saveBatch(list);
     }
 
     private boolean updateArticleWithColumn(CmsArticleAo cmsArticleAo) {
@@ -281,9 +328,6 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
      */
     @Override
     public CommonPage<CmsArticleVo> getPage(CmsArticleQuery cmsArticleQuery) {
-//        if(CmsArticleStateEnum.DRAFT.getState().equals(cmsArticleQuery.getState())){
-//            throw new BusinessException(ResponseEnum.NO_PERMISSION.getCode(), "不能查看未提交的文章");
-//        }
         //查询用户的部门及所有下属部门
         Long deptId = SecurityUtils.getLoginUser().getSysDept().getDeptId();
         List<Long> deptIds = getOwnDepts();

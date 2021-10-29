@@ -36,18 +36,6 @@ public class CmsTemplateController {
     private ICmsTemplateService cmsTemplateService;
 
     /**
-     * 栏目模板存储目录
-     */
-    @Value("${file.template.column}")
-    private String columnTemplate;
-
-    /**
-     * 文章模板存储目录
-     */
-    @Value("${file.template.article}")
-    private String articleTemplate;
-
-    /**
      * 添加模板
      *
      * @param cmsTemplateAo 模板表单参数
