@@ -6,6 +6,7 @@ import com.rongji.rjsoft.ao.content.CmsArticleDeleteAo;
 import com.rongji.rjsoft.entity.content.CmsFinalArticle;
 import com.rongji.rjsoft.query.content.CmsCategoryArticleQuery;
 import com.rongji.rjsoft.query.content.CmsColumnQuery;
+import com.rongji.rjsoft.query.content.CmsDeptArticleQuery;
 import com.rongji.rjsoft.query.content.CmsSliderArticleQuery;
 import com.rongji.rjsoft.vo.content.CmsArticleContentVo;
 import com.rongji.rjsoft.vo.content.CmsArticlePortalVo;
@@ -121,4 +122,10 @@ public interface CmsFinalArticleMapper extends BaseMapper<CmsFinalArticle> {
      */
     List<CmsArticleContentVo> getCurrentPublishArticel(List<Long> articleIds);
 
+    /**
+     * 按部门查询文章
+     * @param cmsDeptArticleQuerys 查询对象
+     * @return 文章列表
+     */
+    List<CmsArticlePortalVo> getArticlesByDept(CmsDeptArticleQuery cmsDeptArticleQuerys);
 }

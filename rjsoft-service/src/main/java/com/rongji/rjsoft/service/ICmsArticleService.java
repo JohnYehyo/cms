@@ -112,4 +112,11 @@ public interface ICmsArticleService extends IService<CmsArticle> {
      * @return 移动结果
      */
     boolean move(CmsArticleForMoveAo cmsArticleForMoveAo);
+
+    /**
+     * 按部门查询文章
+     * @param cmsDeptArticleQuerys 查询对象
+     * @return 文章列表
+     */
+    List<CmsArticlePortalVo> getArticlesByDept(CmsDeptArticleQuery cmsDeptArticleQuerys);
 }

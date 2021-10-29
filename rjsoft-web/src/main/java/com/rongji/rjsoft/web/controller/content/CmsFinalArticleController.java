@@ -5,16 +5,14 @@ import com.rongji.rjsoft.common.annotation.LogAction;
 import com.rongji.rjsoft.enums.LogTypeEnum;
 import com.rongji.rjsoft.enums.OperatorTypeEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
-import com.rongji.rjsoft.query.content.CmsCategoryArticleQuery;
-import com.rongji.rjsoft.query.content.CmsColumnArticleQuery;
-import com.rongji.rjsoft.query.content.CmsSliderArticleQuery;
-import com.rongji.rjsoft.query.content.CmsTagArticleQuery;
+import com.rongji.rjsoft.query.content.*;
 import com.rongji.rjsoft.service.ICmsArticleService;
 import com.rongji.rjsoft.service.ICmsFinalArticleService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.ResponseVo;
 import com.rongji.rjsoft.vo.content.CmsArticlePortalVo;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -104,6 +102,18 @@ public class CmsFinalArticleController {
     @ResponseBody
     public Object getArticlesBySlider(CmsSliderArticleQuery cmsSliderArticleQuery) {
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsArticleService.getArticlesBySlider(cmsSliderArticleQuery));
+    }
+
+    /**
+     * 按部门查询文章
+     * @param cmsDeptArticleQuerys 查询对象
+     * @return 文章列表
+     */
+    @ApiOperation(value = "按部门查询文章")
+    @GetMapping(value = "dept")
+    @ResponseBody
+    public Object getArticlesByDept(CmsDeptArticleQuery cmsDeptArticleQuerys) {
+        return ResponseVo.response(ResponseEnum.SUCCESS, cmsArticleService.getArticlesByDept(cmsDeptArticleQuerys));
     }
 
 }

@@ -491,4 +491,17 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         return false;
     }
 
+    /**
+     * 按部门查询文章
+     * @param cmsDeptArticleQuerys 查询对象
+     * @return 文章列表
+     */
+    @Override
+    public List<CmsArticlePortalVo> getArticlesByDept(CmsDeptArticleQuery cmsDeptArticleQuerys) {
+        Long deptId = getDeptId();
+        if (null == deptId){
+            throw new BusinessException(ResponseEnum.NO_PERMISSION);
+        }
+        return cmsFinalArticleMapper.getArticlesByDept(cmsDeptArticleQuerys);
+    }
 }
