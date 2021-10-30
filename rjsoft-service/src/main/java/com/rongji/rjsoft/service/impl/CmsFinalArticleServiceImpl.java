@@ -179,7 +179,7 @@ public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMappe
         Map<String, Object> map = redisCache.existsHash(Constants.COLUMN_DICT);
         if (CollectionUtil.isEmpty(map)) {
             cmsColumnService.refreshCache();
-            map = redisCache.existsHash(Constants.SITE_DICT);
+            map = redisCache.existsHash(Constants.COLUMN_DICT);
             if(CollectionUtil.isEmpty(map)){
                 throw new BusinessException(ResponseEnum.CANT_GET_COLUMNS);
             }
@@ -224,7 +224,7 @@ public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMappe
 
     private String getTemplate(CmsArticleContentVo article) {
         SysCommonFileQuery sysCommonFileQuery = new SysCommonFileQuery();
-        sysCommonFileQuery.setTableId(article.getArticleId());
+        sysCommonFileQuery.setTableId(article.getTemplateId());
         sysCommonFileQuery.setTableType(TableTypeEnum.CMS_TEMPLATE.getValue());
         sysCommonFileQuery.setFileType(TableFileTypeEnum.TEMPLATE_HTML_ARTICLE.getCode());
         List<SysCommonFileVo> files = sysCommonFileService.getFiles(sysCommonFileQuery);
