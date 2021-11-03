@@ -58,4 +58,24 @@ public class CmsArticleInfoVo extends CmsArticleVo implements Serializable {
      */
     private List<CmsArticleRefVo> siteColumns;
 
+    /**
+     * 类别
+     */
+    private Long categoryId;
+
+    /**
+     * 来源
+     */
+    private String source;
+
+    /**
+     * 查看限制 0 无 1 登录 2 登录+部门
+     */
+    private int readType;
+
+    /**
+     * 发布方式 0 手动实时发布 1 定时发布
+     */
+    private int publishType;
+
 }

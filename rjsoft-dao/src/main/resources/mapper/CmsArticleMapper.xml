@@ -22,6 +22,8 @@
         <result column="source" property="source"/>
         <result column="article_url" property="articleUrl"/>
         <result column="publish_time" property="publishTime"/>
+        <result column="read_type" property="readType"/>
+        <result column="publish_type" property="publishType"/>
         <result column="create_by" property="createBy"/>
         <result column="create_time" property="createTime"/>
         <result column="update_by" property="updateBy"/>
@@ -90,7 +92,7 @@
         t1.article_title,
         t1.author_name,
         t1.cover_image,
-        t2.category_name as categoryName,
+        t1.category_id,
         t1.top,
         t1.slider,
         t1.qrcode_path,
@@ -100,9 +102,11 @@
         t3.content,
         t1.keywords,
         t1.publish_time,
-        t1.state
+        t1.state,
+        t1.source,
+        t1.read_type,
+        t1.publish_type
         FROM cms_article AS t1
-        LEFT JOIN cms_category AS t2 ON t1.category_id = t2.category_id
         LEFT JOIN cms_article_content AS t3 ON t1.article_id = t3.article_id
         where t1.article_id = #{articleId}
     </select>
