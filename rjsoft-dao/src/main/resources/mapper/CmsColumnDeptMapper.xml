@@ -61,6 +61,9 @@
             <if test="null != param1.columnId">
                 t1.column_id = #{param1.columnId}
             </if>
+            <if test="null != param1.siteId">
+                and t2.site_id = #{param1.siteId}
+            </if>
             <if test="null != param2">
                 and t1.dept_id in
                 <foreach collection="param2" index="index" item="deptId" open="(" separator="," close=")">

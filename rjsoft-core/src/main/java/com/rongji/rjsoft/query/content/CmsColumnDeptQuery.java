@@ -15,7 +15,13 @@ import lombok.Data;
 public class CmsColumnDeptQuery extends PageQuery {
 
     /**
-     * 栏目名
+     * 站点
+     */
+    @ApiModelProperty(value = "站点id")
+    private Long siteId;
+
+    /**
+     * 栏目
      */
     @ApiModelProperty(value = "栏目id")
     private Long columnId;
