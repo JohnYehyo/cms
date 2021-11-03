@@ -3,9 +3,11 @@ package com.rongji.rjsoft.web.controller.content;
 
 import com.rongji.rjsoft.ao.content.*;
 import com.rongji.rjsoft.common.annotation.LogAction;
+import com.rongji.rjsoft.enums.CmsArticlePublishTypeEnum;
 import com.rongji.rjsoft.enums.LogTypeEnum;
 import com.rongji.rjsoft.enums.OperatorTypeEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
+import com.rongji.rjsoft.exception.BusinessException;
 import com.rongji.rjsoft.query.content.CmsArticleQuery;
 import com.rongji.rjsoft.service.ICmsArticleService;
 import com.rongji.rjsoft.vo.CommonPage;
@@ -49,6 +51,10 @@ public class CmsArticleController {
     @PostMapping(value = "article")
     @LogAction(module = "文章管理", method = "添加文章", logType = LogTypeEnum.INSERT, operatorType = OperatorTypeEnum.WEB)
     public Object add(@Validated(CmsArticleAo.insert.class) @RequestBody CmsArticleAo cmsArticleAo) {
+        if(cmsArticleAo.getPublishType() == CmsArticlePublishTypeEnum.AUTOMATIC.getCode()
+                && null == cmsArticleAo.getPublishTime()){
+            throw new BusinessException(ResponseEnum.FAIL.getCode(), "请填写发布时间!");
+        }
         if (cmsArticleService.saveArticle(cmsArticleAo)) {
             return ResponseVo.success("添加文章成功");
         }
@@ -66,6 +72,10 @@ public class CmsArticleController {
     @PutMapping(value = "article")
     @LogAction(module = "文章管理", method = "编辑文章", logType = LogTypeEnum.UPDATE, operatorType = OperatorTypeEnum.WEB)
     public Object update(@Validated(CmsArticleAo.update.class) @RequestBody CmsArticleAo cmsArticleAo) {
+        if(cmsArticleAo.getPublishType() == CmsArticlePublishTypeEnum.AUTOMATIC.getCode()
+                && null == cmsArticleAo.getPublishTime()){
+            throw new BusinessException(ResponseEnum.FAIL.getCode(), "请填写发布时间!");
+        }
         if (cmsArticleService.updateArticle(cmsArticleAo)) {
             return ResponseVo.success("编辑文章成功");
         }
