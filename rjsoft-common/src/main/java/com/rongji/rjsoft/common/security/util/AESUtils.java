@@ -76,7 +76,7 @@ public class AESUtils {
 
         for(int i = 0; i < length; ++i) {
             int pos = i * 2;
-            b[i] = (byte)(charToByte(hexChars[pos]) << 4 | charToByte(hexChars[pos + 1]));
+            b[i] = (byte)(charToByte(hexChars[pos]) << 4 | (charToByte(hexChars[pos + 1]) & 0xff));
         }
 
         return b;

@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.UUID;
 import com.rongji.rjsoft.common.config.FileConfig;
 import com.rongji.rjsoft.common.util.file.entity.FileVo;
+import com.rongji.rjsoft.common.util.file.enums.FileTypeEnum;
 import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.exception.BusinessException;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @description: 文件上传工具类
@@ -65,13 +67,44 @@ public class FileUploadUtils {
      * @throws IOException
      */
     public static final FileVo upload(String baseDir, MultipartFile file) throws IOException {
+        String originalFilename = file.getOriginalFilename();
+        if(StringUtils.isEmpty(originalFilename)){
+            throw new BusinessException(ResponseEnum.FILE_UPLOAD_ERROR);
+        }
+        int fileNamelength = originalFilename.length();
+        if (fileNamelength > FileUploadUtils.DEFAULT_FILE_NAME_LENGTH) {
+            throw new BusinessException(ResponseEnum.SUPER_LONG_FILE);
+        }
+
+        //文件大小及类型校验
+        judgeFile(file);
+
+        String fileName = extractFilename(file);
+        String originFileName = file.getOriginalFilename();
+
+        File desc = getAbsoluteFile(baseDir, fileName);
+        file.transferTo(desc);
+        String pathFileName = getPathFileName(baseDir, fileName);
+        return new FileVo(originFileName, pathFileName);
+    }
+
+    /**
+     * 根据文件路径上传
+     *
+     * @param baseDir 相对应用的基目录
+     * @param file    上传的文件
+     * @param limits  限制的类型
+     * @return 文件名称
+     * @throws IOException
+     */
+    public static final FileVo uploadWithLimits(String baseDir, MultipartFile file, List<String> limits) throws IOException {
         int fileNamelength = file.getOriginalFilename().length();
         if (fileNamelength > FileUploadUtils.DEFAULT_FILE_NAME_LENGTH) {
             throw new BusinessException(ResponseEnum.SUPER_LONG_FILE);
         }
 
         //文件大小及类型校验
-        assertAllowed(file);
+        judgeFileWithLimits(file, limits);
 
         String fileName = extractFilename(file);
         String originFileName = file.getOriginalFilename();
@@ -128,18 +161,37 @@ public class FileUploadUtils {
     }
 
     /**
-     * 文件大小校验
+     * 文件大小及类型校验
      *
      * @param file 上传的文件
      * @return
      */
-    public static final void assertAllowed(MultipartFile file) throws IOException {
+    public static final void judgeFile(MultipartFile file) throws IOException {
         long size = file.getSize();
         if (DEFAULT_MAX_SIZE != -1 && size > DEFAULT_MAX_SIZE) {
             throw new BusinessException(ResponseEnum.SUPER_LARGE_FILE);
         }
 
         if (!FileTypeJudgeUtils.isPermit(file)) {
+            throw new BusinessException(ResponseEnum.NO_ALLOW_FILE);
+        }
+
+    }
+
+    /**
+     * 文件大小及类型校验
+     *
+     * @param file 上传的文件
+     * @return
+     */
+    public static final void judgeFileWithLimits(MultipartFile file, List<String> limits) throws IOException {
+        long size = file.getSize();
+        if (DEFAULT_MAX_SIZE != -1 && size > DEFAULT_MAX_SIZE) {
+            throw new BusinessException(ResponseEnum.SUPER_LARGE_FILE);
+        }
+
+        FileTypeEnum[] permits = null;
+        if (!FileTypeJudgeUtils.isPermit(file, permits)) {
             throw new BusinessException(ResponseEnum.NO_ALLOW_FILE);
         }
 
@@ -157,6 +209,19 @@ public class FileUploadUtils {
             extension = FileTypeJudgeUtils.getExtension(file.getContentType());
         }
         return extension;
+    }
+
+    /**
+     * 删除文件
+     * @param filePath 文件路径
+     * @return 删除结果
+     */
+    public static final boolean delete(String filePath) {
+        File file = new File(filePath);
+        if (file.exists()) {
+            return file.delete();
+        }
+        return false;
     }
 
 }
