@@ -26,4 +26,10 @@ public class FileUploadAo {
      */
     @ApiModelProperty(value = "oss存储对象id")
     private String fileName;
+
+    /**
+     * 限制类型
+     */
+    @ApiModelProperty(value = "限制类型")
+    private String limits;
 }
