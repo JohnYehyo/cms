@@ -123,7 +123,7 @@ public class CmsFinalArticleController {
      */
     @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "生成栏目")
-    @PostMapping(value = "generateArticle")
+    @PostMapping(value = "generateColumn")
     @ResponseBody
     @LogAction(module = "门户管理", method = "生成栏目", logType = LogTypeEnum.INSERT, operatorType = OperatorTypeEnum.WEB)
     public void generateColumn() {
