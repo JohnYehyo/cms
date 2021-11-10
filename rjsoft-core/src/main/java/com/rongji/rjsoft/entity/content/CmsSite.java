@@ -78,6 +78,11 @@ public class CmsSite implements Serializable {
     private Long deptId;
 
     /**
+     * 模板id
+     */
+    private Long templateId;
+
+    /**
      * 创建者
      */
     @TableField(fill = FieldFill.INSERT)

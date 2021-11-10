@@ -70,4 +70,11 @@ public class CmsSiteAo {
     @NotNull(message = "部门不能为空")
     private Long deptId;
 
+    /**
+     * 模板
+     */
+    @ApiModelProperty(value = "模板", required = true)
+    @NotNull(message = "模板不能为空")
+    private Long templateId;
+
 }

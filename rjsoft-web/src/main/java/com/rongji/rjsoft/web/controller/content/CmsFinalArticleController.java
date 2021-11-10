@@ -116,4 +116,32 @@ public class CmsFinalArticleController {
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsArticleService.getArticlesByDept(cmsDeptArticleQuerys));
     }
 
+    /**
+     * 生成栏目页
+     *
+     * @return 响应
+     */
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
+    @ApiOperation(value = "生成栏目")
+    @PostMapping(value = "generateArticle")
+    @ResponseBody
+    @LogAction(module = "门户管理", method = "生成栏目", logType = LogTypeEnum.INSERT, operatorType = OperatorTypeEnum.WEB)
+    public void generateColumn() {
+        cmsFinalArticleService.generateColumn();
+    }
+
+    /**
+     * 生成门户页
+     *
+     * @return 响应
+     */
+    @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
+    @ApiOperation(value = "生成门户")
+    @PostMapping
+    @ResponseBody
+    @LogAction(module = "门户管理", method = "生成门户", logType = LogTypeEnum.INSERT, operatorType = OperatorTypeEnum.WEB)
+    public void generatePortal() {
+        cmsFinalArticleService.generatePortal();
+    }
+
 }

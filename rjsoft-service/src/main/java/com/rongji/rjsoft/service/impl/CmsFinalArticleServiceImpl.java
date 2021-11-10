@@ -233,4 +233,20 @@ public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMappe
         }
         return files.get(0).getFileUrl();
     }
+
+    /**
+     * 生成栏目页
+     */
+    @Override
+    public void generateColumn() {
+        //todo 待栏目模板出来后开发
+    }
+
+    /**
+     * 生成门户页
+     */
+    @Override
+    public void generatePortal() {
+        //todo 待门户模板出来后开发
+    }
 }

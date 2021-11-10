@@ -33,4 +33,13 @@ public interface ICmsFinalArticleService extends IService<CmsFinalArticle> {
      */
     void generateArticle(List<Long> articleIds);
 
+    /**
+     * 发布栏目页
+     */
+    void generateColumn();
+
+    /**
+     * 发布门户页
+     */
+    void generatePortal();
 }
