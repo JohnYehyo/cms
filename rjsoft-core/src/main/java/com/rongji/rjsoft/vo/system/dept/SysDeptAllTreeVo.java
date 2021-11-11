@@ -30,7 +30,7 @@ public class SysDeptAllTreeVo implements Serializable {
     private String deptName;
 
     /**
-     * 是否叶子节点
+     * 子节点
      */
     private List<SysDeptAllTreeVo> children;
 }
