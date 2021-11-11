@@ -48,4 +48,14 @@ public interface CmsArticleMapper extends BaseMapper<CmsArticle> {
      */
     CmsArticleInfoVo getInfo(Long articleId);
 
+    /**
+     * 审核管理员文章列表
+     * @param page 分页对象
+     * @param cmsArticleQuery 查询对象
+     * @param deptIds 拥有的部门id
+     * @return 文章列表
+     */
+    IPage<CmsArticleVo> getPageForAudit(IPage<CmsArticleVo> page,
+                                        @Param("param") CmsArticleQuery cmsArticleQuery,
+                                        @Param("deptIds") List<Long> deptIds);
 }

@@ -28,22 +28,16 @@
         <result column="create_time" property="createTime"/>
         <result column="update_by" property="updateBy"/>
         <result column="update_time" property="updateTime"/>
-<!--        <result column="after_login" property="afterLogin"/>-->
+        <!--        <result column="after_login" property="afterLogin"/>-->
     </resultMap>
 
-    <update id="audit" parameterType="com.rongji.rjsoft.dto.content.CmsArticleStateDto">
-        update cms_article set state = #{state} where article_id in
-        <foreach collection="articleIds" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-    </update>
-
-    <select id="getPage" resultType="com.rongji.rjsoft.vo.content.CmsArticleVo">
+    <sql id="pageQuery">
         SELECT
         t1.article_id,
         t1.article_title,
         t1.author_name,
         t1.cover_image,
+        t2.category_id as categoryId,
         t2.category_name as categoryName,
         t1.top,
         t1.slider,
@@ -53,24 +47,30 @@
         FROM
         cms_article AS t1
         INNER JOIN cms_category AS t2 ON t1.category_id = t2.category_id
+    </sql>
+
+    <update id="audit" parameterType="com.rongji.rjsoft.dto.content.CmsArticleStateDto">
+        update cms_article set state = #{state} where article_id in
+        <foreach collection="articleIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="getPage" resultType="com.rongji.rjsoft.vo.content.CmsArticleVo">
+        <include refid="pageQuery"/>
         <where>
-            (t1.author_id = #{deptId}
+            ((t1.author_id = #{deptId}
             <if test="null != param.state">
                 and t1.state = #{param.state}
             </if>)
-            or
-           (t1.author_id in
-            <foreach collection="deptIds" item="item" index="index" open="(" separator="," close=")">
-                #{item}
-            </foreach>
-            <choose>
-                <when test="param.state > 0">
-                    and t1.state = #{param.state}
-                </when>
-                <otherwise>
-                    and t1.state != 0
-                </otherwise>
-            </choose>)
+            <if test="null != param.state and param.state > 0">
+                or
+                (t1.author_id in
+                <foreach collection="deptIds" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+                and t1.state = #{param.state})
+            </if>)
             <if test="null != param.categoryId">
                 and t1.category_id = #{param.categoryId}
             </if>
@@ -109,6 +109,30 @@
         FROM cms_article AS t1
         LEFT JOIN cms_article_content AS t3 ON t1.article_id = t3.article_id
         where t1.article_id = #{articleId}
+    </select>
+
+    <select id="getPageForAudit" resultType="com.rongji.rjsoft.vo.content.CmsArticleVo">
+        <include refid="pageQuery"/>
+        <where>
+            t1.author_id in
+            <foreach collection="deptIds" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            and t1.state = #{param.state}
+            <if test="null != param.categoryId">
+                and t1.category_id = #{param.categoryId}
+            </if>
+            <if test="null != param.authorName and param.authorName != ''">
+                and t1.author_name like concat('%',#{param.authorName}, '%')
+            </if>
+            <if test="null != param.articleTitle and param.articleTitle != ''">
+                and t1.article_title like concat('%', #{param.articleTitle}, '%')
+            </if>
+            <if test="null != param.keywords and param.keywords != ''">
+                and t1.keywords like concat('%', #{param.keywords}, '%')
+            </if>
+        </where>
+        order by t1.top desc, t1.order_num, t1.create_by desc
     </select>
 
 </mapper>

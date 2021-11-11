@@ -23,10 +23,7 @@ import com.rongji.rjsoft.common.util.bean.SpringBeanUtil;
 import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.content.*;
 import com.rongji.rjsoft.entity.system.SysDept;
-import com.rongji.rjsoft.enums.CmsArticlePublishTypeEnum;
-import com.rongji.rjsoft.enums.CmsArticleStateEnum;
-import com.rongji.rjsoft.enums.CmsOriginalEnum;
-import com.rongji.rjsoft.enums.ResponseEnum;
+import com.rongji.rjsoft.enums.*;
 import com.rongji.rjsoft.exception.BusinessException;
 import com.rongji.rjsoft.mapper.*;
 import com.rongji.rjsoft.query.content.*;
@@ -45,10 +42,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -121,7 +120,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     }
 
     private boolean saveLimitDepts(CmsArticleAo cmsArticleAo) {
-        if (null == cmsArticleAo.getDeptIds() || cmsArticleAo.getDeptIds().length == 0){
+        if (null == cmsArticleAo.getDeptIds() || cmsArticleAo.getDeptIds().length == 0) {
             return true;
         }
         //保存文章部门关系
@@ -163,8 +162,14 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         cmsArticleAo.setAuthorName(SecurityUtils.getLoginUser().getSysDept().getDeptName());
         BeanUtil.copyProperties(cmsArticleAo, cmsArticle);
         cmsArticle.setFiles(JSON.toJSONString(cmsArticleAo.getFiles()));
-        cmsArticle.setArticleUrl(dateTimeFormatter.format(cmsArticle.getPublishTime())
-                + "-" + UUID.fastUUID().toString().replace("-", ""));
+        if (cmsArticleAo.getPublishType() == CmsArticlePublishTypeEnum.AUTOMATIC.getCode()) {
+            cmsArticle.setArticleUrl(dateTimeFormatter.format(cmsArticle.getPublishTime())
+                    + "-" + UUID.fastUUID().toString().replace("-", ""));
+        } else {
+            cmsArticle.setArticleUrl(dateTimeFormatter.format(LocalDateTime.now())
+                    + "-" + UUID.fastUUID().toString().replace("-", ""));
+        }
+
         //判断是否需要审核
         if (cmsArticleAo.getState() == CmsArticleStateEnum.TO_AUDIT.getState()
                 && SecurityUtils.getLoginUser().getRoles().contains(Constants.ARTICLE_AUDIT_ADMIN)) {
@@ -235,11 +240,11 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     }
 
     private boolean updateLimitDepts(CmsArticleAo cmsArticleAo) {
-        if (null == cmsArticleAo.getDeptIds() || cmsArticleAo.getDeptIds().length == 0){
+        if (null == cmsArticleAo.getDeptIds() || cmsArticleAo.getDeptIds().length == 0) {
             return true;
         }
         boolean result = cmsArticleDeptService.removeById(cmsArticleAo.getArticleId());
-        if(result){
+        if (result) {
             //保存文章部门关系
             return saveArticleDepts(cmsArticleAo);
         }
@@ -275,8 +280,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     }
 
     private boolean editArticle(CmsArticleAo cmsArticleAo) {
-        cmsArticleAo.setAuthorId(SecurityUtils.getLoginUser().getUser().getUserId());
-        cmsArticleAo.setAuthorName(SecurityUtils.getLoginUser().getUser().getUserName());
+        cmsArticleAo.setAuthorId(SecurityUtils.getLoginUser().getSysDept().getDeptId());
+        cmsArticleAo.setAuthorName(SecurityUtils.getLoginUser().getSysDept().getDeptName());
         CmsArticle cmsArticle = new CmsArticle();
         BeanUtil.copyProperties(cmsArticleAo, cmsArticle);
         cmsArticle.setFiles(JSON.toJSONString(cmsArticleAo.getFiles()));
@@ -312,8 +317,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     @Override
     public boolean audit(CmsArticleAuditAo cmsArticleAuditAo) {
         boolean result = cmsArticleMapper.audit(cmsArticleAuditAo);
-        if(cmsArticleAuditAo.getState() == CmsArticleStateEnum.ENABLE.getState()) {
-            ThreadUtil.execute(()->{
+        if (cmsArticleAuditAo.getState() == CmsArticleStateEnum.ENABLE.getState()) {
+            ThreadUtil.execute(() -> {
                 cmsFinalArticleService.generateArticle(cmsArticleAuditAo.getArticleIds());
             });
         }
@@ -333,7 +338,16 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         List<Long> deptIds = getOwnDepts();
 
         IPage<CmsArticleVo> page = new Page<>();
-        page = cmsArticleMapper.getPage(page, cmsArticleQuery, deptIds, deptId);
+        Set<String> roles = SecurityUtils.getLoginUser().getRoles();
+        if (null != roles && roles.size() == 1 && roles.contains(Constants.ARTICLE_AUDIT_ADMIN)) {
+            if (null != cmsArticleQuery.getState() && cmsArticleQuery.getState().equals(CmsArticleStateEnum.DRAFT.getState())) {
+                throw new BusinessException(ResponseEnum.NO_PERMISSION);
+            }
+            page = cmsArticleMapper.getPageForAudit(page, cmsArticleQuery, deptIds);
+        } else {
+            roles.remove(deptId);
+            page = cmsArticleMapper.getPage(page, cmsArticleQuery, deptIds, deptId);
+        }
         List<CmsArticleVo> records = page.getRecords();
         for (CmsArticleVo cmsArticleVo : records) {
             cmsArticleVo.setTags(cmsArticleTagsMapper.getTagsByArticleId(cmsArticleVo.getArticleId()));
@@ -493,13 +507,14 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
 
     /**
      * 按部门查询文章
+     *
      * @param cmsDeptArticleQuerys 查询对象
      * @return 文章列表
      */
     @Override
     public List<CmsArticlePortalVo> getArticlesByDept(CmsDeptArticleQuery cmsDeptArticleQuerys) {
         Long deptId = getDeptId();
-        if (null == deptId){
+        if (null == deptId) {
             throw new BusinessException(ResponseEnum.NO_PERMISSION);
         }
         return cmsFinalArticleMapper.getArticlesByDept(cmsDeptArticleQuerys);

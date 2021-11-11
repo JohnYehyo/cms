@@ -41,6 +41,11 @@ public class CmsArticleVo implements Serializable {
     private String coverImage;
 
     /**
+     * 类型id
+     */
+    private String categoryId;
+
+    /**
      * 类型
      */
     private String categoryName;

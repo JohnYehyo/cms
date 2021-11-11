@@ -81,12 +81,6 @@ public class CmsArticleAo {
     private int top;
 
     /**
-     * 类型
-     */
-    @ApiModelProperty(value = "类型", required = true)
-    private Long categoryId;
-
-    /**
      * 是否轮播 0 否 1 是
      */
     @ApiModelProperty(value = "是否轮播", notes = "0 否 1 是")
