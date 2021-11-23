@@ -1,5 +1,6 @@
 package com.rongji.rjsoft.common.util.file;
 
+import cn.hutool.core.io.FileTypeUtil;
 import com.rongji.rjsoft.common.util.file.enums.FileTypeEnum;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -83,7 +84,6 @@ public class FileTypeJudgeUtils {
      * @throws IOException
      */
     public static FileTypeEnum getType(InputStream is) {
-
         String fileHead = getFileContent(is);
         if (fileHead == null || fileHead.length() == 0) {
             return null;
@@ -134,8 +134,8 @@ public class FileTypeJudgeUtils {
         FileTypeEnum type = getType(file.getInputStream());
 
         FileTypeEnum[] permits = {FileTypeEnum.JPEG, FileTypeEnum.PNG, FileTypeEnum.ZIP, FileTypeEnum.RAR, FileTypeEnum.PDF,
-                FileTypeEnum.XLS_DOC, FileTypeEnum.XLSX_DOCX, FileTypeEnum.WAV, FileTypeEnum.AVI, FileTypeEnum.MP4,
-                FileTypeEnum.FLV, FileTypeEnum.HTML_TEMPLATE, FileTypeEnum.HTML};
+                FileTypeEnum.XLS_DOC, FileTypeEnum.XLSX_DOCX, FileTypeEnum.WAV, FileTypeEnum.AVI, FileTypeEnum.MP4, FileTypeEnum.MP42,
+                FileTypeEnum.FLV, FileTypeEnum.HTML_TEMPLATE, FileTypeEnum.HTML, FileTypeEnum.MP3, FileTypeEnum.MOV};
 
         for (FileTypeEnum fileType : permits) {
             if (fileType.equals(type)) {
