@@ -58,6 +58,9 @@
 
     <select id="getPage" resultType="com.rongji.rjsoft.vo.content.CmsArticleVo">
         <include refid="pageQuery"/>
+        <if test="null != param.columnId">
+            INNER JOIN cms_final_article AS t3 ON t1.article_id = t3.article_id
+        </if>
         <where>
             ((t1.author_id = #{deptId}
             <if test="null != param.state">
@@ -71,6 +74,9 @@
                 </foreach>
                 and t1.state = #{param.state})
             </if>)
+            <if test="null != param.columnId">
+                and t3.column_id = #{param.columnId}
+            </if>
             <if test="null != param.categoryId">
                 and t1.category_id = #{param.categoryId}
             </if>
@@ -113,12 +119,18 @@
 
     <select id="getPageForAudit" resultType="com.rongji.rjsoft.vo.content.CmsArticleVo">
         <include refid="pageQuery"/>
+        <if test="null != param.columnId">
+            INNER JOIN cms_final_article AS t3 ON t1.article_id = t3.article_id
+        </if>
         <where>
             t1.author_id in
             <foreach collection="deptIds" item="item" index="index" open="(" separator="," close=")">
                 #{item}
             </foreach>
             and t1.state = #{param.state}
+            <if test="null != param.columnId">
+                and t3.column_id = #{param.columnId}
+            </if>
             <if test="null != param.categoryId">
                 and t1.category_id = #{param.categoryId}
             </if>

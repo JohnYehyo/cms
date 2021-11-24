@@ -43,4 +43,10 @@ public class CmsArticleQuery {
      */
     @ApiModelProperty(value = "作者")
     private String authorName;
+
+    /**
+     * 栏目
+     */
+    @ApiModelProperty(value = "栏目")
+    private Long columnId;
 }
