@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.ao.content.*;
@@ -170,6 +171,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
                     + "-" + UUID.fastUUID().toString().replace("-", ""));
         }
 
+        //分析文章类型
+        cmsArticle.setCategoryId(analysisType(cmsArticleAo));
         //判断是否需要审核
         if (cmsArticleAo.getState() == CmsArticleStateEnum.TO_AUDIT.getState()
                 && SecurityUtils.getLoginUser().getRoles().contains(Constants.ARTICLE_AUDIT_ADMIN)) {
@@ -178,6 +181,38 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
             cmsArticle.setState(cmsArticleAo.getState());
         }
         return cmsArticleMapper.insert(cmsArticle) > 0;
+    }
+
+    /**
+     * 分析文章类型
+     *
+     * @param cmsArticleAo 文章信息
+     */
+    private Long analysisType(CmsArticleAo cmsArticleAo) {
+        Long categoryId = CmsArticleCategoryEnmu.WORD.getCode();
+        CmsArticleCategoryEnmu[] values = CmsArticleCategoryEnmu.values();
+        if (null == values || values.length == 0) {
+            return categoryId;
+        }
+        int count = 0;
+        //分析富文本
+        for (int i = 0; i < values.length - 2; i++) {
+            if (cmsArticleAo.getContent().contains(values[i].getSignature())
+                    && values[i].getCode() > CmsArticleCategoryEnmu.WORD.getCode()) {
+                categoryId = values[i].getCode();
+                count++;
+            }
+        }
+        //分析附件
+        if(CollectionUtil.isNotEmpty(cmsArticleAo.getFiles())){
+            categoryId = CmsArticleCategoryEnmu.APPENDIX.getCode();
+            count++;
+        }
+        //包含图片、视频、音频、附件中两种及两种以上的视为多媒体类型
+        if (count > 1) {
+            categoryId = CmsArticleCategoryEnmu.MULTIMEDIA.getCode();
+        }
+        return categoryId;
     }
 
     private boolean saveTags(CmsArticleAo cmsArticleAo) {
@@ -284,6 +319,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         cmsArticleAo.setAuthorName(SecurityUtils.getLoginUser().getSysDept().getDeptName());
         CmsArticle cmsArticle = new CmsArticle();
         BeanUtil.copyProperties(cmsArticleAo, cmsArticle);
+        //分析文章类型
+        cmsArticle.setCategoryId(analysisType(cmsArticleAo));
         cmsArticle.setFiles(JSON.toJSONString(cmsArticleAo.getFiles()));
         return cmsArticleMapper.updateById(cmsArticle) > 0;
     }
@@ -519,4 +556,5 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         }
         return cmsFinalArticleMapper.getArticlesByDept(cmsDeptArticleQuerys);
     }
+
 }
