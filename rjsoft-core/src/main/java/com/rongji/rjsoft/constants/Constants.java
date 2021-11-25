@@ -123,4 +123,9 @@ public class Constants {
      * 栏目缓存信息-模板后缀
      */
     public static final String COLUMN_DICT_TEMPLATE = "_template";
+
+    /**
+     * SSO token key 前缀
+     */
+    public static final String SSO_KEY = "sso_key:";
 }

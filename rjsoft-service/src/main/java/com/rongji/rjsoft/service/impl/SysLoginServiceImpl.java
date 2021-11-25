@@ -1,12 +1,15 @@
 package com.rongji.rjsoft.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.rongji.rjsoft.ao.system.LoginAo;
 import com.rongji.rjsoft.common.security.entity.LoginUser;
+import com.rongji.rjsoft.common.security.entity.SsoLoginUser;
 import com.rongji.rjsoft.common.security.util.AESUtils;
 import com.rongji.rjsoft.common.security.util.TokenUtils;
-import com.rongji.rjsoft.common.util.LogUtils;
 import com.rongji.rjsoft.common.util.RedisCache;
+import com.rongji.rjsoft.common.util.ServletUtils;
 import com.rongji.rjsoft.constants.Constants;
+import com.rongji.rjsoft.entity.system.SysUser;
 import com.rongji.rjsoft.enums.LogStatusEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.exception.BusinessException;
@@ -15,10 +18,12 @@ import com.rongji.rjsoft.service.ISysLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @description: 登录
@@ -42,6 +47,12 @@ public class SysLoginServiceImpl implements ISysLoginService {
 
     @Value("${JohnYehyo.key}")
     private String KEY;
+
+    /**
+     * 令牌有效期（默认30秒钟）
+     */
+    @Value("${token.sso.expireTime}")
+    private int expireTime;
 
 
     /**
@@ -95,5 +106,31 @@ public class SysLoginServiceImpl implements ISysLoginService {
 
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         return tokenUtils.createToken(loginUser);
+    }
+
+    /**
+     * 创建SSO token
+     * @return 创建SSO token
+     */
+    @Override
+    public String creatSsoToken() {
+        LoginUser loginUser = tokenUtils.getLoginUser(ServletUtils.getRequest());
+        SysUser user = loginUser.getUser();
+        SsoLoginUser ssoLoginUser = new SsoLoginUser();
+        BeanUtil.copyProperties(loginUser, ssoLoginUser);
+        BeanUtil.copyProperties(user, ssoLoginUser);
+        String key = UUID.randomUUID().toString().replace("-", "");
+        redisCache.setCacheObject(Constants.SSO_KEY + key, ssoLoginUser, expireTime, TimeUnit.MINUTES);
+        return key;
+    }
+
+    /**
+     * token登录
+     * @param token token
+     * @return 登录结果
+     */
+    @Override
+    public SsoLoginUser tokenLogin(String token) {
+        return redisCache.getCacheObject(Constants.SSO_KEY + token);
     }
 }
