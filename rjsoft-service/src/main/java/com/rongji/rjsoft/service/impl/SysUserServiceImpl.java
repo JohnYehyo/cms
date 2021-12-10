@@ -291,7 +291,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      * @return 重置结果
      */
     @Override
-    public boolean restPwd(Long userId) {
+    public String restPwd(Long userId) {
         SysUser user = new SysUser();
         user.setUserId(userId);
         String password = PassWordUtils.passRandom(8);
@@ -299,6 +299,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         user.setPassword(encryptNewPassword);
         user.setUpdateBy(user.getUserName());
         user.setUpdateTime(LocalDateTime.now());
+        user.setLastPwdTime(null);
         if(sysUserMapper.updatePassword(user) > 0){
             return password;
         }
