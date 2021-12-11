@@ -2,25 +2,29 @@ package com.rongji.rjsoft.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.rongji.rjsoft.ao.system.PasswordAo;
 import com.rongji.rjsoft.ao.system.PersonInfoAo;
 import com.rongji.rjsoft.common.security.entity.LoginUser;
 import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.security.util.TokenUtils;
 import com.rongji.rjsoft.common.util.ServletUtils;
-import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.system.SysDept;
+import com.rongji.rjsoft.entity.system.SysPwdHistory;
 import com.rongji.rjsoft.entity.system.SysRole;
 import com.rongji.rjsoft.entity.system.SysUser;
 import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.mapper.SysRoleMapper;
 import com.rongji.rjsoft.mapper.SysUserMapper;
 import com.rongji.rjsoft.service.ISysPersonService;
+import com.rongji.rjsoft.service.ISysPwdHistoryService;
 import com.rongji.rjsoft.service.ISysRoleService;
 import com.rongji.rjsoft.vo.ResponseVo;
 import com.rongji.rjsoft.vo.system.person.PersonInfoVo;
-import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,16 +39,25 @@ import java.util.stream.Collectors;
  * @create: 2021-09-09 16:27:09
  */
 @Service
-@AllArgsConstructor
 public class SysPersonServiceImpl implements ISysPersonService {
 
-    private final TokenUtils tokenUtils;
+    @Autowired
+    private TokenUtils tokenUtils;
 
-    private final ISysRoleService sysRoleService;
+    @Autowired
+    private ISysRoleService sysRoleService;
 
-    private final SysRoleMapper sysRoleMapper;
+    @Autowired
+    private SysRoleMapper sysRoleMapper;
 
-    private final SysUserMapper sysUserMapper;
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
+    @Autowired
+    private ISysPwdHistoryService sysPwdHistoryService;
+
+    @Value("${JohnYehyo.pwd_history}")
+    private int PWD_HISTORY;
 
     private static final String PATTERN = "^(?=.*\\d)(?=.*[a-zA-Z])(?=.*[~!@#$%^&_*-])[\\da-zA-Z~!@#$%^&_*-]{8,}$";
 
@@ -155,6 +168,12 @@ public class SysPersonServiceImpl implements ISysPersonService {
         if (!Pattern.matches(PATTERN, passwordAo.getNewPassword())) {
             return ResponseVo.response(ResponseEnum.EASY_PASSWORD);
         }
+        //判断历史密码
+        if(checkHistoryPassword(user.getUserName(), passwordAo.getNewPassword())){
+            return ResponseVo.error(ResponseEnum.SAME_HISTORY_PASSWORD.getCode(),
+                    ResponseEnum.SAME_HISTORY_PASSWORD.getValue() + PWD_HISTORY + "次修改密码相同!");
+        }
+
         user.setPassword(encryptNewPassword);
         user.setUpdateBy(user.getUserName());
         user.setUpdateTime(LocalDateTime.now());
@@ -162,9 +181,37 @@ public class SysPersonServiceImpl implements ISysPersonService {
         if (sysUserMapper.updatePassword(user) > 0) {
             loginUser.setUser(user);
             tokenUtils.setLoginUser(loginUser);
+            //保存密码记录
+            updatePwdHistory(user, encryptNewPassword);
             return ResponseVo.success("修改密码成功");
         }
         return ResponseVo.error("修改密码失败");
+    }
+
+    private boolean checkHistoryPassword(String accout, String newPassword) {
+        boolean result = false;
+        SysPwdHistory sysPwdHistory = sysPwdHistoryService.getHistoryByAccount(accout);
+        if (null != sysPwdHistory
+                && StringUtils.isNotEmpty(sysPwdHistory.getHistory())) {
+            String history = sysPwdHistory.getHistory();
+            JSONArray ja = JSON.parseArray(history);
+            for (int i = 0; i < ja.size(); i++) {
+                if(matchesPassword(newPassword, ja.getJSONObject(i).getString("history"))){
+                    result = true;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    private void updatePwdHistory(SysUser user, String encryptNewPassword) {
+        if (null != user && StringUtils.isNotEmpty(user.getUserName())) {
+            SysPwdHistory sysPwdHistory = new SysPwdHistory();
+            sysPwdHistory.setAccount(user.getUserName());
+            sysPwdHistory.setHistory(encryptNewPassword);
+            sysPwdHistoryService.updateHistory(sysPwdHistory);
+        }
     }
 
     /**

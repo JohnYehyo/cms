@@ -11,6 +11,7 @@ import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.common.util.PassWordUtils;
 import com.rongji.rjsoft.constants.Constants;
+import com.rongji.rjsoft.entity.system.SysPwdHistory;
 import com.rongji.rjsoft.entity.system.SysUser;
 import com.rongji.rjsoft.entity.system.SysUserPost;
 import com.rongji.rjsoft.entity.system.SysUserRole;
@@ -19,11 +20,13 @@ import com.rongji.rjsoft.mapper.SysUserMapper;
 import com.rongji.rjsoft.mapper.SysUserPostMapper;
 import com.rongji.rjsoft.mapper.SysUserRoleMapper;
 import com.rongji.rjsoft.query.system.user.UserQuery;
+import com.rongji.rjsoft.service.ISysPwdHistoryService;
 import com.rongji.rjsoft.service.ISysUserService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.system.user.SysUserInfoVo;
 import com.rongji.rjsoft.vo.system.user.SysUserVo;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +55,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     private final SysDeptMapper sysDeptMapper;
 
+    private final ISysPwdHistoryService sysPwdHistoryService;
 
     /**
      * 通过用户姓名查询用户信息
@@ -104,7 +108,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         SysUser sysUser = new SysUser();
         BeanUtil.copyProperties(user, sysUser);
         String password = PassWordUtils.passRandom(8);
-        sysUser.setPassword(SecurityUtils.encryptPassword(password));
+        String encryptPassword = SecurityUtils.encryptPassword(password);
+        sysUser.setPassword(encryptPassword);
         sysUser.setCreateBy(SecurityUtils.getUserName());
         int insert = sysUserMapper.saveUser(sysUser);
 
@@ -115,9 +120,18 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         saveUserWithRole(user);
 
         if (insert > 0) {
+            //保存密码记录
+            savePwdHistory(user, encryptPassword);
             return password;
         }
         return "";
+    }
+
+    private void savePwdHistory(SysUserAo user, String encryptPassword) {
+        SysPwdHistory sysPwdHistory = new SysPwdHistory();
+        sysPwdHistory.setAccount(user.getUserName());
+        sysPwdHistory.setHistory(encryptPassword);
+        sysPwdHistoryService.save(sysPwdHistory);
     }
 
     /**
@@ -301,9 +315,21 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         user.setUpdateTime(LocalDateTime.now());
         user.setLastPwdTime(null);
         if(sysUserMapper.updatePassword(user) > 0){
+            //保存密码记录
+            updatePwdHistory(userId, encryptNewPassword);
             return password;
         }
         return "";
+    }
+
+    private void updatePwdHistory(Long userId, String encryptNewPassword) {
+        SysUser sysUser = sysUserMapper.selectById(userId);
+        if(null != sysUser && StringUtils.isNotEmpty(sysUser.getUserName())){
+            SysPwdHistory sysPwdHistory = new SysPwdHistory();
+            sysPwdHistory.setAccount(sysUser.getUserName());
+            sysPwdHistory.setHistory(encryptNewPassword);
+            sysPwdHistoryService.updateHistory(sysPwdHistory);
+        }
     }
 
 }
