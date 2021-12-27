@@ -4,7 +4,7 @@ MAINTAINER JohnYehyo <johnyehyo@hotmail.com>
 
 LABEL description="内容管理系统"
 
-ADD rjsoft-web.jar /opt/rjsoft/cms-server.jar
+ADD cms-server.jar /opt/rjsoft/cms-server.jar
 
 EXPOSE 8088
 
