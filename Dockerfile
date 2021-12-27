@@ -8,4 +8,4 @@ ADD rjsoft-web.jar /opt/rjsoft/cms-server.jar
 
 EXPOSE 8088
 
-ENTRYPOINT ["java", "-Xms1000m -Xmx1000m", "-jar","/opt/rjsoft/cms-server.jar"]
+ENTRYPOINT ["java", "-jar", "/opt/rjsoft/cms-server.jar"]
