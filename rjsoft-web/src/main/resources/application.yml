@@ -11,7 +11,7 @@ spring:
   application:
     name: rjsoft
   profiles:
-    active: other
+    active: prod
   thymeleaf:
     cache: false
     mode: HTML
