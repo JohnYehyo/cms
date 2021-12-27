@@ -2,16 +2,10 @@ FROM openjdk:8-jdk-alpine
 
 MAINTAINER JohnYehyo <johnyehyo@hotmail.com>
 
-LABEL description="基础框架"
+LABEL description="内容管理系统"
 
-ENV MYPATH /opt/rjsoft
-
-WORKDIR $MYPATH
-
-ADD rjsoft-web.jar rjsoft.jar
-
-VOLUME $MYPATH
+ADD rjsoft-web.jar /opt/rjsoftcms-server.jar
 
 EXPOSE 8088
 
-ENTRYPOINT ["java", "-Xms1000m -Xmx1000m", "-jar","/opt/rjsoft/rjsoft.jar"]
+ENTRYPOINT ["java", "-Xms1000m -Xmx1000m", "-jar","/opt/rjsoft/cms-server.jar"]
