@@ -67,5 +67,13 @@ xxl:
         </dependency>
 ```
 
+- 数据库表关系
+
+    - 基础表:
+    ![基础表](doc/basic-frame.png)
+      
+    - cms:
+    ![cms表](doc/cms.png)
+
 
 
