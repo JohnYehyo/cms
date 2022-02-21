@@ -34,13 +34,21 @@
                create_time,
                branch_code,
                dept_type
-        from sys_dept
+        from ${prefix}sys_dept
     </sql>
 
-    <select id="selectDeptIdsByDeptId" parameterType="long" resultType="long">
+    <select id="selectDeptIdsByDeptId" parameterType="long" resultType="long" databaseId="mysql">
         SELECT t.dept_id
-        FROM sys_dept t
+        FROM ${prefix}sys_dept t
         WHERE find_in_set(#{deptId}, ancestors)
+          and status = 0
+          and del_flag = 0
+    </select>
+
+    <select id="selectDeptIdsByDeptId" parameterType="long" resultType="long" databaseId="dm">
+        SELECT t.dept_id
+        FROM ${prefix}sys_dept t
+        WHERE instr(','||ancestors||',', ','||#{deptId}||',')
           and status = 0
           and del_flag = 0
     </select>
@@ -50,7 +58,7 @@
         select dept_id,
                parent_id,
                dept_name
-        from sys_dept
+        from ${prefix}sys_dept
         where parent_id = #{deptId}
           and status = 0
           and del_flag = 0
@@ -61,7 +69,7 @@
         select dept_id,
                parent_id,
                dept_name
-        from sys_dept
+        from ${prefix}sys_dept
         where dept_id = #{deptId}
           and status = 0
           and del_flag = 0
@@ -84,14 +92,20 @@
         order by dept_type, branch_code
     </select>
 
-    <select id="selectChildrenByDeptId" parameterType="long" resultMap="BaseResultMap">
+    <select id="selectChildrenByDeptId" parameterType="long" resultMap="BaseResultMap" databaseId="mysql">
         select dept_id, ancestors
-        from sys_dept
+        from ${prefix}sys_dept
         where find_in_set(#{deptId}, ancestors)
     </select>
 
+    <select id="selectChildrenByDeptId" parameterType="long" resultMap="BaseResultMap" databaseId="dm">
+        select dept_id, ancestors
+        from ${prefix}sys_dept
+        where instr(','||ancestors||',', ','||#{deptId}||',')
+    </select>
+
     <update id="batchUpdateChildreAncestors">
-        update sys_dept set ancestors =
+        update ${prefix}sys_dept set ancestors =
         <foreach collection="list" item="item" index="index" separator=" " open="case dept_id" close="end">
             when #{item.deptId} then #{item.ancestors}
         </foreach>
@@ -101,25 +115,40 @@
         </foreach>
     </update>
 
-    <select id="selectAllTreeNode" resultType="com.rongji.rjsoft.vo.system.dept.SysDeptAllTreeVo">
+    <select id="selectAllTreeNode" resultType="com.rongji.rjsoft.vo.system.dept.SysDeptAllTreeVo" databaseId="mysql">
         select dept_id, dept_name, parent_id
-        from sys_dept
+        from ${prefix}sys_dept
         where find_in_set(#{deptId}, ancestors)
+        order by parent_id
+    </select>
+
+    <select id="selectAllTreeNode" resultType="com.rongji.rjsoft.vo.system.dept.SysDeptAllTreeVo" databaseId="dm">
+        select dept_id, dept_name, parent_id
+        from ${prefix}sys_dept
+        where instr(','||ancestors||',', ','||#{deptId}||',')
         order by parent_id
     </select>
 
     <select id="selectDeptsByIds" resultType="com.rongji.rjsoft.vo.system.dept.SysDeptTreeVo">
         select dept_id, dept_name, parent_id
-        from sys_dept
+        from ${prefix}sys_dept
         where dept_id in
         <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
     </select>
 
-    <select id="selectAllTreeInfoNode" resultType="com.rongji.rjsoft.vo.system.dept.SysDeptAllTreeInfoVo">
+    <select id="selectAllTreeInfoNode" resultType="com.rongji.rjsoft.vo.system.dept.SysDeptAllTreeInfoVo"
+        databaseId="mysql">
         <include refid="selectDeptVo"/>
         where find_in_set(#{deptId}, ancestors)
+        order by parent_id
+    </select>
+
+    <select id="selectAllTreeInfoNode" resultType="com.rongji.rjsoft.vo.system.dept.SysDeptAllTreeInfoVo"
+        databaseId="dm">
+        <include refid="selectDeptVo"/>
+        where instr(','||ancestors||',', ','||#{deptId}||',')
         order by parent_id
     </select>
 

@@ -16,7 +16,7 @@
     </resultMap>
 
     <update id="updateStatus">
-        update cms_category set status = 1 where category_id in
+        update ${prefix}cms_category set status = 1 where category_id in
         <foreach collection="array" open="(" separator="," close=")" index="index" item="item">
             #{item}
         </foreach>
@@ -24,7 +24,7 @@
 
     <select id="getPages" resultType="com.rongji.rjsoft.vo.content.CmsCategoryVo">
         select category_id, category_name, description, order_num, status
-        from cms_category
+        from ${prefix}cms_category
         <where>
             <if test="param.categoryId != null">
                 category_id = #{param.categoryId}
@@ -37,7 +37,7 @@
 
     <select id="listOfCategory" resultType="com.rongji.rjsoft.vo.content.CmsCategorySimpleVo">
         select category_id, category_name
-        from cms_category
+        from ${prefix}cms_category
         <where>
             <if test="categoryName != null and categoryName != ''">
                 and category_name like concat ('%', #{param.categoryName}, '%')

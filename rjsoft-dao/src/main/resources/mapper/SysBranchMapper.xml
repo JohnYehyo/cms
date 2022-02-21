@@ -18,14 +18,14 @@
 
     <select id="getSimpleAsynchTreeByCode" parameterType="string" resultType="com.rongji.rjsoft.vo.system.branch.BranchTreeVo">
         select branch_code, branch_name, parent_code
-        from sys_branch
+        from ${prefix}sys_branch
         where branch_code = #{branchCode}
           and status = 0
     </select>
 
     <select id="getAsynchTreeByCode" parameterType="string" resultType="com.rongji.rjsoft.vo.system.branch.BranchTreeVo">
         select branch_code, branch_name, parent_code
-        from sys_branch
+        from ${prefix}sys_branch
         where parent_code = #{branchCode}
           and status = 0
         order by branch_code

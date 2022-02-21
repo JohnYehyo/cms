@@ -9,7 +9,7 @@
     </resultMap>
 
     <insert id="batchInsert">
-        insert into cms_article_tags (article_id, tag_id) values
+        insert into ${prefix}cms_article_tags (article_id, tag_id) values
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.articleId}, #{item.tagId})
         </foreach>
@@ -17,8 +17,8 @@
 
     <select id="getTagsByArticleId" parameterType="long" resultType="com.rongji.rjsoft.vo.content.CmsTagsSimpleVo">
         select t2.tag_id, t2.tag_name
-        from cms_article_tags as t1
-                 INNER JOIN cms_tags as t2 on t1.tag_id = t2.tag_id
+        from ${prefix}cms_article_tags as t1
+                 INNER JOIN ${prefix}cms_tags as t2 on t1.tag_id = t2.tag_id
         where t1.article_id = #{articleId}
     </select>
 

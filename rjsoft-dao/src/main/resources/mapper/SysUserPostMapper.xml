@@ -9,7 +9,7 @@
     </resultMap>
 
     <insert id="batchUserPost">
-        insert into sys_user_post (user_id, post_id) values
+        insert into ${prefix}sys_user_post (user_id, post_id) values
         <foreach item="item" index="index" collection="list" separator=",">
             (#{item.userId}, #{item.postId})
         </foreach>
@@ -17,7 +17,7 @@
 
     <select id="getPostsByUserId" parameterType="long" resultType="integer">
         select post_id
-        from sys_user_post
+        from ${prefix}sys_user_post
         where user_id = #{userId}
     </select>
 

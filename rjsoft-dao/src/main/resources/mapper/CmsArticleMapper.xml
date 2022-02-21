@@ -45,12 +45,12 @@
         t1.publish_time,
         t1.state
         FROM
-        cms_article AS t1
-        INNER JOIN cms_category AS t2 ON t1.category_id = t2.category_id
+             ${prefix}cms_article AS t1
+        INNER JOIN ${prefix}cms_category AS t2 ON t1.category_id = t2.category_id
     </sql>
 
     <update id="audit" parameterType="com.rongji.rjsoft.dto.content.CmsArticleStateDto">
-        update cms_article set state = #{state} where article_id in
+        update ${prefix}cms_article set state = #{state} where article_id in
         <foreach collection="articleIds" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
@@ -59,7 +59,7 @@
     <select id="getPage" resultType="com.rongji.rjsoft.vo.content.CmsArticleVo">
         <include refid="pageQuery"/>
         <if test="null != param.columnId">
-            INNER JOIN cms_final_article AS t3 ON t1.article_id = t3.article_id
+            INNER JOIN ${prefix}cms_final_article AS t3 ON t1.article_id = t3.article_id
         </if>
         <where>
             ((t1.author_id = #{deptId}
@@ -112,15 +112,15 @@
         t1.source,
         t1.read_type,
         t1.publish_type
-        FROM cms_article AS t1
-        LEFT JOIN cms_article_content AS t3 ON t1.article_id = t3.article_id
+        FROM ${prefix}cms_article AS t1
+        LEFT JOIN ${prefix}cms_article_content AS t3 ON t1.article_id = t3.article_id
         where t1.article_id = #{articleId}
     </select>
 
     <select id="getPageForAudit" resultType="com.rongji.rjsoft.vo.content.CmsArticleVo">
         <include refid="pageQuery"/>
         <if test="null != param.columnId">
-            INNER JOIN cms_final_article AS t3 ON t1.article_id = t3.article_id
+            INNER JOIN ${prefix}cms_final_article AS t3 ON t1.article_id = t3.article_id
         </if>
         <where>
             t1.author_id in

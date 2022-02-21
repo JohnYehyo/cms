@@ -29,8 +29,8 @@
         t1.dept_id,
         t1.order_num
         from
-        cms_column as t1
-        left join cms_column as t2 on
+        ${prefix}cms_column as t1
+        left join ${prefix}cms_column as t2 on
         t1.parent_id = t2.column_id
         <where>
             <if test="param.columnId != null">
@@ -46,14 +46,20 @@
         order by t1.order_num, t1.create_by desc
     </select>
 
-    <select id="selectChildrenByColumnId" resultMap="BaseResultMap">
+    <select id="selectChildrenByColumnId" resultMap="BaseResultMap" databaseId="mysql">
         select column_Id, parent_id, ancestors
-        from cms_column
+        from ${prefix}cms_column
         where find_in_set(#{columnId}, ancestors)
     </select>
 
+    <select id="selectChildrenByColumnId" resultMap="BaseResultMap" databaseId="dm">
+        select column_Id, parent_id, ancestors
+        from ${prefix}cms_column
+        where instr(','||ancestors||',', ','||#{columnId}||',')
+    </select>
+
     <update id="batchUpdateChildreAncestors">
-        update cms_column set ancestors =
+        update ${prefix}cms_column set ancestors =
         <foreach collection="list" item="item" index="index" separator=" " open="case column_id" close="end">
             when #{item.columnId} then #{item.ancestors}
         </foreach>
@@ -64,7 +70,7 @@
     </update>
 
     <update id="batchDeleteColumn">
-        update cms_column set del_flag = 1 where column_id in
+        update ${prefix}cms_column set del_flag = 1 where column_id in
         <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
             #{item}
         </foreach>
@@ -72,7 +78,7 @@
 
     <select id="selectParentTreeNode" resultType="com.rongji.rjsoft.vo.content.CmsColumnAllTree">
         select column_Id, column_name, parent_id
-        from cms_column
+        from ${prefix}cms_column
         where column_id = #{parentId}
     </select>
 
@@ -82,7 +88,7 @@
         t1.column_name,
         t1.parent_id
         FROM
-        cms_column AS t1
+        ${prefix}cms_column AS t1
         <if test="deptId != null">
             LEFT JOIN cms_column_dept AS t2 ON t2.column_id = t1.column_id
         </if>
@@ -98,7 +104,7 @@
     </select>
 
     <delete id="deleteBySiteId">
-        update cms_column set del_flag = 1 where site_id in
+        update ${prefix}cms_column set del_flag = 1 where site_id in
         <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
             #{item}
         </foreach>

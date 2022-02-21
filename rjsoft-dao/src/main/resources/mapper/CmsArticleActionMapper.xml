@@ -13,7 +13,7 @@
     </resultMap>
 
     <select id="getActionCount" resultType="com.rongji.rjsoft.vo.content.CmsArticleActionSimpleVo">
-        select type, count(*) as count from cms_article_action where article_id  = #{articleId} group by type
+        select type, count(*) as count from ${prefix}cms_article_action where article_id  = #{articleId} group by type
     </select>
 
 </mapper>

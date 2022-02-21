@@ -25,7 +25,7 @@
 
     <select id="getPages" resultType="com.rongji.rjsoft.vo.monitor.log.OperatorLogVo">
         select id, module, method, business_type, operator_type, user_name, dept_name, ip, status, time
-        from sys_operation_log
+        from ${prefix}sys_operation_log
         <where>
             <if test="null != param.deptId and param.DeptId != ''">
                 deptId = #{param.deptId}

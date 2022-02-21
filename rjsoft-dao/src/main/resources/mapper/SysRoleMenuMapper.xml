@@ -10,7 +10,7 @@
 
 
     <insert id="batchSaveRoleMenu">
-        insert into sys_role_menu (role_id, menu_id) values
+        insert into ${prefix}sys_role_menu (role_id, menu_id) values
         <foreach collection="list" item="item" index="index" separator="," >
             (#{item.roleId}, #{item.menuId})
         </foreach>

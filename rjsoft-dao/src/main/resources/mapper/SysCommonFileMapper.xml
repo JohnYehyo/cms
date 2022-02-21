@@ -18,7 +18,7 @@
 
     <select id="getFiles" parameterType="com.rongji.rjsoft.query.common.SysCommonFileQuery"
             resultType="com.rongji.rjsoft.vo.common.SysCommonFileVo">
-        select file_url, file_name, file_type from sys_common_file
+        select file_url, file_name, file_type from ${prefix}sys_common_file
         <where>
             table_id = #{tableId} and table_type = #{tableType}
             <if test="null != fileType">

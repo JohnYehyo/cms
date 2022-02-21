@@ -32,7 +32,7 @@
                         r.del_flag,
                         r.create_time,
                         r.remark
-        from sys_role r
+        from ${prefix}sys_role r
     </sql>
 
     <sql id="selectRoleInfoVo">
@@ -47,21 +47,21 @@
                         r.del_flag,
                         r.create_time,
                         r.remark
-        from sys_role r
-                 left join sys_user_role ur on ur.role_id = r.role_id
-                 left join sys_user u on u.user_id = ur.user_id
-                 left join sys_dept d on u.dept_id = d.dept_id
+        from ${prefix}sys_role r
+                 left join ${prefix}sys_user_role ur on ur.role_id = r.role_id
+                 left join ${prefix}sys_user u on u.user_id = ur.user_id
+                 left join ${prefix}sys_dept d on u.dept_id = d.dept_id
     </sql>
 
     <select id="checkRoleByRoleName" resultType="com.rongji.rjsoft.entity.system.SysRole">
         select role_id
-        from sys_Role
+        from ${prefix}sys_Role
         where role_name = #{roleName} limit 1
     </select>
 
     <select id="checkRoleByRoleKey" resultType="com.rongji.rjsoft.entity.system.SysRole">
         select role_id
-        from sys_Role
+        from ${prefix}sys_Role
         where role_key = #{roleKey} limit 1
     </select>
 
@@ -95,10 +95,10 @@
 
     <select id="getRoleKeysByUserId" parameterType="long" resultType="String">
         select distinct r.role_key
-        from sys_role r
-                 left join sys_user_role ur on ur.role_id = r.role_id
-                 left join sys_user u on u.user_id = ur.user_id
-                 left join sys_dept d on u.dept_id = d.dept_id
+        from ${prefix}sys_role r
+                 left join ${prefix}sys_user_role ur on ur.role_id = r.role_id
+                 left join ${prefix}sys_user u on u.user_id = ur.user_id
+                 left join ${prefix}sys_dept d on u.dept_id = d.dept_id
         where ur.user_id = #{userId}
           and r.del_flag = 0
     </select>
@@ -106,7 +106,7 @@
     <select id="listOfRole" parameterType="com.rongji.rjsoft.query.system.role.RoleSelectQuery"
             resultType="com.rongji.rjsoft.vo.system.role.SysRoleSelectVo">
         select role_id, role_name
-        from sys_role
+        from ${prefix}sys_role
         <where>
             <if test="roleName != null and roleName != ''">
                 role_name like concat(#{roleName}, '%')
@@ -115,7 +115,7 @@
     </select>
 
     <insert id="saveRole" parameterType="com.rongji.rjsoft.entity.system.SysRole" useGeneratedKeys="true" keyProperty="roleId">
-        insert into sys_role(
+        insert into ${prefix}sys_role(
         <if test="roleId != null and roleId != 0">role_id,</if>
         <if test="roleName != null and roleName != ''">role_name,</if>
         <if test="roleKey != null and roleKey != ''">role_key,</if>

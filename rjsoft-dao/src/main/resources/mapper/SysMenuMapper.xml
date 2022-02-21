@@ -39,12 +39,12 @@
                ifnull(perms, '') as perms,
                icon,
                create_time
-        from sys_menu
+        from ${prefix}sys_menu
     </sql>
 
     <select id="checkMenuByName" resultType="com.rongji.rjsoft.entity.system.SysMenu">
         select menu_id
-        from sys_menu
+        from ${prefix}sys_menu
         where menu_name = #{params.menuName}
           and parent_id = #{params.parentId} limit 1
     </select>
@@ -65,10 +65,10 @@
     <select id="selectMenuListByUserId" resultType="com.rongji.rjsoft.vo.system.menu.SysMenuInfoVo">
         select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.visible, m.status,
         ifnull(m.perms,'') as perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time
-        from sys_menu m
-        left join sys_role_menu rm on m.menu_id = rm.menu_id
-        left join sys_user_role ur on rm.role_id = ur.role_id
-        left join sys_role ro on ur.role_id = ro.role_id
+        from ${prefix}sys_menu m
+        left join ${prefix}sys_role_menu rm on m.menu_id = rm.menu_id
+        left join ${prefix}sys_user_role ur on rm.role_id = ur.role_id
+        left join ${prefix}sys_role ro on ur.role_id = ro.role_id
         where ur.user_id = #{params.userId}
         <if test="params.menuName != null and params.menuName != ''">
             AND menu_name like concat('%', #{params.menuName}, '%')
@@ -88,10 +88,10 @@
 
     <select id="getMenuPermsByUserId" parameterType="long" resultType="String">
         select distinct t1.perms
-        from sys_menu as t1
-                 left join sys_role_menu as t2 on t1.menu_id = t2.menu_id
-                 left join sys_user_role as t3 on t2.role_id = t3.role_id
-                 left join sys_role as t4 on t4.role_id = t3.role_id
+        from ${prefix}sys_menu as t1
+                 left join ${prefix}sys_role_menu as t2 on t1.menu_id = t2.menu_id
+                 left join ${prefix}sys_user_role as t3 on t2.role_id = t3.role_id
+                 left join ${prefix}sys_role as t4 on t4.role_id = t3.role_id
         where t1.status = 0
           and t4.status = 0
           and t3.user_id = #{userId}
@@ -112,7 +112,7 @@
                         m.icon,
                         m.order_num,
                         m.create_time
-        from sys_menu m
+        from ${prefix}sys_menu m
         where m.menu_type in ('M', 'C')
           and m.status = 0
         order by m.parent_id, m.order_num
@@ -133,11 +133,11 @@
                         m.icon,
                         m.order_num,
                         m.create_time
-        from sys_menu m
-                 left join sys_role_menu rm on m.menu_id = rm.menu_id
-                 left join sys_user_role ur on rm.role_id = ur.role_id
-                 left join sys_role ro on ur.role_id = ro.role_id
-                 left join sys_user u on ur.user_id = u.user_id
+        from ${prefix}sys_menu m
+                 left join ${prefix}sys_role_menu rm on m.menu_id = rm.menu_id
+                 left join ${prefix}sys_user_role ur on rm.role_id = ur.role_id
+                 left join ${prefix}sys_role ro on ur.role_id = ro.role_id
+                 left join ${prefix}sys_user u on ur.user_id = u.user_id
         where u.user_id = #{userId}
           and m.menu_type in ('M', 'C')
           and m.status = 0
@@ -147,7 +147,7 @@
 
     <select id="selectAllMenu" resultType="com.rongji.rjsoft.vo.system.menu.MenuTreeVo">
         select menu_id, menu_name, parent_id
-        from sys_menu
+        from ${prefix}sys_menu
         where menu_type in ('M', 'C')
           and status = 0
         order by parent_id, order_num

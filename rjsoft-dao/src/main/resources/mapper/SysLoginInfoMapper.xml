@@ -15,7 +15,7 @@
     </resultMap>
 
     <select id="getPages" resultType="com.rongji.rjsoft.vo.monitor.login.LoginInfoVo">
-        select user_name, ip, browser, os, status, msg, login_time from sys_login_info
+        select user_name, ip, browser, os, status, msg, login_time from ${prefix}sys_login_info
         <where>
             <if test="null!= param.userName and param.userName != ''">
                 user_name like concat ('%', #{param.userName}, '%')

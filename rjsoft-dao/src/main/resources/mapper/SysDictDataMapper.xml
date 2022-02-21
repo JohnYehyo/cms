@@ -26,7 +26,7 @@
         status,
         create_time,
         remark
-        from sys_dict_data
+        from ${prefix}sys_dict_data
         <where>
             <if test="param.dictLabel != null and param.dictLabel != ''">
                 dict_label = #{param.dictLabel}
@@ -41,7 +41,7 @@
     </select>
 
     <select id="listOfDict" resultType="com.rongji.rjsoft.vo.system.dict.DictDataVo">
-        select dict_code, dict_label, dict_value, dict_type from sys_dict_data
+        select dict_code, dict_label, dict_value, dict_type from ${prefix}sys_dict_data
     </select>
 
 </mapper>

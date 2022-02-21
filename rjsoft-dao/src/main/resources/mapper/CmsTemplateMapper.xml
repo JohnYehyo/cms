@@ -10,18 +10,20 @@
         <result column="create_time" property="createTime" />
         <result column="update_by" property="updateBy" />
         <result column="update_time" property="updateTime" />
+        <result column="type" property="type" />
     </resultMap>
 
     <select id="getList" parameterType="com.rongji.rjsoft.query.content.CmsTemplateQuery" resultType="com.rongji.rjsoft.vo.content.CmsTemplateVo">
         select
         t1.template_id as templateId,
         t1.template_name as templateName,
+        t1.type,
         t2.file_url,
         t2.file_Name,
         t2.file_type
         from
-        cms_template as t1
-        inner join sys_common_file as t2 on
+        ${prefix}cms_template as t1
+        inner join ${prefix}sys_common_file as t2 on
         t1.template_id = t2.table_id
         <where>
             <if test="null != templateName and templateName != ''">
@@ -35,8 +37,8 @@
             t1.template_id,
             t1.template_name
         from
-            cms_template as t1
-                inner join cms_column as t2 on
+            ${prefix}cms_template as t1
+                inner join ${prefix}cms_column as t2 on
                 t1.template_id = t2.template_id
         where t2.column_id = #{columnId}
     </select>

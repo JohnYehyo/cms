@@ -28,8 +28,8 @@
     <select id="listOfUser" resultType="com.rongji.rjsoft.vo.system.user.SysUserVo">
         select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.password, u.gender,
         u.status, u.del_flag, u.create_by, u.create_time, u.remark, d.dept_name, d.leader from
-        sys_user u
-        left join sys_dept d on u.dept_id = d.dept_id
+        ${prefix}sys_user u
+        left join ${prefix}sys_dept d on u.dept_id = d.dept_id
         where u.del_flag = 0
         <choose>
             <when test="null != params.beginTime and null != params.endTime">
@@ -68,24 +68,24 @@
 
     <select id="checkUserByUserName" resultType="Integer">
         select count(*)
-        from sys_user
+        from ${prefix}sys_user
         where user_name = #{userName} limit 1
     </select>
 
     <select id="checkUserByPhone" resultMap="BaseResultMap">
         select user_id, phonenumber
-        from sys_user
+        from ${prefix}sys_user
         where phonenumber = #{phonenumber} limit 1
     </select>
 
     <select id="checkUserByEmail" resultMap="BaseResultMap">
         select user_id, email
-        from sys_user
+        from ${prefix}sys_user
         where email = #{email} limit 1
     </select>
 
     <update id="batchUpdateDeleteMarks" parameterType="Long">
-        update sys_user set del_flag = 2 where user_id in
+        update ${prefix}sys_user set del_flag = 2 where user_id in
         <foreach collection="list" item="userId" index="index" open="(" separator="," close=")">
             #{userId}
         </foreach>
@@ -93,7 +93,7 @@
 
     <insert id="saveUser" parameterType="com.rongji.rjsoft.entity.system.SysUser" useGeneratedKeys="true"
             keyProperty="userId">
-        insert into sys_user(
+        insert into ${prefix}sys_user(
         <if test="userId != null and userId != 0">user_id,</if>
         <if test="deptId != null and deptId != 0">dept_id,</if>
         <if test="userName != null and userName != ''">user_name,</if>
@@ -125,7 +125,7 @@
     </insert>
 
     <update id="updateUserById" parameterType="com.rongji.rjsoft.entity.system.SysUser">
-        update sys_user
+        update ${prefix}sys_user
         <set>
             <if test="nickName != null and nickName != ''">nick_name = #{nickName},</if>
             <if test="email != null ">email = #{email},</if>
@@ -139,7 +139,7 @@
     </update>
 
     <update id="updatePassword" parameterType="com.rongji.rjsoft.entity.system.SysUser">
-        update sys_user
+        update ${prefix}sys_user
         <set>
             password = #{password},
             update_by = #{updateBy},

@@ -9,7 +9,7 @@
     </resultMap>
 
     <insert id="batchUserRole">
-        insert into sys_user_role (user_id, role_id) values
+        insert into ${prefix}sys_user_role (user_id, role_id) values
         <foreach collection="list" index="index" item="item" separator=",">
             (#{item.userId}, #{item.roleId})
         </foreach>
@@ -17,7 +17,7 @@
 
     <select id="getRolesByUserId" parameterType="long" resultType="integer">
         select role_id
-        from sys_user_role
+        from ${prefix}sys_user_role
         where user_id = #{userId}
     </select>
 

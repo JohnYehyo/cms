@@ -9,14 +9,14 @@
     </resultMap>
 
     <insert id="batchInsert">
-        insert into cms_column_dept (column_id, dept_id) values
+        insert into ${prefix}cms_column_dept (column_id, dept_id) values
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.columnId}, #{item.deptId})
         </foreach>
     </insert>
 
     <delete id="deleteBatch">
-        delete from cms_column_dept where column_id in
+        delete from ${prefix}cms_column_dept where column_id in
         <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
@@ -29,12 +29,12 @@
         t3.dept_name as deptName,
         t4.site_name
         from
-        cms_column_dept as t1
-        left join cms_column as t2 on
+        ${prefix}cms_column_dept as t1
+        left join ${prefix}cms_column as t2 on
         t1.column_id = t2.column_id
-        left join sys_dept as t3 on
+        left join ${prefix}sys_dept as t3 on
         t1.dept_id = t3.dept_id
-        left join cms_site as t4 on
+        left join ${prefix}cms_site as t4 on
         t2.site_id = t4.site_id
         <where>
             t1.dept_id = #{param.deptId}
@@ -52,10 +52,10 @@
         t3.site_name as siteName,
         t3.site_id as siteId
         from
-        cms_column_dept as t1
-        left join cms_column as t2 on
+        ${prefix}cms_column_dept as t1
+        left join ${prefix}cms_column as t2 on
         t1.column_id = t2.column_id
-        left join cms_site as t3 on
+        left join ${prefix}cms_site as t3 on
         t3.site_id = t2.site_id
         <where>
             <if test="null != param1.columnId">

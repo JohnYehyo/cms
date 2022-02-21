@@ -23,7 +23,7 @@
 
     <select id="getPage" resultType="com.rongji.rjsoft.vo.content.CmsSiteVo">
         select site_id, site_name, description, parent_id, site_url, order_num, site_file, del_flag, dept_id
-        from cms_site
+        from ${prefix}cms_site
         <where>
             <if test="param.siteId != null">
                 site_id = #{param.siteId}
@@ -35,14 +35,20 @@
         order by order_num, create_by desc
     </select>
 
-    <select id="selectChildrenBySiteId" resultMap="BaseResultMap">
+    <select id="selectChildrenBySiteId" resultMap="BaseResultMap" databaseId="mysql">
         select site_id, parent_id, ancestors
-        from cms_site
+        from ${prefix}cms_site
         where find_in_set(#{siteId}, ancestors)
     </select>
 
+    <select id="selectChildrenBySiteId" resultMap="BaseResultMap" databaseId="dm">
+        select site_id, parent_id, ancestors
+        from ${prefix}cms_site
+        where instr(','||ancestors||',', ','||#{siteId}||',')
+    </select>
+
     <update id="batchUpdateChildreAncestors">
-        update cms_site set ancestors =
+        update ${prefix}cms_site set ancestors =
         <foreach collection="list" item="item" index="index" separator=" " open="case site_id" close="end">
             when #{item.siteId} then #{item.ancestors}
         </foreach>
@@ -53,17 +59,24 @@
     </update>
 
     <update id="deleteSites">
-        update cms_site set del_flag = 1
+        update ${prefix}cms_site set del_flag = 1
         where site_id in
         <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
             #{item}
         </foreach>
     </update>
 
-    <select id="selectAllTree" resultType="com.rongji.rjsoft.vo.content.CmsSiteAllTreeVo">
+    <select id="selectAllTree" resultType="com.rongji.rjsoft.vo.content.CmsSiteAllTreeVo" databaseId="mysql">
         select site_id, site_name, description, parent_id
-        from cms_site
+        from ${prefix}cms_site
         where find_in_set(#{siteId}, ancestors)
+        order by parent_id
+    </select>
+
+    <select id="selectAllTree" resultType="com.rongji.rjsoft.vo.content.CmsSiteAllTreeVo" databaseId="dm">
+        select site_id, site_name, description, parent_id
+        from ${prefix}cms_site
+        where instr(','||ancestors||',',','||#{siteId}||',')
         order by parent_id
     </select>
 
@@ -74,8 +87,8 @@
             t2.site_name,
             t2.parent_id
         from
-            cms_site_column as t1
-                inner join cms_site as t2 on t1.site_id = t2.site_id
+            ${prefix}cms_site_column as t1
+                inner join ${prefix}cms_site as t2 on t1.site_id = t2.site_id
         where t1.column_id = #{columnId}
     </select>
 

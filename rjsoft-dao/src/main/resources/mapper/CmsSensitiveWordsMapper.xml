@@ -16,7 +16,7 @@
     </resultMap>
 
     <update id="deleteWords">
-        update cms_sensitive_words set del_flag = 1 where word_id in
+        update ${prefix}cms_sensitive_words set del_flag = 1 where word_id in
         <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
@@ -24,7 +24,7 @@
 
     <select id="getPages" resultType="com.rongji.rjsoft.vo.content.CmsSensitiveWordsVo">
         select word_id, word, start_time, end_time, del_flag
-        from cms_sensitive_words
+        from ${prefix}cms_sensitive_words
         <where>
             <if test="null != param.startTime">
                 start_time &gt;= #{param.startTime}
@@ -39,7 +39,7 @@
     </select>
 
     <insert id="batchSaveWords">
-        insert into cms_sensitive_words (word, create_by, create_time) values
+        insert into ${prefix}cms_sensitive_words (word, create_by, create_time) values
         <foreach collection="array" item="item" index="index" separator=",">
             (#{item}, 'admin', now())
         </foreach>
