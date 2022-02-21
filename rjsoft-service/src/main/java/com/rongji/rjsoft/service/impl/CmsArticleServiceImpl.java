@@ -378,7 +378,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         Long deptId = SecurityUtils.getLoginUser().getSysDept().getDeptId();
         List<Long> deptIds = getOwnDepts();
 
-        IPage<CmsArticleVo> page = new Page<>();
+        IPage<CmsArticleVo> page = new Page<>(cmsArticleQuery.getCurrent(), cmsArticleQuery.getPageSize());
         Set<String> roles = SecurityUtils.getLoginUser().getRoles();
         if (null != roles && roles.size() == 1 && roles.contains(Constants.ARTICLE_AUDIT_ADMIN)) {
             if (null != cmsArticleQuery.getState() && cmsArticleQuery.getState().equals(CmsArticleStateEnum.DRAFT.getState())) {

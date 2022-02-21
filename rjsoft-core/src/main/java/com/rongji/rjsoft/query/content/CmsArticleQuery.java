@@ -1,5 +1,6 @@
 package com.rongji.rjsoft.query.content;
 
+import com.rongji.rjsoft.query.common.PageQuery;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -11,7 +12,7 @@ import javax.validation.constraints.NotEmpty;
  * @create: 2021-09-22 15:01:12
  */
 @Data
-public class CmsArticleQuery {
+public class CmsArticleQuery extends PageQuery {
 
     /**
      * 文章标题
