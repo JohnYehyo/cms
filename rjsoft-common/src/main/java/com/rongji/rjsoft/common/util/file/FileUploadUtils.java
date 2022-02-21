@@ -2,6 +2,7 @@ package com.rongji.rjsoft.common.util.file;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.UUID;
+import cn.hutool.core.util.ZipUtil;
 import com.rongji.rjsoft.common.config.FileConfig;
 import com.rongji.rjsoft.common.util.file.entity.FileVo;
 import com.rongji.rjsoft.common.util.file.enums.FileTypeEnum;
@@ -68,7 +69,7 @@ public class FileUploadUtils {
      */
     public static final FileVo upload(String baseDir, MultipartFile file) throws IOException {
         String originalFilename = file.getOriginalFilename();
-        if(StringUtils.isEmpty(originalFilename)){
+        if (StringUtils.isEmpty(originalFilename)) {
             throw new BusinessException(ResponseEnum.FILE_UPLOAD_ERROR);
         }
         int fileNamelength = originalFilename.length();
@@ -213,6 +214,7 @@ public class FileUploadUtils {
 
     /**
      * 删除文件
+     *
      * @param filePath 文件路径
      * @return 删除结果
      */
@@ -224,4 +226,33 @@ public class FileUploadUtils {
         return false;
     }
 
+    /**
+     * ZIP文件解压上传
+     *
+     * @param baseDir 相对应用的基目录
+     * @param file    上传的文件
+     * @return 文件名称
+     * @throws IOException
+     */
+    public static final FileVo uploadZip(String baseDir, MultipartFile file) throws IOException {
+        judgeFile(file);
+        String fileName = extractFilename(file);
+        String originFileName = removeSuffix(file.getOriginalFilename());
+        File unzip = ZipUtil.unzip(file.getInputStream(), new File(baseDir), null);
+        String pathFileName = removeSuffix(getPathFileName(baseDir, fileName));
+        return new FileVo(originFileName, pathFileName);
+    }
+
+    /**
+     * 移除文件后缀名
+     * @param content 文件名
+     * @return 文件名
+     */
+    private static String removeSuffix(String content) {
+        int index = content.lastIndexOf(".");
+        if (index >= 0) {
+            return content.substring(0, index);
+        }
+        return content;
+    }
 }
