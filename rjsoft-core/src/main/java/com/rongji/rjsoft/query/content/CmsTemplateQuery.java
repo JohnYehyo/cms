@@ -17,4 +17,10 @@ public class CmsTemplateQuery extends PageQuery {
     @ApiModelProperty(value = "模板名称")
     private String templateName;
 
+    @ApiModelProperty(value = "模板类型")
+    private String type;
+
+    @ApiModelProperty(value = "附件业务分类")
+    private String businessType;
+
 }

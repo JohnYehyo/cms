@@ -71,10 +71,21 @@ public class CmsSiteAo {
     private Long deptId;
 
     /**
-     * 模板
+     * 站点模板id
      */
-    @ApiModelProperty(value = "模板", required = true)
-    @NotNull(message = "模板不能为空")
-    private Long templateId;
+    @ApiModelProperty(value = "站点模板")
+    private Long siteTemplate;
+
+    /**
+     * 列表模板id
+     */
+    @ApiModelProperty(value = "列表模板")
+    private Long listTemplate;
+
+    /**
+     * 文章模板id
+     */
+    @ApiModelProperty(value = "文章模板")
+    private Long articleTemplate;
 
 }

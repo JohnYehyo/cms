@@ -1,7 +1,9 @@
 package com.rongji.rjsoft.vo.content;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rongji.rjsoft.vo.common.FileVo;
 import io.swagger.annotations.ApiModel;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -31,28 +33,25 @@ public class CmsTemplateVo implements Serializable {
     private String templateImg;
 
     /**
-     * 栏目模板
+     * 模板
      */
-    private FileVo templateColumn;
-
-    /**
-     * 文章模板
-     */
-    private FileVo templateArticle;
+    private FileVo template;
 
     /**
      * 模板类型
      */
-    private int fileType;
+    private int type;
 
     /**
      * 附件路径
      */
+    @JsonIgnore
     private String fileUrl;
 
     /**
      * 附件名字
      */
+    @JsonIgnore
     private String fileName;
 
 }

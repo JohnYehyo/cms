@@ -47,34 +47,24 @@ public class CmsTemplateAo {
     private String templateName;
 
     /**
-     * 模板缩略图
+     * 模板
      */
-    @ApiModelProperty(value = "模板缩略图", required = true)
+    @ApiModelProperty(value = "模板", required = true)
     @NotNull(
             groups = {CmsTemplateAo.add.class, CmsTemplateAo.update.class},
             message = "模板缩略图不能为空"
     )
-    private List<FileAo> templateImg;
+    private FileAo template;
+
 
     /**
-     * 栏目模板
+     * 类型 0 站点 1 列表 2 文章
      */
-    @ApiModelProperty(value = "栏目模板", required = true)
+    @ApiModelProperty(value = "模板类型", required = true, notes = "0 站点 1 列表 2 文章")
     @NotNull(
             groups = {CmsTemplateAo.add.class, CmsTemplateAo.update.class},
-            message = "栏目模板不能为空"
+            message = "模板类型不能为空"
     )
-    private FileAo columnTemplate;
-
-    /**
-     * 文章模板
-     */
-    @ApiModelProperty(value = "文章模板", required = true)
-    @NotNull(
-            groups = {CmsTemplateAo.add.class, CmsTemplateAo.update.class},
-            message = "文章模板不能为空"
-    )
-    private FileAo articleTemplate;
-
+    private int type;
 
 }

@@ -78,6 +78,9 @@ file:
   maxSize: 100
   avatarMaxSize: 5
   localUrl: http://127.0.0.1:8088
+  static:
+    #    folder: D://study/frame/cms/html/path
+    folder: D://other//file
 # swagger开关
 swagger:
   enable: false

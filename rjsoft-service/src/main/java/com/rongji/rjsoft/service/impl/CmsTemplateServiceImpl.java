@@ -1,11 +1,15 @@
 package com.rongji.rjsoft.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.ao.content.CmsTemplateAo;
+import com.rongji.rjsoft.common.config.FileConfig;
 import com.rongji.rjsoft.entity.content.CmsColumn;
+import com.rongji.rjsoft.entity.content.CmsFinalArticle;
+import com.rongji.rjsoft.entity.content.CmsSite;
 import com.rongji.rjsoft.entity.content.CmsTemplate;
 import com.rongji.rjsoft.entity.system.SysCommonFile;
 import com.rongji.rjsoft.enums.ResponseEnum;
@@ -13,6 +17,8 @@ import com.rongji.rjsoft.enums.TableFileTypeEnum;
 import com.rongji.rjsoft.enums.TableTypeEnum;
 import com.rongji.rjsoft.exception.BusinessException;
 import com.rongji.rjsoft.mapper.CmsColumnMapper;
+import com.rongji.rjsoft.mapper.CmsFinalArticleMapper;
+import com.rongji.rjsoft.mapper.CmsSiteMapper;
 import com.rongji.rjsoft.mapper.CmsTemplateMapper;
 import com.rongji.rjsoft.query.content.CmsTemplateListQuery;
 import com.rongji.rjsoft.query.content.CmsTemplateQuery;
@@ -25,6 +31,7 @@ import com.rongji.rjsoft.vo.content.CmsTemplateVo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +51,11 @@ public class CmsTemplateServiceImpl extends ServiceImpl<CmsTemplateMapper, CmsTe
 
     private final CmsTemplateMapper cmsTemplateMapper;
 
+    private final CmsSiteMapper siteMapper;
+
     private final CmsColumnMapper columnMapper;
+
+    private final CmsFinalArticleMapper finalArticleMapper;
 
     private final ISysCommonFileService sysCommonFileService;
 
@@ -76,23 +87,10 @@ public class CmsTemplateServiceImpl extends ServiceImpl<CmsTemplateMapper, CmsTe
         SysCommonFile sysCommonFile = new SysCommonFile();
         sysCommonFile.setTableId(cmsTemplate.getTemplateId());
         sysCommonFile.setTableType(TableTypeEnum.CMS_TEMPLATE.getValue());
-        //保存文章模板
-        sysCommonFile.setFileName(cmsTemplateAo.getArticleTemplate().getFileName());
-        sysCommonFile.setFileUrl(cmsTemplateAo.getArticleTemplate().getFileUrl());
-        sysCommonFile.setFileType(TableFileTypeEnum.TEMPLATE_HTML_ARTICLE.getCode());
+//        sysCommonFile.setFileType(TableFileTypeEnum.TEMPLATE_IMG.getCode());
+        sysCommonFile.setFileName(cmsTemplateAo.getTemplate().getFileName());
+        sysCommonFile.setFileUrl(cmsTemplateAo.getTemplate().getFileUrl());
         sysCommonFileService.save(sysCommonFile);
-        //保存栏目模板
-        sysCommonFile.setFileName(cmsTemplateAo.getColumnTemplate().getFileName());
-        sysCommonFile.setFileUrl(cmsTemplateAo.getColumnTemplate().getFileUrl());
-        sysCommonFile.setFileType(TableFileTypeEnum.TEMPLATE_HTML_COLUMN.getCode());
-        sysCommonFileService.save(sysCommonFile);
-        //保存缩略图
-        sysCommonFile.setFileType(TableFileTypeEnum.TEMPLATE_IMG.getCode());
-        cmsTemplateAo.getTemplateImg().forEach(k -> {
-            sysCommonFile.setFileName(k.getFileName());
-            sysCommonFile.setFileUrl(k.getFileUrl());
-            sysCommonFileService.save(sysCommonFile);
-        });
     }
 
     /**
@@ -135,14 +133,22 @@ public class CmsTemplateServiceImpl extends ServiceImpl<CmsTemplateMapper, CmsTe
      */
     @Override
     public boolean delete(Long templateId) {
-        LambdaQueryWrapper<CmsColumn> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(CmsColumn::getTemplateId, templateId).last(" limit 0, 1");
-        CmsColumn cmsColumn = columnMapper.selectOne(wrapper);
-        if (null != cmsColumn) {
+        LambdaQueryWrapper<CmsSite> wrapper1 = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<CmsColumn> wrapper2 = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<CmsFinalArticle> wrapper3 = new LambdaQueryWrapper<>();
+        wrapper1.eq(CmsSite::getSiteTemplate, templateId).or().eq(CmsSite::getListTemplate, templateId).or().eq(CmsSite::getArticleTemplate, templateId).last(" limit 0, 1");
+        wrapper2.eq(CmsColumn::getSiteTemplate, templateId).or().eq(CmsColumn::getListTemplate, templateId).or().eq(CmsColumn::getArticleTemplate, templateId).last(" limit 0, 1");
+        wrapper3.eq(CmsFinalArticle::getSiteTemplate, templateId).or().eq(CmsFinalArticle::getListTemplate, templateId).or().eq(CmsFinalArticle::getArticleTemplate, templateId).last(" limit 0, 1");
+        CmsSite cmsSite = siteMapper.selectOne(wrapper1);
+        CmsColumn cmsColumn = columnMapper.selectOne(wrapper2);
+        CmsFinalArticle cmsFinalArticle = finalArticleMapper.selectOne(wrapper3);
+        if (null != cmsSite || null != cmsColumn || null != cmsFinalArticle) {
             throw new BusinessException(ResponseEnum.TAKE_UP);
         }
         deleteFiles(templateId);
-        return cmsTemplateMapper.deleteById(templateId) > 0;
+        boolean result = cmsTemplateMapper.deleteById(templateId) > 0;
+        //todo 删除附件
+        return result;
     }
 
     /**
@@ -153,10 +159,12 @@ public class CmsTemplateServiceImpl extends ServiceImpl<CmsTemplateMapper, CmsTe
      */
     @Override
     public CommonPage<CmsTemplateVo> getPage(CmsTemplateQuery cmsTemplateQuery) {
+        cmsTemplateQuery.setBusinessType(CmsTemplate.class.getSimpleName());
         List<CmsTemplateVo> list = cmsTemplateMapper.getList(cmsTemplateQuery);
         CommonPage<CmsTemplateVo> page = reorganization(list, cmsTemplateQuery.getCurrent(), cmsTemplateQuery.getPageSize());
         return page;
     }
+
 
     /**
      * 重组分页结果
@@ -167,42 +175,38 @@ public class CmsTemplateServiceImpl extends ServiceImpl<CmsTemplateMapper, CmsTe
      * @return
      */
     private CommonPage<CmsTemplateVo> reorganization(List<CmsTemplateVo> recordsTemp, int current, int pageSize) {
-        List<CmsTemplateVo> records = new ArrayList<>();
-        Map<String, List<CmsTemplateVo>> map = recordsTemp.stream().collect(Collectors.groupingBy(CmsTemplateVo::getTemplateId));
-        CmsTemplateVo cmsTemplateVo;
-        for (Map.Entry<String, List<CmsTemplateVo>> entry : map.entrySet()) {
-            cmsTemplateVo = new CmsTemplateVo();
-            String imgStr = "";
-            FileVo fileVo;
-            for (CmsTemplateVo cms : entry.getValue()) {
-                cmsTemplateVo.setTemplateId(cms.getTemplateId());
-                cmsTemplateVo.setTemplateName(cms.getTemplateName());
-                //缩略图
-                if (cms.getFileType() == TableFileTypeEnum.TEMPLATE_IMG.getCode()) {
-                    imgStr = imgStr + "," + cms.getFileUrl();
-                    continue;
-                }
-                //栏目模板
-                if (cms.getFileType() == TableFileTypeEnum.TEMPLATE_HTML_COLUMN.getCode()) {
-                    fileVo = new FileVo();
-                    fileVo.setFileUrl(cms.getFileUrl());
-                    fileVo.setFileName(cms.getFileName());
-                    cmsTemplateVo.setTemplateColumn(fileVo);
-                    continue;
-                }
-                //文章模板
-                if (cms.getFileType() == TableFileTypeEnum.TEMPLATE_HTML_ARTICLE.getCode()) {
-                    fileVo = new FileVo();
-                    fileVo.setFileUrl(cms.getFileUrl());
-                    fileVo.setFileName(cms.getFileName());
-                    cmsTemplateVo.setTemplateArticle(fileVo);
-                    continue;
-                }
-            }
-            cmsTemplateVo.setTemplateImg(imgStr.length() > 0 ? imgStr.substring(1) : imgStr);
-            records.add(cmsTemplateVo);
+        if (CollectionUtil.isEmpty(recordsTemp)) {
+            return null;
         }
-        return assemblyPage(current, pageSize, records);
+        for (CmsTemplateVo cms : recordsTemp) {
+            cms.setTemplateImg(cms.getFileUrl() + "/" + FileConfig.getSample());
+            FileVo fileVo;
+            //站点模板
+            if (cms.getType() == TableFileTypeEnum.TEMPLATE_SITE.getCode()) {
+                fileVo = new FileVo();
+                fileVo.setFileUrl(cms.getFileUrl() + "/" + FileConfig.getSiteTemplate());
+                fileVo.setFileName(cms.getFileName());
+                cms.setTemplate(fileVo);
+                continue;
+            }
+            //列表模板
+            if (cms.getType() == TableFileTypeEnum.TEMPLATE_COLUMN.getCode()) {
+                fileVo = new FileVo();
+                fileVo.setFileUrl(cms.getFileUrl() + "/" + FileConfig.getListTemplate());
+                fileVo.setFileName(cms.getFileName());
+                cms.setTemplate(fileVo);
+                continue;
+            }
+            //文章模板
+            if (cms.getType() == TableFileTypeEnum.TEMPLATE_ARTICLE.getCode()) {
+                fileVo = new FileVo();
+                fileVo.setFileUrl(cms.getFileUrl() + "/" + FileConfig.getArticleTemplate());
+                fileVo.setFileName(cms.getFileName());
+                cms.setTemplate(fileVo);
+                continue;
+            }
+        }
+        return assemblyPage(current, pageSize, recordsTemp);
     }
 
     /**
@@ -256,22 +260,15 @@ public class CmsTemplateServiceImpl extends ServiceImpl<CmsTemplateMapper, CmsTe
 
     private List<CmsTemplateListVo> reorganization(List<CmsTemplateVo> recordsTemp) {
         List<CmsTemplateListVo> records = new ArrayList<>();
-        Map<String, List<CmsTemplateVo>> map = recordsTemp.stream().collect(Collectors.groupingBy(CmsTemplateVo::getTemplateId));
+        if (CollectionUtil.isEmpty(recordsTemp)) {
+            return null;
+        }
         CmsTemplateListVo cmsTemplateListVo;
-        for (Map.Entry<String, List<CmsTemplateVo>> entry : map.entrySet()) {
+        for (CmsTemplateVo cms : recordsTemp) {
             cmsTemplateListVo = new CmsTemplateListVo();
-            String imgStr = "";
-            for (CmsTemplateVo cms : entry.getValue()) {
-                cmsTemplateListVo.setTemplateId(cms.getTemplateId());
-                cmsTemplateListVo.setTemplateName(cms.getTemplateName());
-                //缩略图
-                if (cms.getFileType() == TableFileTypeEnum.TEMPLATE_IMG.getCode()) {
-                    imgStr = imgStr + "," + cms.getFileUrl();
-                    continue;
-                }
-
-            }
-            cmsTemplateListVo.setTemplateImg(imgStr.length() > 0 ? imgStr.substring(1) : imgStr);
+            cmsTemplateListVo.setTemplateId(cms.getTemplateId());
+            cmsTemplateListVo.setTemplateName(cms.getTemplateName());
+            cmsTemplateListVo.setTemplateImg(cms.getFileUrl() + "/" + FileConfig.getSample());
             records.add(cmsTemplateListVo);
         }
         return records;

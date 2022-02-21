@@ -149,7 +149,7 @@ public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMappe
         List<CmsArticleContentVo> publishedList = new ArrayList<>();
         for (CmsArticleContentVo cmsArticleContentVo : articles) {
             cmsArticleContentVo.setSiteFile(siteMap.get(String.valueOf(cmsArticleContentVo.getSiteId())));
-            cmsArticleContentVo.setTemplateId((Long) columnMap.get(cmsArticleContentVo.getColumnId() + Constants.COLUMN_DICT_TEMPLATE));
+            cmsArticleContentVo.setTemplateId((Long) columnMap.get(cmsArticleContentVo.getColumnId() + Constants.ARTICLE_DICT_TEMPLATE));
             createArticle(cmsArticleContentVo, publishedList);
         }
         return publishedList;
@@ -226,7 +226,7 @@ public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMappe
         SysCommonFileQuery sysCommonFileQuery = new SysCommonFileQuery();
         sysCommonFileQuery.setTableId(article.getTemplateId());
         sysCommonFileQuery.setTableType(TableTypeEnum.CMS_TEMPLATE.getValue());
-        sysCommonFileQuery.setFileType(TableFileTypeEnum.TEMPLATE_HTML_ARTICLE.getCode());
+        sysCommonFileQuery.setFileType(TableFileTypeEnum.TEMPLATE_ARTICLE.getCode());
         List<SysCommonFileVo> files = sysCommonFileService.getFiles(sysCommonFileQuery);
         if(CollectionUtil.isEmpty(files)){
             throw new BusinessException(ResponseEnum.FAIL.getCode(), "系统未查询到该模板");

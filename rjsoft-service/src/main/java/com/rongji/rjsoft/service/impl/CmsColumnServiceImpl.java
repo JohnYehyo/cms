@@ -296,7 +296,9 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         SysCommonFileQuery query = new SysCommonFileQuery();
         if (null != cmsTemplate) {
             query.setTableId(cmsTemplate.getTemplateId());
-            cmsColumnDetailsVo.setTemplateId(cmsTemplate.getTemplateId());
+            cmsColumnDetailsVo.setSiteTemplate(cmsTemplate.getTemplateId());
+            cmsColumnDetailsVo.setListTemplate(cmsTemplate.getTemplateId());
+            cmsColumnDetailsVo.setArticleTemplate(cmsTemplate.getTemplateId());
         }
         query.setTableType(TableTypeEnum.CMS_TEMPLATE.getValue());
         List<SysCommonFileVo> files = sysCommonFileService.getFiles(query);
@@ -313,7 +315,9 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         wrapper.eq(CmsColumn::getDelFlag, DelFlagEnum.EXIST.getCode());
         List<CmsColumn> cmsColumns = cmsColumnMapper.selectList(wrapper);
         for (CmsColumn cmsColumn : cmsColumns) {
-            redisCache.setCacheMapValue(Constants.COLUMN_DICT, cmsColumn.getColumnId() + Constants.COLUMN_DICT_TEMPLATE, cmsColumn.getTemplateId());
+            redisCache.setCacheMapValue(Constants.COLUMN_DICT, cmsColumn.getColumnId() + Constants.SITE_DICT_TEMPLATE, cmsColumn.getSiteTemplate());
+            redisCache.setCacheMapValue(Constants.COLUMN_DICT, cmsColumn.getColumnId() + Constants.LIST_DICT_TEMPLATE, cmsColumn.getListTemplate());
+            redisCache.setCacheMapValue(Constants.COLUMN_DICT, cmsColumn.getColumnId() + Constants.ARTICLE_DICT_TEMPLATE, cmsColumn.getArticleTemplate());
         }
     }
 }

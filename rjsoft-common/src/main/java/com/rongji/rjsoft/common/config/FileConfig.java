@@ -38,6 +38,26 @@ public class FileConfig {
         FileConfig.folder = folder;
     }
 
+    @Value("${file.template.site}")
+    private void setSiteTemplate(String siteTemplate){
+        FileConfig.siteTemplate = siteTemplate;
+    }
+
+    @Value("${file.template.list}")
+    private void setListTemplate(String listTemplate){
+        FileConfig.listTemplate = listTemplate;
+    }
+
+    @Value("${file.template.article}")
+    private void setArticleTemplate(String articleTemplate){
+        FileConfig.articleTemplate = articleTemplate;
+    }
+
+    @Value("${file.template.sample}")
+    private void setSample(String sample){
+        FileConfig.sample = sample;
+    }
+
 
 
     /**
@@ -65,6 +85,26 @@ public class FileConfig {
      */
     private static String folder;
 
+    /**
+     * 站点模板
+     */
+    private static String siteTemplate;
+
+    /**
+     * 列表模板
+     */
+    private static String listTemplate;
+
+    /**
+     * 文章模板
+     */
+    private static String articleTemplate;
+
+    /**
+     * 缩略图
+     */
+    private static String sample;
+
     public static String getPath() {
         return path;
     }
@@ -83,5 +123,21 @@ public class FileConfig {
 
     public static String getFolder() {
         return folder;
+    }
+
+    public static String getSiteTemplate() {
+        return siteTemplate;
+    }
+
+    public static String getListTemplate() {
+        return listTemplate;
+    }
+
+    public static String getArticleTemplate() {
+        return articleTemplate;
+    }
+
+    public static String getSample() {
+        return sample;
     }
 }

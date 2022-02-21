@@ -78,9 +78,19 @@ public class CmsSite implements Serializable {
     private Long deptId;
 
     /**
-     * 模板id
+     * 站点模板id
      */
-    private Long templateId;
+    private Long siteTemplate;
+
+    /**
+     * 列表模板id
+     */
+    private Long listTemplate;
+
+    /**
+     * 文章模板id
+     */
+    private Long articleTemplate;
 
     /**
      * 创建者

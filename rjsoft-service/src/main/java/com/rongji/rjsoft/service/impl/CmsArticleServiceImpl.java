@@ -342,7 +342,11 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteArticle(CmsArticleDeleteAo[] list) {
-        return cmsFinalArticleMapper.deleteArticle(list) > 0;
+        boolean result = cmsFinalArticleMapper.deleteArticle(list) > 0;
+        if(result){
+            //删除附件
+        }
+        return result;
     }
 
     /**

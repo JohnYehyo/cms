@@ -10,12 +10,17 @@
         <result column="del_flag" property="delFlag"/>
         <result column="published" property="published"/>
         <result column="original" property="original"/>
+        <result column="site_template" property="siteTemplate"/>
+        <result column="list_template" property="listTemplate"/>
+        <result column="article_template" property="articleTemplate"/>
     </resultMap>
 
     <insert id="batchInsert">
-        insert into ${prefix}cms_final_article (site_id, column_id, article_id, original) values
+        insert into ${prefix}cms_final_article (site_id, column_id, article_id, original, site_template,
+                                                list_template, article_template) values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.siteId}, #{item.columnId}, #{item.articleId}, #{item.original})
+            (#{item.siteId}, #{item.columnId}, #{item.articleId}, #{item.original},
+             #{item.siteTemplate}, #{item.listTemplate}, #{item.articleTemplate})
         </foreach>
     </insert>
 

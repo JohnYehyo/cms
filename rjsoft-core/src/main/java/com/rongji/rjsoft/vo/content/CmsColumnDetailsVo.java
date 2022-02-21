@@ -19,6 +19,21 @@ public class CmsColumnDetailsVo {
     @ApiModelProperty(value = "附件信息")
     private List<SysCommonFileVo> files;
 
-    @ApiModelProperty(value = "模板id")
-    private Long templateId;
+    /**
+     * 站点模板id
+     */
+    @ApiModelProperty(value = "站点模板id")
+    private Long siteTemplate;
+
+    /**
+     * 列表模板id
+     */
+    @ApiModelProperty(value = "列表模板id")
+    private Long listTemplate;
+
+    /**
+     * 文章模板id
+     */
+    @ApiModelProperty(value = "文章模板id")
+    private Long articleTemplate;
 }

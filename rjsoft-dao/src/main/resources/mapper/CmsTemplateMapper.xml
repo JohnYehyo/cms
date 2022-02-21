@@ -6,11 +6,11 @@
     <resultMap id="BaseResultMap" type="com.rongji.rjsoft.entity.content.CmsTemplate">
         <id column="template_id" property="templateId" />
         <result column="template_name" property="templateName" />
+        <result column="type" property="type" />
         <result column="create_by" property="createBy" />
         <result column="create_time" property="createTime" />
         <result column="update_by" property="updateBy" />
         <result column="update_time" property="updateTime" />
-        <result column="type" property="type" />
     </resultMap>
 
     <select id="getList" parameterType="com.rongji.rjsoft.query.content.CmsTemplateQuery" resultType="com.rongji.rjsoft.vo.content.CmsTemplateVo">
@@ -19,13 +19,15 @@
         t1.template_name as templateName,
         t1.type,
         t2.file_url,
-        t2.file_Name,
-        t2.file_type
+        t2.file_Name
         from
         ${prefix}cms_template as t1
         inner join ${prefix}sys_common_file as t2 on
-        t1.template_id = t2.table_id
+        t1.template_id = t2.table_id and t2.table_type = #{businessType}
         <where>
+            <if test="null != type">
+                and t1.type = #{type}
+            </if>
             <if test="null != templateName and templateName != ''">
               and t1.template_name like concat('%', #{templateName}, '%')
             </if>

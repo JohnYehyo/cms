@@ -24,4 +24,22 @@ public class CmsSiteDetailsVo extends CmsSiteVo implements Serializable {
     @ApiModelProperty(value = "栏目id")
     private List<Long> columnIds;
 
+    /**
+     * 站点模板id
+     */
+    @ApiModelProperty(value = "站点模板id")
+    private Long siteTemplate;
+
+    /**
+     * 列表模板id
+     */
+    @ApiModelProperty(value = "列表模板id")
+    private Long listTemplate;
+
+    /**
+     * 文章模板id
+     */
+    @ApiModelProperty(value = "文章模板id")
+    private Long articleTemplate;
+
 }

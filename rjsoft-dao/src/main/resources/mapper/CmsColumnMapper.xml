@@ -10,7 +10,9 @@
         <result column="ancestors" property="ancestors"/>
         <result column="image_url" property="imageUrl"/>
         <result column="del_flag" property="delFlag"/>
-        <result column="template_id" property="templateId"/>
+        <result column="site_template" property="siteTemplate"/>
+        <result column="list_template" property="listTemplate"/>
+        <result column="article_template" property="articleTemplate"/>
         <result column="order_num" property="orderNum"/>
         <result column="site_id" property="siteId"/>
         <result column="create_by" property="createBy"/>

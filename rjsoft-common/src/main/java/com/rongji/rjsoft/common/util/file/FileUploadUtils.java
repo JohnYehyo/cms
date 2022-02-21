@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.ZipUtil;
 import com.rongji.rjsoft.common.config.FileConfig;
+import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.util.file.entity.FileVo;
 import com.rongji.rjsoft.common.util.file.enums.FileTypeEnum;
 import com.rongji.rjsoft.constants.Constants;
@@ -238,8 +239,9 @@ public class FileUploadUtils {
         judgeFile(file);
         String fileName = extractFilename(file);
         String originFileName = removeSuffix(file.getOriginalFilename());
-        File unzip = ZipUtil.unzip(file.getInputStream(), new File(baseDir), null);
-        String pathFileName = removeSuffix(getPathFileName(baseDir, fileName));
+        String target = baseDir + "/" + fileName;
+        File unzip = ZipUtil.unzip(file.getInputStream(), new File(removeSuffix(target)), null);
+        String pathFileName = removeSuffix(getPathFileName(baseDir, fileName)) + "/" + originFileName;
         return new FileVo(originFileName, pathFileName);
     }
 
@@ -255,4 +257,5 @@ public class FileUploadUtils {
         }
         return content;
     }
+
 }

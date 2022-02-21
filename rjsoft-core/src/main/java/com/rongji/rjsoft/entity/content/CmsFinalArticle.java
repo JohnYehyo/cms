@@ -59,4 +59,19 @@ public class CmsFinalArticle implements Serializable {
      */
     private int original;
 
+    /**
+     * 站点模板id
+     */
+    private Long siteTemplate;
+
+    /**
+     * 列表模板id
+     */
+    private Long listTemplate;
+
+    /**
+     * 文章模板id
+     */
+    private Long articleTemplate;
+
 }

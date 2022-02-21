@@ -125,9 +125,19 @@ public class Constants {
     public static final String COLUMN_DICT = "column:dict";
 
     /**
-     * 栏目缓存信息-模板后缀
+     * 站点缓存信息-模板后缀
      */
-    public static final String COLUMN_DICT_TEMPLATE = "_template";
+    public static final String SITE_DICT_TEMPLATE = "_site_template";
+
+    /**
+     * 列表缓存信息-模板后缀
+     */
+    public static final String LIST_DICT_TEMPLATE = "_list_template";
+
+    /**
+     * 文章缓存信息-模板后缀
+     */
+    public static final String ARTICLE_DICT_TEMPLATE = "_article_template";
 
     /**
      * SSO token key 前缀

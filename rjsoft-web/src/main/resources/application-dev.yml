@@ -78,9 +78,22 @@ file:
   maxSize: 100
   avatarMaxSize: 5
   localUrl: http://127.0.0.1:8088
+  static:
+    #    folder: D://study/frame/cms/html/path
+    folder: D://other//file
+  template:
+    #站点模板固定名
+    site: index.html
+    #列表模板固定名
+    list: list.html
+    #文章模板固定名
+    article: article.html
+    #缩略图
+    sample: sample.png
+
 # swagger开关
 swagger:
-  enable: false
+  enable: true
 
 
 mybatis-plus:

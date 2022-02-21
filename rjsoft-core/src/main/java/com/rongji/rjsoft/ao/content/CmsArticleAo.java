@@ -174,4 +174,22 @@ public class CmsArticleAo {
      */
     @ApiModelProperty(value = "发布方式")
     private int publishType;
+
+    /**
+     * 站点模板id
+     */
+    @ApiModelProperty(value = "站点模板")
+    private Long siteTemplate;
+
+    /**
+     * 列表模板id
+     */
+    @ApiModelProperty(value = "列表模板")
+    private Long listTemplate;
+
+    /**
+     * 文章模板id
+     */
+    @ApiModelProperty(value = "文章模板")
+    private Long articleTemplate;
 }

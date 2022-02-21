@@ -12,9 +12,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum TableFileTypeEnum {
 
-    TEMPLATE_IMG(0, "模板图片"),
-    TEMPLATE_HTML_ARTICLE(1, "文章模板文件"),
-    TEMPLATE_HTML_COLUMN(2, "栏目模板文件");
+    TEMPLATE_SITE(0, "站点模板"),
+    TEMPLATE_COLUMN(1, "列表模板"),
+    TEMPLATE_ARTICLE(2, "文章模板");
 
 
     private final int code;

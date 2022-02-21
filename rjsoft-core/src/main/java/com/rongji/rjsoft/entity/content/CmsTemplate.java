@@ -37,6 +37,11 @@ public class CmsTemplate implements Serializable {
     private String templateName;
 
     /**
+     * 类型 0 站点 1 列表 2 文章
+     */
+    private int type;
+
+    /**
      * 创建者
      */
     @TableField(fill = FieldFill.INSERT)

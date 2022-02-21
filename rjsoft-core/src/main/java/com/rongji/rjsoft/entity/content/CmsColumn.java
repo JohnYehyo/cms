@@ -58,9 +58,19 @@ public class CmsColumn implements Serializable {
     private Integer delFlag;
 
     /**
-     * 模板id
+     * 站点模板id
      */
-    private Long templateId;
+    private Long siteTemplate;
+
+    /**
+     * 列表模板id
+     */
+    private Long listTemplate;
+
+    /**
+     * 文章模板id
+     */
+    private Long articleTemplate;
 
     /**
      * 排序
@@ -71,6 +81,11 @@ public class CmsColumn implements Serializable {
      * 站点id
      */
     private Long siteId;
+
+    /**
+     * 栏目地址
+     */
+    private String columnUrl;
 
     /**
      * 创建者
