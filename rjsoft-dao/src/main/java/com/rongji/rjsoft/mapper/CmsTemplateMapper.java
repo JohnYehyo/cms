@@ -20,9 +20,9 @@ import java.util.List;
 public interface CmsTemplateMapper extends BaseMapper<CmsTemplate> {
 
     /**
-     * 模板分页查询
+     * 模板列表查询
      * @param cmsTemplateQuery 查询对象
-     * @return 模板分页查询结果
+     * @return 模板列表查询结果
      */
     List<CmsTemplateVo> getList(CmsTemplateQuery cmsTemplateQuery);
 
@@ -32,4 +32,5 @@ public interface CmsTemplateMapper extends BaseMapper<CmsTemplate> {
      * @return 模板信息
      */
     CmsTemplate getTemplateByColumnId(Long columnId);
+
 }

@@ -31,11 +31,8 @@ import com.rongji.rjsoft.vo.content.CmsTemplateVo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -254,6 +251,7 @@ public class CmsTemplateServiceImpl extends ServiceImpl<CmsTemplateMapper, CmsTe
     public List<CmsTemplateListVo> listOfTemplate(CmsTemplateListQuery cmsTemplateListQuery) {
         CmsTemplateQuery cmsTemplateQuery = new CmsTemplateQuery();
         BeanUtil.copyProperties(cmsTemplateListQuery, cmsTemplateQuery);
+        cmsTemplateQuery.setBusinessType(CmsTemplate.class.getSimpleName());
         List<CmsTemplateVo> list = cmsTemplateMapper.getList(cmsTemplateQuery);
         return reorganization(list);
     }
