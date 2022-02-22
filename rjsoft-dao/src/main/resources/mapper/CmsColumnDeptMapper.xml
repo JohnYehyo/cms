@@ -22,6 +22,13 @@
         </foreach>
     </delete>
 
+    <delete id="deleteRelation">
+        delete from ${prefix}cms_column_dept where column_id = #{columnId} and dept_id in
+        <foreach collection="deptIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
     <select id="getPage" resultType="com.rongji.rjsoft.vo.content.CmsColumnDeptVo">
         select
         t1.column_id as columnId,
@@ -71,6 +78,10 @@
                 </foreach>
             </if>
         </where>
+    </select>
+
+    <select id="getPageByColumnId" resultType="com.rongji.rjsoft.vo.content.CmsSiteColumnDeptVo">
+        select t1.dept_id as deptId, t2.dept_name as deptName from ${prefix}cms_column_dept as t1 inner join ${prefix}sys_dept as t2 on t1.dept_id = t2.dept_id where t1.column_id = #{columnId}
     </select>
 
 </mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rongji.rjsoft.mapper.CmsSiteDeptMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.rongji.rjsoft.entity.content.CmsSiteDept">
+        <id column="site_id" property="siteId" />
+        <result column="dept_id" property="deptId" />
+    </resultMap>
+
+    <insert id="batchInsert">
+        insert into ${prefix}cms_site_dept (site_id, dept_id) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.siteId}, #{item.deptId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteBatch">
+        delete from ${prefix}cms_site_dept where site_id in
+        <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteRelation">
+        delete from ${prefix}cms_site_dept where site_id = #{siteId} and dept_id in
+        <foreach collection="deptIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="getPageBySiteId" resultType="com.rongji.rjsoft.vo.content.CmsSiteColumnDeptVo">
+        select t1.dept_id as deptId, t2.dept_name as deptName from ${prefix}cms_site_dept as t1 inner join ${prefix}sys_dept as t2 on t1.dept_id = t2.dept_id where t1.site_id = #{siteId}
+    </select>
+
+
+</mapper>

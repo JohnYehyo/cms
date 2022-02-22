@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.rongji.rjsoft.entity.content.CmsColumnDept;
 import com.rongji.rjsoft.query.content.CmsColumnDeptQuery;
 import com.rongji.rjsoft.vo.content.CmsColumnDeptVo;
+import com.rongji.rjsoft.vo.content.CmsSiteColumnDeptVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -22,8 +23,8 @@ public interface CmsColumnDeptMapper extends BaseMapper<CmsColumnDept> {
     /**
      * 删除栏目部门关系
      *
-     * @param columnIds
-     * @return
+     * @param columnIds 栏目id
+     * @return 删除结果
      */
     int deleteBatch(Long[] columnIds);
 
@@ -38,6 +39,7 @@ public interface CmsColumnDeptMapper extends BaseMapper<CmsColumnDept> {
 
     /**
      * 批量插入栏目部门关系
+     *
      * @param list 栏目部门关系
      * @return 插入结果
      */
@@ -45,10 +47,28 @@ public interface CmsColumnDeptMapper extends BaseMapper<CmsColumnDept> {
 
     /**
      * 栏目部门列表查询
+     *
      * @param cmsColumnDeptQuery 查询对象
-     * @param deptIds 下属部门id
+     * @param deptIds            下属部门id
      * @return 栏目部门列表
      */
     List<CmsColumnDeptVo> getList(@Param("param1") CmsColumnDeptQuery cmsColumnDeptQuery, @Param("param2") List<Long> deptIds);
 
+    /**
+     * 通过栏目id查询授权部门
+     *
+     * @param page     分页对象
+     * @param columnId 栏目id
+     * @return 分页数据
+     */
+    IPage<CmsSiteColumnDeptVo> getPageByColumnId(IPage<CmsSiteColumnDeptVo> page, @Param("columnId") Long columnId);
+
+    /**
+     * 删除栏目部门关系
+     *
+     * @param columnId 栏目id
+     * @param deptIds  部门id集合
+     * @return 删除结果
+     */
+    boolean deleteRelation(@Param("columnId") Long columnId, @Param("deptIds") Long[] deptIds);
 }

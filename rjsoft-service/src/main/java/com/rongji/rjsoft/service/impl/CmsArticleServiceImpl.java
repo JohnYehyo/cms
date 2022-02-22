@@ -412,7 +412,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     public CommonPage<CmsArticlePortalVo> getArticlesByColumn(CmsColumnArticleQuery cmsColumnArticleQuery) {
         List<CmsColumn> cmsColumns = cmsColumnMapper.selectChildrenByColumnId(cmsColumnArticleQuery.getColumnId());
         List<Long> columns = cmsColumns.stream().map(k -> k.getColumnId()).collect(Collectors.toList());
-        IPage<CmsArticlePortalVo> page = new Page<>();
+        IPage<CmsArticlePortalVo> page = new Page<>(cmsColumnArticleQuery.getCurrent(), cmsColumnArticleQuery.getPageSize());
         page = cmsFinalArticleMapper.getArticlePageByColumn(page, columns, cmsColumnArticleQuery.getSiteId());
         return CommonPageUtils.assemblyPage(page);
     }
@@ -442,7 +442,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         wrapper.eq(CmsArticleTags::getTagId, cmsTagArticleQuery.getTagId());
         List<CmsArticleTags> cmsArticleTags = cmsArticleTagsMapper.selectList(wrapper);
         List<Long> articles = cmsArticleTags.stream().map(k -> k.getArticleId()).collect(Collectors.toList());
-        IPage<CmsArticlePortalVo> page = new Page<>();
+        IPage<CmsArticlePortalVo> page = new Page<>(cmsTagArticleQuery.getCurrent(), cmsTagArticleQuery.getPageSize());
         page = cmsFinalArticleMapper.getArticlePageByTag(page, articles, cmsTagArticleQuery.getSiteId());
         return CommonPageUtils.assemblyPage(page);
     }
@@ -455,7 +455,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
      */
     @Override
     public CommonPage<CmsArticlePortalVo> getArticlesByCategory(CmsCategoryArticleQuery cmsCategoryArticleQuery) {
-        IPage<CmsArticlePortalVo> page = new Page<>();
+        IPage<CmsArticlePortalVo> page = new Page<>(cmsCategoryArticleQuery.getCurrent(), cmsCategoryArticleQuery.getPageSize());
         page = cmsFinalArticleMapper.getArticlesByCategory(page, cmsCategoryArticleQuery);
         return CommonPageUtils.assemblyPage(page);
     }

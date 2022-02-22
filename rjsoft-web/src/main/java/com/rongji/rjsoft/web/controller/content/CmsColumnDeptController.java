@@ -68,7 +68,7 @@ public class CmsColumnDeptController {
 
     /**
      * 删除栏目部门关系
-     * @param columnIds 栏目id几个
+     * @param columnIds 栏目id集合
      * @return 删除结果
      */
     @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")

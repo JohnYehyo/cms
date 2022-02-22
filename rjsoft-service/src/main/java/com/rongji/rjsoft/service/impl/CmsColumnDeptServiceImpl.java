@@ -2,9 +2,12 @@ package com.rongji.rjsoft.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.ao.content.CmsColumnDeptAo;
 import com.rongji.rjsoft.common.security.util.TokenUtils;
+import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.common.util.ServletUtils;
 import com.rongji.rjsoft.entity.content.CmsColumnDept;
 import com.rongji.rjsoft.entity.content.CmsSite;
@@ -13,11 +16,13 @@ import com.rongji.rjsoft.exception.BusinessException;
 import com.rongji.rjsoft.mapper.CmsColumnDeptMapper;
 import com.rongji.rjsoft.mapper.SysDeptMapper;
 import com.rongji.rjsoft.query.content.CmsColumnDeptQuery;
+import com.rongji.rjsoft.query.content.CmsSiteColumnQuery;
 import com.rongji.rjsoft.service.ICmsColumnDeptService;
 import com.rongji.rjsoft.service.ICmsSiteService;
 import com.rongji.rjsoft.service.ISysDeptService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.content.CmsColumnDeptVo;
+import com.rongji.rjsoft.vo.content.CmsSiteColumnDeptVo;
 import com.rongji.rjsoft.vo.system.dept.SysDeptAllTreeVo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,11 +49,7 @@ public class CmsColumnDeptServiceImpl extends ServiceImpl<CmsColumnDeptMapper, C
 
     private final TokenUtils tokenUtils;
 
-    private final ISysDeptService sysDeptService;
-
     private final SysDeptMapper sysDeptMapper;
-
-    private final ICmsSiteService cmsSiteService;
 
     /**
      * 添加栏目部门关系
@@ -167,10 +168,34 @@ public class CmsColumnDeptServiceImpl extends ServiceImpl<CmsColumnDeptMapper, C
 
     @Override
     public SysDeptAllTreeVo allDeptTree(Long siteId) {
-        CmsSite cmsSite = cmsSiteService.getById(siteId);
-        if(null == cmsSite || null == cmsSite.getDeptId()){
-            throw new BusinessException(ResponseEnum.NO_DATA);
-        }
-        return sysDeptService.allTree(cmsSite.getDeptId());
+//        CmsSite cmsSite = cmsSiteService.getById(siteId);
+//        if(null == cmsSite || null == cmsSite.getDeptId()){
+//            throw new BusinessException(ResponseEnum.NO_DATA);
+//        }
+//        return sysDeptService.allTree(cmsSite.getDeptId());
+        //todo 通过站点获取部门同步树
+        return null;
+    }
+
+    /**
+     * 通过栏目id查询授权部门
+     * @param cmsSiteColumnQuery 查询条件
+     * @return 授权关系分页
+     */
+    @Override
+    public CommonPage<CmsSiteColumnDeptVo> getPageByColumnId(CmsSiteColumnQuery cmsSiteColumnQuery) {
+        IPage<CmsSiteColumnDeptVo> page = new Page<>(cmsSiteColumnQuery.getCurrent(), cmsSiteColumnQuery.getPageSize());
+        page = cmsColumnDeptMapper.getPageByColumnId(page, cmsSiteColumnQuery.getColumnId());
+        return CommonPageUtils.assemblyPage(page);
+    }
+
+    /**
+     * 删除栏目部门关系
+     * @param cmsColumnDeptAo 参数体
+     * @return 删除结果
+     */
+    @Override
+    public boolean deleteRelation(CmsColumnDeptAo cmsColumnDeptAo) {
+        return cmsColumnDeptMapper.deleteRelation(cmsColumnDeptAo.getColumnId(), cmsColumnDeptAo.getDeptId());
     }
 }

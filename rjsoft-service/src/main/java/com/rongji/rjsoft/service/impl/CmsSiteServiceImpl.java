@@ -231,7 +231,7 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
     }
 
     /**
-     * 站点树(异步实现)
+     * 站点树
      *
      * @param cmsSiteQuery 查询条件
      * @return 站点树
