@@ -5,10 +5,7 @@ import com.rongji.rjsoft.ao.content.CmsSiteAo;
 import com.rongji.rjsoft.entity.content.CmsSite;
 import com.rongji.rjsoft.query.content.CmsSiteQuery;
 import com.rongji.rjsoft.vo.CommonPage;
-import com.rongji.rjsoft.vo.content.CmsSiteAllTreeVo;
-import com.rongji.rjsoft.vo.content.CmsSiteDetailsVo;
-import com.rongji.rjsoft.vo.content.CmsSiteTreeVo;
-import com.rongji.rjsoft.vo.content.CmsSiteVo;
+import com.rongji.rjsoft.vo.content.*;
 
 import java.util.List;
 
@@ -75,4 +72,11 @@ public interface ICmsSiteService extends IService<CmsSite> {
      * @return 站点详情
      */
     CmsSiteDetailsVo getDetails(Long siteId);
+
+    /**
+     * 通过站点及栏目获取栏目异步树
+     * @param cmsSiteQuery 查询条件
+     * @return 栏目异步树
+     */
+    List<CmsSiteColumnTreeVo> getListBySite(CmsSiteQuery cmsSiteQuery);
 }

@@ -1,6 +1,9 @@
 package com.rongji.rjsoft.service;
 
 import com.rongji.rjsoft.vo.ResponseVo;
+import com.rongji.rjsoft.vo.content.CmsSiteColumnTreeVo;
+
+import java.util.List;
 
 /**
  * @description: 站点栏目
@@ -9,6 +12,10 @@ import com.rongji.rjsoft.vo.ResponseVo;
  */
 public interface ICmsSiteColumnService {
 
-
-    ResponseVo tree(String siteColumnId);
+    /**
+     * 站点栏目树
+     * @param siteColumnId 站点栏目id
+     * @return 站点栏目树
+     */
+    List<CmsSiteColumnTreeVo> tree(String siteColumnId);
 }

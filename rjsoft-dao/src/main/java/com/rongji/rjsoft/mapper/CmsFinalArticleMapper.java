@@ -53,46 +53,38 @@ public interface CmsFinalArticleMapper extends BaseMapper<CmsFinalArticle> {
      * @param page 分页对象
      * @param columnIds 栏目id
      * @param siteId 站点id
-     * @param deptId 部门id
      * @return 文章分页列表
      */
     IPage<CmsArticlePortalVo> getArticlePageByColumn(IPage<CmsArticlePortalVo> page,
                                                      @Param("columnIds") List<Long> columnIds,
-                                                     @Param("siteId") Long siteId,
-                                                     @Param("deptId") Long deptId);
+                                                     @Param("siteId") Long siteId);
 
     /**
      * 通过标签获取文章分页列表
      * @param page 分页对象
      * @param articleIds 文章id
      * @param siteId 站点id
-     * @param deptId 部门id
      * @return 文章分页列表
      */
     IPage<CmsArticlePortalVo> getArticlePageByTag(IPage<CmsArticlePortalVo> page,
                                                   @Param("tagIds") List<Long> articleIds,
-                                                  @Param("siteId") Long siteId,
-                                                  @Param("deptId") Long deptId);
+                                                  @Param("siteId") Long siteId);
 
     /**
      * 通过类别获取文章分页列表
      * @param page 分页对象
      * @param cmsCategoryArticleQuery 查询对象
-     * @param deptId 部门id
      * @return 文章分页列表
      */
     IPage<CmsArticlePortalVo> getArticlesByCategory(IPage<CmsArticlePortalVo> page,
-                                                    @Param("param") CmsCategoryArticleQuery cmsCategoryArticleQuery,
-                                                    @Param("deptId") Long deptId);
+                                                    @Param("param") CmsCategoryArticleQuery cmsCategoryArticleQuery);
 
     /**
      * 获取轮播文章
      * @param cmsSliderArticleQuery 查询对象
-     * @param deptId 部门id
      * @return 轮播文章
      */
-    List<CmsArticlePortalVo> getArticlesBySlider(@Param("param") CmsSliderArticleQuery cmsSliderArticleQuery,
-                                                 @Param("deptId") Long deptId);
+    List<CmsArticlePortalVo> getArticlesBySlider(@Param("param") CmsSliderArticleQuery cmsSliderArticleQuery);
 
     /**
      * 获取待发布文章信息

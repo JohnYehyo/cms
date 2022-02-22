@@ -73,11 +73,6 @@ public class CmsSite implements Serializable {
     private Integer delFlag;
 
     /**
-     * 部门id
-     */
-    private Long deptId;
-
-    /**
      * 站点模板id
      */
     private Long siteTemplate;

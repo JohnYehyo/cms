@@ -28,7 +28,6 @@
         t2.column_id as parentId,
         t2.column_name as parentName,
         t1.image_url,
-        t1.dept_id,
         t1.order_num
         from
         ${prefix}cms_column as t1

@@ -289,14 +289,14 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
     @Override
     public CmsColumnDetailsVo getDetails(Long columnId) {
         CmsColumnDetailsVo cmsColumnDetailsVo = new CmsColumnDetailsVo();
-        CmsTemplate cmsTemplate = cmsTemplateMapper.getTemplateByColumnId(columnId);
+//        CmsTemplate cmsTemplate = cmsTemplateMapper.getTemplateByColumnId(columnId);
         SysCommonFileQuery query = new SysCommonFileQuery();
-        if (null != cmsTemplate) {
-            query.setTableId(cmsTemplate.getTemplateId());
-            cmsColumnDetailsVo.setSiteTemplate(cmsTemplate.getTemplateId());
-            cmsColumnDetailsVo.setListTemplate(cmsTemplate.getTemplateId());
-            cmsColumnDetailsVo.setArticleTemplate(cmsTemplate.getTemplateId());
-        }
+//        if (null != cmsTemplate) {
+//            query.setTableId(cmsTemplate.getTemplateId());
+//            cmsColumnDetailsVo.setSiteTemplate(cmsTemplate.getTemplateId());
+//            cmsColumnDetailsVo.setListTemplate(cmsTemplate.getTemplateId());
+//            cmsColumnDetailsVo.setArticleTemplate(cmsTemplate.getTemplateId());
+//        }
         query.setTableType(TableTypeEnum.CMS_TEMPLATE.getValue());
         List<SysCommonFileVo> files = sysCommonFileService.getFiles(query);
         cmsColumnDetailsVo.setFiles(files);
@@ -340,6 +340,7 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
             cmsSiteColumnTreeVo.setParentId(siteId + "_" + cmsColumn.getParentId());
             cmsSiteColumnTreeVo.setName(cmsColumn.getColumnName());
             cmsSiteColumnTreeVo.setParentNode(!isLeaf(cmsColumn.getColumnId()));
+            cmsSiteColumnTreeVo.setType(1);
             treeList.add(cmsSiteColumnTreeVo);
         }
         return treeList;

@@ -24,10 +24,7 @@ import com.rongji.rjsoft.mapper.CmsSiteMapper;
 import com.rongji.rjsoft.query.content.CmsSiteQuery;
 import com.rongji.rjsoft.service.ICmsSiteService;
 import com.rongji.rjsoft.vo.CommonPage;
-import com.rongji.rjsoft.vo.content.CmsSiteAllTreeVo;
-import com.rongji.rjsoft.vo.content.CmsSiteDetailsVo;
-import com.rongji.rjsoft.vo.content.CmsSiteTreeVo;
-import com.rongji.rjsoft.vo.content.CmsSiteVo;
+import com.rongji.rjsoft.vo.content.*;
 import lombok.AllArgsConstructor;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 import org.apache.commons.lang3.StringUtils;
@@ -189,7 +186,6 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
      */
     @Override
     public List<CmsSiteTreeVo> tree(CmsSiteQuery cmsSiteQuery) {
-        Long deptId = SecurityUtils.getLoginUser().getSysDept().getDeptId();
         LambdaQueryWrapper<CmsSite> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(CmsSite::getDelFlag, 0);
         List<CmsSite> list;
@@ -285,7 +281,8 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
     private CmsSite getTopNode(CmsSiteQuery cmsSiteQuery) {
         Long deptId = SecurityUtils.getLoginUser().getSysDept().getDeptId();
         LambdaQueryWrapper<CmsSite> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(CmsSite::getDeptId, deptId);
+        //todo 通过部门获取顶级节点
+//        wrapper.eq(CmsSite::getDeptId, deptId);
         if (null != cmsSiteQuery.getSiteId()) {
             wrapper.eq(CmsSite::getSiteId, cmsSiteQuery.getSiteId());
         }
@@ -318,4 +315,25 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         return cmsSiteDetailsVo;
     }
 
+    /**
+     * 通过站点及栏目获取栏目异步树
+     * @param cmsSiteQuery 查询条件
+     * @return 栏目异步树
+     */
+    @Override
+    public List<CmsSiteColumnTreeVo> getListBySite(CmsSiteQuery cmsSiteQuery) {
+        List<CmsSiteTreeVo> siteTree = tree(cmsSiteQuery);
+        List<CmsSiteColumnTreeVo> siteTreeList = new ArrayList<>();
+        CmsSiteColumnTreeVo cmsSiteColumnTreeVo;
+        for (CmsSiteTreeVo cmsSiteTreeVo : siteTree) {
+            cmsSiteColumnTreeVo = new CmsSiteColumnTreeVo();
+            cmsSiteColumnTreeVo.setId(cmsSiteTreeVo.getSiteId() + "_" + 0);
+            cmsSiteColumnTreeVo.setParentId(cmsSiteTreeVo.getParentId() + "_" + 0);
+            cmsSiteColumnTreeVo.setName(cmsSiteTreeVo.getSiteName());
+            cmsSiteColumnTreeVo.setParentNode(cmsSiteTreeVo.isParentNode());
+            cmsSiteColumnTreeVo.setType(0);
+            siteTreeList.add(cmsSiteColumnTreeVo);
+        }
+        return siteTreeList;
+    }
 }

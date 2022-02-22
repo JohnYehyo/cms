@@ -28,41 +28,36 @@ public class CmsSiteColumnServiceImpl implements ICmsSiteColumnService {
 
     private final ICmsColumnService columnService;
 
+    /**
+     * 站点栏目树
+     * @param siteColumnId 站点栏目id
+     * @return 站点栏目树
+     */
     @Override
-    public ResponseVo tree(String siteColumnId) {
+    public List<CmsSiteColumnTreeVo> tree(String siteColumnId) {
         CmsSiteQuery cmsSiteQuery = new CmsSiteQuery();
         if(StringUtils.isEmpty(siteColumnId)){
-          siteColumnId = "0";
+          siteColumnId = "0_0";
         }
         String[] ids = siteColumnId.split("_");
         String siteId = ids[0];
-        if(ids.length == 1) {
+        if("0".equals(ids[1])) {
             //1. 参数只有站点id
             cmsSiteQuery.setSiteId(Long.parseLong(siteId));
             //1.1 查询站点树
-            List<CmsSiteTreeVo> siteTree = cmsSiteService.tree(cmsSiteQuery);
-            List<CmsSiteColumnTreeVo> siteTreeList = new ArrayList<>();
-            CmsSiteColumnTreeVo cmsSiteColumnTreeVo;
-            for (CmsSiteTreeVo cmsSiteTreeVo : siteTree) {
-                cmsSiteColumnTreeVo = new CmsSiteColumnTreeVo();
-                cmsSiteColumnTreeVo.setId(cmsSiteTreeVo.getSiteId() + "_" + 0);
-                cmsSiteColumnTreeVo.setParentId(String.valueOf(cmsSiteTreeVo.getParentId()) + "_" + 0);
-                cmsSiteColumnTreeVo.setName(cmsSiteTreeVo.getSiteName());
-                cmsSiteColumnTreeVo.setParentNode(cmsSiteTreeVo.isParentNode());
-                siteTreeList.add(cmsSiteColumnTreeVo);
-            }
+            List<CmsSiteColumnTreeVo> siteTreeList = cmsSiteService.getListBySite(cmsSiteQuery);
             //排除顶级站点
             if (!siteId.equals("0")) {
                 //1.2 查询站点树节点对应的栏目树
                 List<CmsSiteColumnTreeVo> columnTreeList = columnService.getListBySite(Long.valueOf(siteId), null);
                 siteTreeList.addAll(columnTreeList);
             }
-            return ResponseVo.response(ResponseEnum.SUCCESS, siteTreeList);
+            return siteTreeList;
         }
         //2. 参数包含站点id+栏目id
         //下属栏目树
         String columnId = ids[1];
         List<CmsSiteColumnTreeVo> columnTreeList = columnService.getListBySite(Long.valueOf(siteId), Long.valueOf(columnId));;
-        return ResponseVo.response(ResponseEnum.SUCCESS, columnTreeList);
+        return columnTreeList;
     }
 }

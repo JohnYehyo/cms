@@ -26,11 +26,12 @@ public class CmsSiteColumnController {
 
     /**
      * 站点栏目树
-     * @return 站点树
+     * @param id 站点栏目id
+     * @return 站点栏目树
      */
     @ApiOperation(value = "站点栏目树")
     @GetMapping(value = "tree")
-    public ResponseVo tree(String siteColumnId){
-        return ResponseVo.response(ResponseEnum.SUCCESS, cmsSiteColumnService.tree(siteColumnId));
+    public ResponseVo tree(String id){
+        return ResponseVo.response(ResponseEnum.SUCCESS, cmsSiteColumnService.tree(id));
     }
 }

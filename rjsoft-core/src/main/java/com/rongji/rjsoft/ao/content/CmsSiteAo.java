@@ -64,13 +64,6 @@ public class CmsSiteAo {
     private Integer orderNum;
 
     /**
-     * 部门id
-     */
-    @ApiModelProperty(value = "部门id", required = true)
-    @NotNull(message = "部门不能为空")
-    private Long deptId;
-
-    /**
      * 站点模板id
      */
     @ApiModelProperty(value = "站点模板")

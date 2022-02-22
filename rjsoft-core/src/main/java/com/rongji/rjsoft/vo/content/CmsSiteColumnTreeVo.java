@@ -38,4 +38,9 @@ public class CmsSiteColumnTreeVo implements Serializable {
      */
     @ApiModelProperty(value = "是否叶子节点")
     private boolean parentNode;
+
+    /**
+     * 类型 0 站点 1 栏目
+     */
+    private int type;
 }

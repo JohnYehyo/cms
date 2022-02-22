@@ -111,21 +111,10 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         Long articleId = cmsArticleAo.getArticleId();
         boolean result3 = saveArticleWithColumn(list, articleId, CmsOriginalEnum.ORIGINAL.getCode());
 
-        //保存限制查看部门
-        boolean result4 = saveLimitDepts(cmsArticleAo);
-
         //具有文章审核管理员权限的用户提交的文章且文章类型为直接发布时提交完毕直接发布
         publishArticle(cmsArticleAo, cmsArticle);
 
-        return result && result1 && result2 && result3 && result4;
-    }
-
-    private boolean saveLimitDepts(CmsArticleAo cmsArticleAo) {
-        if (null == cmsArticleAo.getDeptIds() || cmsArticleAo.getDeptIds().length == 0) {
-            return true;
-        }
-        //保存文章部门关系
-        return saveArticleDepts(cmsArticleAo);
+        return result && result1 && result2 && result3;
     }
 
     private void publishArticle(CmsArticleAo cmsArticleAo, CmsArticle cmsArticle) {
@@ -204,7 +193,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
             }
         }
         //分析附件
-        if(CollectionUtil.isNotEmpty(cmsArticleAo.getFiles())){
+        if (CollectionUtil.isNotEmpty(cmsArticleAo.getFiles())) {
             categoryId = CmsArticleCategoryEnmu.APPENDIX.getCode();
             count++;
         }
@@ -268,34 +257,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         boolean result2 = updateArticleWithColumn(cmsArticleAo);
         //编辑文章内容
         boolean result3 = updateContent(cmsArticleAo);
-        //更新限制查看部门
-        boolean result4 = updateLimitDepts(cmsArticleAo);
 
-        return result && result1 && result2 && result3 && result4;
-    }
-
-    private boolean updateLimitDepts(CmsArticleAo cmsArticleAo) {
-        if (null == cmsArticleAo.getDeptIds() || cmsArticleAo.getDeptIds().length == 0) {
-            return true;
-        }
-        boolean result = cmsArticleDeptService.removeById(cmsArticleAo.getArticleId());
-        if (result) {
-            //保存文章部门关系
-            return saveArticleDepts(cmsArticleAo);
-        }
-        return result;
-    }
-
-    private boolean saveArticleDepts(CmsArticleAo cmsArticleAo) {
-        CmsArticleDept cmsArticleDept;
-        List<CmsArticleDept> list = new ArrayList<>();
-        for (int i = 0; i < cmsArticleAo.getDeptIds().length - 1; i++) {
-            cmsArticleDept = new CmsArticleDept();
-            cmsArticleDept.setArticleId(cmsArticleAo.getArticleId());
-            cmsArticleDept.setDeptId(cmsArticleAo.getDeptIds()[i]);
-            list.add(cmsArticleDept);
-        }
-        return cmsArticleDeptService.saveBatch(list);
+        return result && result1 && result2 && result3;
     }
 
     private boolean updateArticleWithColumn(CmsArticleAo cmsArticleAo) {
@@ -343,7 +306,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteArticle(CmsArticleDeleteAo[] list) {
         boolean result = cmsFinalArticleMapper.deleteArticle(list) > 0;
-        if(result){
+        if (result) {
             //删除附件
         }
         return result;
@@ -449,9 +412,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     public CommonPage<CmsArticlePortalVo> getArticlesByColumn(CmsColumnArticleQuery cmsColumnArticleQuery) {
         List<CmsColumn> cmsColumns = cmsColumnMapper.selectChildrenByColumnId(cmsColumnArticleQuery.getColumnId());
         List<Long> columns = cmsColumns.stream().map(k -> k.getColumnId()).collect(Collectors.toList());
-        Long deptId = getDeptId();
         IPage<CmsArticlePortalVo> page = new Page<>();
-        page = cmsFinalArticleMapper.getArticlePageByColumn(page, columns, cmsColumnArticleQuery.getSiteId(), deptId);
+        page = cmsFinalArticleMapper.getArticlePageByColumn(page, columns, cmsColumnArticleQuery.getSiteId());
         return CommonPageUtils.assemblyPage(page);
     }
 
@@ -480,9 +442,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         wrapper.eq(CmsArticleTags::getTagId, cmsTagArticleQuery.getTagId());
         List<CmsArticleTags> cmsArticleTags = cmsArticleTagsMapper.selectList(wrapper);
         List<Long> articles = cmsArticleTags.stream().map(k -> k.getArticleId()).collect(Collectors.toList());
-        Long deptId = getDeptId();
         IPage<CmsArticlePortalVo> page = new Page<>();
-        page = cmsFinalArticleMapper.getArticlePageByTag(page, articles, cmsTagArticleQuery.getSiteId(), deptId);
+        page = cmsFinalArticleMapper.getArticlePageByTag(page, articles, cmsTagArticleQuery.getSiteId());
         return CommonPageUtils.assemblyPage(page);
     }
 
@@ -494,9 +455,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
      */
     @Override
     public CommonPage<CmsArticlePortalVo> getArticlesByCategory(CmsCategoryArticleQuery cmsCategoryArticleQuery) {
-        Long deptId = getDeptId();
         IPage<CmsArticlePortalVo> page = new Page<>();
-        page = cmsFinalArticleMapper.getArticlesByCategory(page, cmsCategoryArticleQuery, deptId);
+        page = cmsFinalArticleMapper.getArticlesByCategory(page, cmsCategoryArticleQuery);
         return CommonPageUtils.assemblyPage(page);
     }
 
@@ -508,8 +468,7 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
      */
     @Override
     public List<CmsArticlePortalVo> getArticlesBySlider(CmsSliderArticleQuery cmsSliderArticleQuery) {
-        Long deptId = getDeptId();
-        return cmsFinalArticleMapper.getArticlesBySlider(cmsSliderArticleQuery, deptId);
+        return cmsFinalArticleMapper.getArticlesBySlider(cmsSliderArticleQuery);
     }
 
     /**

@@ -157,17 +157,17 @@ public class CmsArticleAo {
 //    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishTime;
 
-    /**
-     * 查看限制 0 否 1 登录 2 登录+部门
-     */
-    @ApiModelProperty(value = "查看限制")
-    private int readType;
-
-    /**
-     * 有权查看部门
-     */
-    @ApiModelProperty(value = "有权部门")
-    private Long[] deptIds;
+//    /**
+//     * 查看限制 0 否 1 登录 2 登录+部门
+//     */
+//    @ApiModelProperty(value = "查看限制")
+//    private int readType;
+//
+//    /**
+//     * 有权查看部门
+//     */
+//    @ApiModelProperty(value = "有权部门")
+//    private Long[] deptIds;
 
     /**
      * 发布方式 0 手动实时发布 1 定时发布
