@@ -196,8 +196,8 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
         List<CmsSiteTreeVo> treeList = new ArrayList<>();
         CmsSiteTreeVo cmsSiteTreeVo;
         if (cmsSiteQuery.getSiteId() == null) {
-            //无siteId查询部门拥有的最顶级站点
-            wrapper.eq(CmsSite::getDeptId, deptId);
+            //无siteId查询顶级site(parentId为0的)
+            wrapper.eq(CmsSite::getParentId, 0);
             list = cmsSiteMapper.selectList(wrapper);
         } else {
             //查询以cmsSiteQuery.getSiteId为父节点的所有站点

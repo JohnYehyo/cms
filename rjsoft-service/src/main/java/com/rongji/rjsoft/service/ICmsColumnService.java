@@ -5,10 +5,7 @@ import com.rongji.rjsoft.ao.content.CmsColumnAo;
 import com.rongji.rjsoft.entity.content.CmsColumn;
 import com.rongji.rjsoft.query.content.CmsColumnQuery;
 import com.rongji.rjsoft.vo.CommonPage;
-import com.rongji.rjsoft.vo.content.CmsColumnAllTree;
-import com.rongji.rjsoft.vo.content.CmsColumnDetailsVo;
-import com.rongji.rjsoft.vo.content.CmsColumnTreeVo;
-import com.rongji.rjsoft.vo.content.CmsColumnVo;
+import com.rongji.rjsoft.vo.content.*;
 
 import java.util.List;
 
@@ -77,4 +74,11 @@ public interface ICmsColumnService extends IService<CmsColumn> {
      */
     void refreshCache();
 
+    /**
+     * 通过站点及栏目获取栏目异步树
+     * @param siteId 站点id
+     * @param columnId 栏目id
+     * @return 栏目异步树
+     */
+    List<CmsSiteColumnTreeVo> getListBySite(Long siteId, Long columnId);
 }

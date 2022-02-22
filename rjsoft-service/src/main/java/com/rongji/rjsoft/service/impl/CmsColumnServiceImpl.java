@@ -26,10 +26,7 @@ import com.rongji.rjsoft.service.ICmsColumnService;
 import com.rongji.rjsoft.service.ISysCommonFileService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.common.SysCommonFileVo;
-import com.rongji.rjsoft.vo.content.CmsColumnAllTree;
-import com.rongji.rjsoft.vo.content.CmsColumnDetailsVo;
-import com.rongji.rjsoft.vo.content.CmsColumnTreeVo;
-import com.rongji.rjsoft.vo.content.CmsColumnVo;
+import com.rongji.rjsoft.vo.content.*;
 import com.rongji.rjsoft.vo.system.dept.SysDeptTreeVo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -210,15 +207,15 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         for (CmsColumn cmsColumn : list) {
             cmsColumnTreeVo = new CmsColumnTreeVo();
             BeanUtil.copyProperties(cmsColumn, cmsColumnTreeVo);
-            cmsColumnTreeVo.setParentNode(!isLeaf(cmsColumnTreeVo));
+            cmsColumnTreeVo.setParentNode(!isLeaf(cmsColumnTreeVo.getColumnId()));
             treeList.add(cmsColumnTreeVo);
         }
         return treeList;
     }
 
-    private boolean isLeaf(CmsColumnTreeVo cmsColumnTreeVo) {
+    private boolean isLeaf(Long columnId) {
         LambdaQueryWrapper<CmsColumn> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(CmsColumn::getParentId, cmsColumnTreeVo.getColumnId());
+        wrapper.eq(CmsColumn::getParentId, columnId);
         Integer count = cmsColumnMapper.selectCount(wrapper);
         return count > 0 ? false : true;
     }
@@ -320,4 +317,33 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
             redisCache.setCacheMapValue(Constants.COLUMN_DICT, cmsColumn.getColumnId() + Constants.ARTICLE_DICT_TEMPLATE, cmsColumn.getArticleTemplate());
         }
     }
+
+    /**
+     * 通过站点及栏目获取栏目异步树
+     *
+     * @param siteId 站点id
+     * @param columnId 栏目id
+     * @return 栏目异步树
+     */
+    @Override
+    public List<CmsSiteColumnTreeVo> getListBySite(Long siteId, Long columnId) {
+        LambdaQueryWrapper<CmsColumn> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(CmsColumn::getSiteId, siteId);
+        wrapper.eq(CmsColumn::getParentId, columnId == null ? 0 : columnId);
+        wrapper.eq(CmsColumn::getDelFlag, DelFlagEnum.EXIST.getCode());
+        List<CmsColumn> list = cmsColumnMapper.selectList(wrapper);
+        List<CmsSiteColumnTreeVo> treeList = new ArrayList<>();
+        CmsSiteColumnTreeVo cmsSiteColumnTreeVo;
+        for (CmsColumn cmsColumn : list) {
+            cmsSiteColumnTreeVo = new CmsSiteColumnTreeVo();
+            cmsSiteColumnTreeVo.setId(siteId + "_" + cmsColumn.getColumnId());
+            cmsSiteColumnTreeVo.setParentId(siteId + "_" + cmsColumn.getParentId());
+            cmsSiteColumnTreeVo.setName(cmsColumn.getColumnName());
+            cmsSiteColumnTreeVo.setParentNode(!isLeaf(cmsColumn.getColumnId()));
+            treeList.add(cmsSiteColumnTreeVo);
+        }
+        return treeList;
+    }
+
+
 }
