@@ -79,7 +79,7 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         } else {
             cmsColumn.setAncestors(parent.getAncestors() + "," + parent.getColumnId());
         }
-        cmsColumn.setColumnUrl(PinyinUtil.getPinyin(cmsColumnAo.getColumnName()));
+        cmsColumn.setColumnUrl(PinyinUtil.getPinyin(cmsColumnAo.getColumnName(), ""));
         boolean result = cmsColumnMapper.insert(cmsColumn) > 0;
         if (result) {
             ThreadUtil.execute(this::refreshCache);
@@ -124,7 +124,7 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         cmsColumn.setAncestors(newAncestors);
         //修改该节点下所有节点的ancestors
         updateSiteChildren(old.getColumnId(), newAncestors, oldAncestors);
-        cmsColumn.setColumnUrl(PinyinUtil.getPinyin(cmsColumnAo.getColumnName()));
+        cmsColumn.setColumnUrl(PinyinUtil.getPinyin(cmsColumnAo.getColumnName(), ""));
         boolean result = cmsColumnMapper.updateById(cmsColumn) > 0;
         if (result) {
             ThreadUtil.execute(this::refreshCache);
@@ -347,6 +347,5 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         }
         return treeList;
     }
-
 
 }
