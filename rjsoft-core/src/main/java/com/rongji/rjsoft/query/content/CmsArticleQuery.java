@@ -48,6 +48,25 @@ public class CmsArticleQuery extends PageQuery {
     /**
      * 栏目
      */
-    @ApiModelProperty(value = "栏目")
+    @ApiModelProperty(value = "栏目", hidden = true)
     private Long columnId;
+
+    /**
+     * 栏目
+     */
+    @ApiModelProperty(value = "站点", hidden = true)
+    private Long siteId;
+
+    /**
+     * 站点栏目
+     */
+    @ApiModelProperty(value = "站点栏目", required = true)
+    @NotEmpty(message = "请选择一个站点或栏目")
+    private String id;
+
+    /**
+     * 类型
+     */
+    @ApiModelProperty(value = "类型")
+    private int type;
 }

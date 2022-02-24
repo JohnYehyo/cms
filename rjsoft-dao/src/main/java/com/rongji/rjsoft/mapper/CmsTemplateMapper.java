@@ -33,4 +33,10 @@ public interface CmsTemplateMapper extends BaseMapper<CmsTemplate> {
      */
     CmsTemplate getTemplateByColumnId(Long columnId);
 
+    /**
+     * 获取模板路径
+     * @param templateId 模板id
+     * @return 模板路径
+     */
+    String getTemplateUrl(Long templateId);
 }

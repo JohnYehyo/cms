@@ -2,6 +2,7 @@ package com.rongji.rjsoft.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.rongji.rjsoft.ao.content.CmsColumnDeptAo;
+import com.rongji.rjsoft.entity.content.CmsColumn;
 import com.rongji.rjsoft.entity.content.CmsColumnDept;
 import com.rongji.rjsoft.query.content.CmsColumnDeptQuery;
 import com.rongji.rjsoft.query.content.CmsSiteColumnQuery;
@@ -9,6 +10,8 @@ import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.content.CmsColumnDeptVo;
 import com.rongji.rjsoft.vo.content.CmsSiteColumnDeptVo;
 import com.rongji.rjsoft.vo.system.dept.SysDeptAllTreeVo;
+
+import java.util.List;
 
 /**
  * <p>
@@ -68,4 +71,26 @@ public interface ICmsColumnDeptService extends IService<CmsColumnDept> {
      * @return 删除结果
      */
     boolean deleteRelation(CmsColumnDeptAo cmsColumnDeptAo);
+
+    /**
+     * 批量添加栏目部门关系
+     * @param records 栏目部门关系
+     * @return 添加结果
+     */
+    boolean batchAdd(List<CmsColumnDept> records);
+
+    /**
+     * 通过栏目id查询授权部门
+     * @param cmsColumnsBySite 查询条件
+     * @param cmsSiteColumnQuery 分页条件
+     * @return 授权关系分页
+     */
+    CommonPage<CmsSiteColumnDeptVo> getPageByColumnIds(List<CmsColumn> cmsColumnsBySite, CmsSiteColumnQuery cmsSiteColumnQuery);
+
+    /**
+     * 删除栏目部门关系
+     * @param records 栏目部门关系
+     * @return 删除结果
+     */
+    boolean deleteRelations(List<CmsColumnDept> records);
 }

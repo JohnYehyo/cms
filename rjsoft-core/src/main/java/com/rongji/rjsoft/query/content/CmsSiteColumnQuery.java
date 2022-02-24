@@ -31,10 +31,12 @@ public class CmsSiteColumnQuery extends PageQuery implements Serializable {
     /**
      * 部门id
      */
+    @ApiModelProperty(value = "部门id", hidden = true)
     private Long siteId;
 
     /**
      * 栏目id
      */
+    @ApiModelProperty(value = "栏目id", hidden = true)
     private Long columnId;
 }

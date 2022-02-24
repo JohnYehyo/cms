@@ -21,6 +21,11 @@ public class CmsArticleVo implements Serializable {
     private static final long serialVersionUID = 9175886446556841665L;
 
     /**
+     * 文章关系表id
+     */
+    private Long id;
+
+    /**
      * 文章ID
      */
     private Long articleId;

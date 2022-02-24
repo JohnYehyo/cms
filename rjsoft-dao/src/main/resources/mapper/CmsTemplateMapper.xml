@@ -45,4 +45,16 @@
         where t2.column_id = #{columnId}
     </select>
 
+    <select id="getTemplateUrl" resultType="java.lang.String">
+        select
+            t2.file_url
+        from
+        ${prefix}cms_template as t1
+        inner join ${prefix}sys_common_file as t2 on
+        t1.template_id = t2.table_id and t2.table_type = #{businessType}
+        <where>
+            t1.templateId = #{templateId}
+        </where>
+    </select>
+
 </mapper>

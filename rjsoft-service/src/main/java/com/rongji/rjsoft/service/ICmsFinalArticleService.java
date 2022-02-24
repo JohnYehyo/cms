@@ -34,12 +34,9 @@ public interface ICmsFinalArticleService extends IService<CmsFinalArticle> {
     void generateArticle(List<Long> articleIds);
 
     /**
-     * 发布栏目页
+     * 获取栏目模板
+     * @param columnId 栏目id
+     * @return 栏目模板
      */
-    void generateColumn();
-
-    /**
-     * 发布门户页
-     */
-    void generatePortal();
+    String getTemplateByColumn(Long columnId);
 }

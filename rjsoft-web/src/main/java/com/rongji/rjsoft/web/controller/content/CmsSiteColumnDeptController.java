@@ -12,7 +12,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -66,7 +65,7 @@ public class CmsSiteColumnDeptController {
      * @return 删除结果
      */
     @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
-    @ApiOperation(value = "站点栏目授权部门")
+    @ApiOperation(value = "删除站点栏目部门授权")
     @DeleteMapping
     @LogAction(module = "站点栏目部门授权维护", method = "删除站点栏目对部门的授权", logType = LogTypeEnum.DELETE, operatorType = OperatorTypeEnum.WEB)
     public Object delete(@Valid @RequestBody CmsSiteColumnDeptAo cmsSiteColumnDeptAo){

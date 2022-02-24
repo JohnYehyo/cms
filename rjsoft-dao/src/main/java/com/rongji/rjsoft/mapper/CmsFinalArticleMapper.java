@@ -11,6 +11,7 @@ import com.rongji.rjsoft.query.content.CmsSliderArticleQuery;
 import com.rongji.rjsoft.vo.content.CmsArticleContentVo;
 import com.rongji.rjsoft.vo.content.CmsArticlePortalVo;
 import com.rongji.rjsoft.vo.content.CmsArticleRefVo;
+import com.rongji.rjsoft.vo.content.CmsTemplateWithTypeVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -120,4 +121,11 @@ public interface CmsFinalArticleMapper extends BaseMapper<CmsFinalArticle> {
      * @return 文章列表
      */
     List<CmsArticlePortalVo> getArticlesByDept(CmsDeptArticleQuery cmsDeptArticleQuerys);
+
+    /**
+     * 获取栏目模板
+     * @param columnId 栏目id
+     * @return 栏目模板
+     */
+    CmsTemplateWithTypeVo getTemplateByColumn(Long columnId);
 }

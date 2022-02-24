@@ -1,16 +1,24 @@
 package com.rongji.rjsoft.web.controller.content;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import com.rongji.rjsoft.common.annotation.LogAction;
+import com.rongji.rjsoft.entity.content.CmsColumn;
+import com.rongji.rjsoft.entity.content.CmsSite;
+import com.rongji.rjsoft.entity.system.SysUser;
 import com.rongji.rjsoft.enums.LogTypeEnum;
 import com.rongji.rjsoft.enums.OperatorTypeEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.query.content.*;
 import com.rongji.rjsoft.service.ICmsArticleService;
+import com.rongji.rjsoft.service.ICmsColumnService;
 import com.rongji.rjsoft.service.ICmsFinalArticleService;
+import com.rongji.rjsoft.service.ICmsSiteService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.ResponseVo;
 import com.rongji.rjsoft.vo.content.CmsArticlePortalVo;
+import com.rongji.rjsoft.vo.system.dept.SysDeptVo;
+import com.rongji.rjsoft.vo.system.user.SysUserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -20,6 +28,8 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
 
 /**
  * <p>
@@ -55,6 +65,7 @@ public class CmsFinalArticleController {
 
     /**
      * 通过栏目获取文章列表
+     *
      * @param cmsColumnArticleQuery 查询对象
      * @return 文章列表
      */
@@ -68,6 +79,7 @@ public class CmsFinalArticleController {
 
     /**
      * 通过标签获取文章列表
+     *
      * @param cmsTagArticleQuery 查询对象
      * @return 文章列表
      */
@@ -81,6 +93,7 @@ public class CmsFinalArticleController {
 
     /**
      * 通过类别获取文章列表
+     *
      * @param cmsCategoryArticleQuery 查询对象
      * @return 文章列表
      */
@@ -94,6 +107,7 @@ public class CmsFinalArticleController {
 
     /**
      * 查询轮播文章列表
+     *
      * @param cmsSliderArticleQuery 查询对象
      * @return 文章列表
      */
@@ -106,6 +120,7 @@ public class CmsFinalArticleController {
 
     /**
      * 按部门查询文章
+     *
      * @param cmsDeptArticleQuerys 查询对象
      * @return 文章列表
      */
@@ -123,11 +138,15 @@ public class CmsFinalArticleController {
      */
     @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "生成栏目")
-    @PostMapping(value = "generateColumn")
-    @ResponseBody
+    @ApiImplicitParam(name = "columnId", value = "栏目路径", required = true)
+    @PostMapping(value = "column/{columnId}")
     @LogAction(module = "门户管理", method = "生成栏目", logType = LogTypeEnum.INSERT, operatorType = OperatorTypeEnum.WEB)
-    public void generateColumn() {
-        cmsFinalArticleService.generateColumn();
+    public ModelAndView generateColumn(@PathVariable Long columnId, ModelAndView mav) {
+        //获取模板
+        String model = cmsFinalArticleService.getTemplateByColumn(columnId);
+        ModelAndView modelAndView = new ModelAndView(model);
+        //todo 加载数据
+        return modelAndView;
     }
 
     /**
@@ -137,11 +156,14 @@ public class CmsFinalArticleController {
      */
     @PreAuthorize("@permissionIdentify.hasRole('cms_admin')")
     @ApiOperation(value = "生成门户")
-    @PostMapping
-    @ResponseBody
+    @ApiImplicitParam(name = "siteId", value = "站点路径", required = true)
+    @PostMapping(value = "site/{siteId}")
     @LogAction(module = "门户管理", method = "生成门户", logType = LogTypeEnum.INSERT, operatorType = OperatorTypeEnum.WEB)
-    public void generatePortal() {
-        cmsFinalArticleService.generatePortal();
+    public String generatePortal(@PathVariable Long siteId) {
+        //获取模板
+//        CmsSite cmsSite = cmsFinalArticleService.getTemplateBySite(siteId);
+        //todo 加载数据
+        return "";
     }
 
 }

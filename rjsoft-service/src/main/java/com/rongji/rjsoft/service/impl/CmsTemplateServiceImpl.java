@@ -272,5 +272,13 @@ public class CmsTemplateServiceImpl extends ServiceImpl<CmsTemplateMapper, CmsTe
         return records;
     }
 
-
+    /**
+     * 获取模板路径
+     * @param templateId 模板id
+     * @return 模板路径
+     */
+    @Override
+    public String getTemplateUrl(Long templateId) {
+        return cmsTemplateMapper.getTemplateUrl(templateId);
+    }
 }

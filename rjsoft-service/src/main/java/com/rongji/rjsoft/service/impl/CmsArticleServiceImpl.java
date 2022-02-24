@@ -109,7 +109,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         //保存栏目文章关系
         List<CmsSiteColumn> list = cmsArticleAo.getList();
         Long articleId = cmsArticleAo.getArticleId();
-        boolean result3 = saveArticleWithColumn(list, articleId, CmsOriginalEnum.ORIGINAL.getCode());
+        boolean result3 = saveArticleWithColumn(list, articleId, CmsOriginalEnum.ORIGINAL.getCode(),
+                cmsArticleAo.getSiteTemplate(), cmsArticleAo.getListTemplate(), cmsArticleAo.getArticleTemplate());
 
         //具有文章审核管理员权限的用户提交的文章且文章类型为直接发布时提交完毕直接发布
         publishArticle(cmsArticleAo, cmsArticle);
@@ -223,7 +224,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         return cmsArticleContentMapper.insert(cmsArticleContent) > 0;
     }
 
-    private boolean saveArticleWithColumn(List<CmsSiteColumn> siteColumnList, Long articleId, int original) {
+    private boolean saveArticleWithColumn(List<CmsSiteColumn> siteColumnList, Long articleId, int original,
+                                          Long siteTemplate, Long listTemplate, Long articleTemplate) {
         List<CmsFinalArticle> list = new ArrayList<>();
         CmsFinalArticle cmsColumnArticle;
         for (CmsSiteColumn cmsSiteColumn : siteColumnList) {
@@ -232,6 +234,9 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
             cmsColumnArticle.setSiteId(cmsSiteColumn.getSiteId());
             cmsColumnArticle.setColumnId(cmsSiteColumn.getColumnId());
             cmsColumnArticle.setOriginal(original);
+            cmsColumnArticle.setSiteTemplate(siteTemplate);
+            cmsColumnArticle.setListTemplate(listTemplate);
+            cmsColumnArticle.setArticleTemplate(articleTemplate);
             list.add(cmsColumnArticle);
         }
         return cmsFinalArticleMapper.batchInsert(list) > 0;
@@ -267,7 +272,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
         cmsFinalArticleMapper.delete(wrapper);
         Long articleId = cmsArticleAo.getArticleId();
         List<CmsSiteColumn> list = cmsArticleAo.getList();
-        return saveArticleWithColumn(list, articleId, CmsOriginalEnum.ORIGINAL.getCode());
+        return saveArticleWithColumn(list, articleId, CmsOriginalEnum.ORIGINAL.getCode(),
+                cmsArticleAo.getSiteTemplate(), cmsArticleAo.getListTemplate(), cmsArticleAo.getArticleTemplate());
     }
 
     private boolean updateTags(CmsArticleAo cmsArticleAo) {
@@ -481,7 +487,8 @@ public class CmsArticleServiceImpl extends ServiceImpl<CmsArticleMapper, CmsArti
     public boolean forwarding(CmsArticleForWardingAo cmsArticleForWardingAo) {
         List<CmsSiteColumn> list = cmsArticleForWardingAo.getList();
         Long articleId = cmsArticleForWardingAo.getArticleId();
-        return saveArticleWithColumn(list, articleId, CmsOriginalEnum.FORWARDING.getCode());
+        return saveArticleWithColumn(list, articleId, CmsOriginalEnum.FORWARDING.getCode(),
+                null, null, null);
     }
 
     /**

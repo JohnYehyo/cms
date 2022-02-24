@@ -2,6 +2,7 @@ package com.rongji.rjsoft.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.rongji.rjsoft.entity.content.CmsColumn;
 import com.rongji.rjsoft.entity.content.CmsColumnDept;
 import com.rongji.rjsoft.query.content.CmsColumnDeptQuery;
 import com.rongji.rjsoft.vo.content.CmsColumnDeptVo;
@@ -71,4 +72,19 @@ public interface CmsColumnDeptMapper extends BaseMapper<CmsColumnDept> {
      * @return 删除结果
      */
     boolean deleteRelation(@Param("columnId") Long columnId, @Param("deptIds") Long[] deptIds);
+
+    /**
+     * 通过栏目id查询授权部门
+     *
+     * @param cmsColumns 下属部门id
+     * @return 分页数据
+     */
+    List<CmsSiteColumnDeptVo> getPageByColumnIds(@Param("cmsColumns") List<CmsColumn> cmsColumns);
+
+    /**
+     * 删除栏目部门关系
+     * @param records 栏目部门关系
+     * @return 删除结果
+     */
+    boolean deleteRelations(@Param("records") List<CmsColumnDept> records);
 }

@@ -56,16 +56,6 @@ public class CmsColumnAo {
     private String imageUrl;
 
     /**
-     * 模板id
-     */
-    @ApiModelProperty(value = "模板id", required = true)
-    @NotNull(
-            groups = {CmsColumnAo.insert.class, CmsColumnAo.update.class},
-            message = "模板不能为空"
-    )
-    private Long templateId;
-
-    /**
      * 排序
      */
     @ApiModelProperty(value = "排序", required = true)

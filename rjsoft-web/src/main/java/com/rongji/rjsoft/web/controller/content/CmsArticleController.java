@@ -18,6 +18,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -51,8 +52,8 @@ public class CmsArticleController {
     @PostMapping(value = "article")
     @LogAction(module = "文章管理", method = "添加文章", logType = LogTypeEnum.INSERT, operatorType = OperatorTypeEnum.WEB)
     public Object add(@Validated(CmsArticleAo.insert.class) @RequestBody CmsArticleAo cmsArticleAo) {
-        if(cmsArticleAo.getPublishType() == CmsArticlePublishTypeEnum.AUTOMATIC.getCode()
-                && null == cmsArticleAo.getPublishTime()){
+        if (cmsArticleAo.getPublishType() == CmsArticlePublishTypeEnum.AUTOMATIC.getCode()
+                && null == cmsArticleAo.getPublishTime()) {
             throw new BusinessException(ResponseEnum.FAIL.getCode(), "请填写发布时间!");
         }
         if (cmsArticleService.saveArticle(cmsArticleAo)) {
@@ -72,8 +73,8 @@ public class CmsArticleController {
     @PutMapping(value = "article")
     @LogAction(module = "文章管理", method = "编辑文章", logType = LogTypeEnum.UPDATE, operatorType = OperatorTypeEnum.WEB)
     public Object update(@Validated(CmsArticleAo.update.class) @RequestBody CmsArticleAo cmsArticleAo) {
-        if(cmsArticleAo.getPublishType() == CmsArticlePublishTypeEnum.AUTOMATIC.getCode()
-                && null == cmsArticleAo.getPublishTime()){
+        if (cmsArticleAo.getPublishType() == CmsArticlePublishTypeEnum.AUTOMATIC.getCode()
+                && null == cmsArticleAo.getPublishTime()) {
             throw new BusinessException(ResponseEnum.FAIL.getCode(), "请填写发布时间!");
         }
         if (cmsArticleService.updateArticle(cmsArticleAo)) {
@@ -126,6 +127,13 @@ public class CmsArticleController {
     @ApiOperation(value = "文章列表")
     @GetMapping(value = "list")
     public Object list(CmsArticleQuery cmsArticleQuery) {
+        Long siteId = Long.valueOf(cmsArticleQuery.getId().split("_")[0]);
+        Long columnId = Long.valueOf(cmsArticleQuery.getId().split("_")[1]);
+        if (cmsArticleQuery.getType() == 0) {
+            cmsArticleQuery.setSiteId(siteId);
+        } else {
+            cmsArticleQuery.setColumnId(columnId);
+        }
         CommonPage<CmsArticleVo> page = cmsArticleService.getPage(cmsArticleQuery);
         return ResponseVo.response(ResponseEnum.SUCCESS, page);
     }
@@ -148,6 +156,7 @@ public class CmsArticleController {
 
     /**
      * 转发文章
+     *
      * @param cmsArticleForWardingAo 转发文章参数体
      * @return 转发结果
      */
@@ -155,8 +164,8 @@ public class CmsArticleController {
     @ApiOperation(value = "转发文章")
     @PostMapping(value = "forwarding")
     @LogAction(module = "文章管理", method = "转发文章", logType = LogTypeEnum.FORWARDING, operatorType = OperatorTypeEnum.WEB)
-    public Object forwarding(@Valid @RequestBody CmsArticleForWardingAo cmsArticleForWardingAo){
-        if(cmsArticleService.forwarding(cmsArticleForWardingAo)){
+    public Object forwarding(@Valid @RequestBody CmsArticleForWardingAo cmsArticleForWardingAo) {
+        if (cmsArticleService.forwarding(cmsArticleForWardingAo)) {
             return ResponseVo.success("转发成功");
         }
         return ResponseVo.error("转发失败,请重试");
@@ -164,6 +173,7 @@ public class CmsArticleController {
 
     /**
      * 移动文章
+     *
      * @param cmsArticleForMoveAo 移动文章参数体
      * @return 转发结果
      */
@@ -171,8 +181,8 @@ public class CmsArticleController {
     @ApiOperation(value = "移动文章")
     @PostMapping(value = "move")
     @LogAction(module = "文章管理", method = "移动文章", logType = LogTypeEnum.MOVE, operatorType = OperatorTypeEnum.WEB)
-    public Object move(@Valid @RequestBody CmsArticleForMoveAo cmsArticleForMoveAo){
-        if(cmsArticleService.move(cmsArticleForMoveAo)){
+    public Object move(@Valid @RequestBody CmsArticleForMoveAo cmsArticleForMoveAo) {
+        if (cmsArticleService.move(cmsArticleForMoveAo)) {
             return ResponseVo.success("移动成功");
         }
         return ResponseVo.error("移动失败,请重试");

@@ -55,4 +55,11 @@ public interface ICmsTemplateService extends IService<CmsTemplate> {
      * @return 模板列表查询结果
      */
     List<CmsTemplateListVo> listOfTemplate(CmsTemplateListQuery cmsTemplateListQuery);
+
+    /**
+     * 获取模板路径
+     * @param templateId 模板id
+     * @return 模板路径
+     */
+    String getTemplateUrl(Long templateId);
 }

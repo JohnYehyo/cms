@@ -8,18 +8,17 @@ import com.rongji.rjsoft.common.util.LogUtils;
 import com.rongji.rjsoft.common.util.RedisCache;
 import com.rongji.rjsoft.constants.Constants;
 import com.rongji.rjsoft.entity.content.CmsFinalArticle;
+import com.rongji.rjsoft.entity.content.CmsTemplate;
 import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.enums.TableFileTypeEnum;
 import com.rongji.rjsoft.enums.TableTypeEnum;
 import com.rongji.rjsoft.exception.BusinessException;
 import com.rongji.rjsoft.mapper.CmsFinalArticleMapper;
 import com.rongji.rjsoft.query.common.SysCommonFileQuery;
-import com.rongji.rjsoft.service.ICmsColumnService;
-import com.rongji.rjsoft.service.ICmsFinalArticleService;
-import com.rongji.rjsoft.service.ICmsSiteService;
-import com.rongji.rjsoft.service.ISysCommonFileService;
+import com.rongji.rjsoft.service.*;
 import com.rongji.rjsoft.vo.common.SysCommonFileVo;
 import com.rongji.rjsoft.vo.content.CmsArticleContentVo;
+import com.rongji.rjsoft.vo.content.CmsTemplateWithTypeVo;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -57,6 +56,8 @@ public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMappe
     private final ICmsColumnService cmsColumnService;
 
     private final ISysCommonFileService sysCommonFileService;
+
+    private final ICmsTemplateService cmsTemplateService;
 
     /**
      * 发布文章
@@ -235,18 +236,18 @@ public class CmsFinalArticleServiceImpl extends ServiceImpl<CmsFinalArticleMappe
     }
 
     /**
-     * 生成栏目页
+     * 获取栏目模板
+     * @param columnId 栏目id
+     * @return 栏目模板
      */
     @Override
-    public void generateColumn() {
-        //todo 待栏目模板出来后开发
-    }
+    public String getTemplateByColumn(Long columnId) {
+        CmsTemplateWithTypeVo cmsTemplateWithTypeVo = cmsFinalArticleMapper.getTemplateByColumn(columnId);
+        Long templateId = cmsTemplateWithTypeVo.getListTemplate();
+        if(null == templateId){
 
-    /**
-     * 生成门户页
-     */
-    @Override
-    public void generatePortal() {
-        //todo 待门户模板出来后开发
+        }
+        String url = cmsTemplateService.getTemplateUrl(templateId);
+        return url;
     }
 }

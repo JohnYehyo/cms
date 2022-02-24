@@ -2,6 +2,8 @@ package com.rongji.rjsoft.vo.content;
 
 import com.rongji.rjsoft.entity.content.CmsFinalArticle;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -24,4 +26,5 @@ public class CmsArticleRefVo extends CmsFinalArticle implements Serializable {
      * 栏目名称
      */
     private String columnName;
+
 }
