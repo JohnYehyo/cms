@@ -374,8 +374,10 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
         wrapper.eq(CmsColumn::getDelFlag, DelFlagEnum.EXIST.getCode());
         List<CmsColumn> list = cmsColumnMapper.selectList(wrapper);
         list = getLimitNode(limitColumnIds, list);
-
         List<CmsSiteColumnTreeVo> treeList = new ArrayList<>();
+        if(CollectionUtil.isEmpty(list)){
+            return treeList;
+        }
         CmsSiteColumnTreeVo cmsSiteColumnTreeVo;
         for (CmsColumn cmsColumn : list) {
             cmsSiteColumnTreeVo = new CmsSiteColumnTreeVo();
@@ -424,6 +426,9 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
      */
     private List<CmsColumn> recursion(List<Long> limitSiteIds, List<CmsColumn> list) {
         List<Long> unAllowIds = list.stream().map(k -> k.getSiteId()).collect(Collectors.toList());
+        if(CollectionUtil.isEmpty(unAllowIds)){
+            return null;
+        }
         List<CmsColumn> allowList = new ArrayList<>();
         list = cmsColumnMapper.selectColumnByParents(unAllowIds);
         for (CmsColumn cmsColumn: list) {

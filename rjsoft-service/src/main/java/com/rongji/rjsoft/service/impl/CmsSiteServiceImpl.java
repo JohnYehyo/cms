@@ -394,6 +394,9 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
             list = cmsSiteMapper.selectList(wrapper);
             list = getLimitNode(limitSiteIds, list);
         }
+        if(CollectionUtil.isEmpty(list)){
+            return treeList;
+        }
         for (CmsSite cmsSite : list) {
             cmsSiteTreeVo = new CmsSiteTreeVo();
             BeanUtil.copyProperties(cmsSite, cmsSiteTreeVo);
@@ -438,6 +441,9 @@ public class CmsSiteServiceImpl extends ServiceImpl<CmsSiteMapper, CmsSite> impl
      */
     private List<CmsSite> recursion(List<Long> limitSiteIds, List<CmsSite> list) {
         List<Long> unAllowIds = list.stream().map(k -> k.getSiteId()).collect(Collectors.toList());
+        if(CollectionUtil.isEmpty(unAllowIds)){
+            return null;
+        }
         List<CmsSite> allowList = new ArrayList<>();
         list = cmsSiteMapper.selectSiteByParents(unAllowIds);
         for (CmsSite cmsSite: list) {
