@@ -35,5 +35,4 @@ public class CmsAuthority implements Serializable {
      */
     private Long deptId;
 
-
 }

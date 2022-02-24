@@ -81,4 +81,12 @@ public interface ICmsColumnService extends IService<CmsColumn> {
      * @return 栏目异步树
      */
     List<CmsSiteColumnTreeVo> getListBySite(Long siteId, Long columnId);
+
+    /**
+     * 通过站点及栏目获取已授权栏目异步树
+     * @param siteId 站点id
+     * @param columnId 栏目id
+     * @return 栏目异步树
+     */
+    List<CmsSiteColumnTreeVo> getLimitListBySite(Long siteId, Long columnId);
 }

@@ -34,4 +34,17 @@ public class CmsSiteColumnController {
     public ResponseVo tree(String id){
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsSiteColumnService.tree(id));
     }
+
+
+    /**
+     * 站点栏目权限树
+     * @param id 站点栏目id
+     * @return 站点栏目树
+     */
+    @ApiOperation(value = "站点栏目权限树")
+    @GetMapping(value = "limitTree")
+    public ResponseVo limitTree(String id){
+        return ResponseVo.response(ResponseEnum.SUCCESS, cmsSiteColumnService.limitTree(id));
+    }
+
 }

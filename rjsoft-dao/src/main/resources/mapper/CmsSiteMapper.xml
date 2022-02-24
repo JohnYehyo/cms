@@ -93,4 +93,13 @@
         where t1.column_id = #{columnId}
     </select>
 
+    <select id="selectSiteByParents" resultType="com.rongji.rjsoft.entity.content.CmsSite">
+        select site_id, site_name, parent_id
+        from ${prefix}cms_site
+        where parent_id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
 </mapper>

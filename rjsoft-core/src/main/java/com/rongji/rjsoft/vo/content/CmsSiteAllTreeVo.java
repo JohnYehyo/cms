@@ -14,6 +14,7 @@ import java.util.List;
 @Data
 public class CmsSiteAllTreeVo implements Serializable {
 
+    private static final long serialVersionUID = 8228346062752468802L;
     /**
      * 站点ID
      */

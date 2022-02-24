@@ -22,7 +22,7 @@ public class CmsSiteColumnServiceImpl implements ICmsSiteColumnService {
 
     private final ICmsSiteService cmsSiteService;
 
-    private final ICmsColumnService columnService;
+    private final ICmsColumnService cmsColumnService;
 
     /**
      * 站点栏目树
@@ -45,7 +45,7 @@ public class CmsSiteColumnServiceImpl implements ICmsSiteColumnService {
             //排除顶级站点
             if (!siteId.equals("0")) {
                 //1.2 查询站点树节点对应的栏目树
-                List<CmsSiteColumnTreeVo> columnTreeList = columnService.getListBySite(Long.valueOf(siteId), null);
+                List<CmsSiteColumnTreeVo> columnTreeList = cmsColumnService.getListBySite(Long.valueOf(siteId), null);
                 siteTreeList.addAll(columnTreeList);
             }
             return siteTreeList;
@@ -53,7 +53,40 @@ public class CmsSiteColumnServiceImpl implements ICmsSiteColumnService {
         //2. 参数包含站点id+栏目id
         //下属栏目树
         String columnId = ids[1];
-        List<CmsSiteColumnTreeVo> columnTreeList = columnService.getListBySite(Long.valueOf(siteId), Long.valueOf(columnId));;
+        List<CmsSiteColumnTreeVo> columnTreeList = cmsColumnService.getListBySite(Long.valueOf(siteId), Long.valueOf(columnId));;
+        return columnTreeList;
+    }
+
+    /**
+     * 站点栏目权限树
+     * @param siteColumnId 站点栏目id
+     * @return 站点栏目树
+     */
+    @Override
+    public List<CmsSiteColumnTreeVo> limitTree(String siteColumnId) {
+        CmsSiteQuery cmsSiteQuery = new CmsSiteQuery();
+        if(StringUtils.isEmpty(siteColumnId)){
+            siteColumnId = "0_0";
+        }
+        String[] ids = siteColumnId.split("_");
+        String siteId = ids[0];
+        if("0".equals(ids[1])) {
+            //1. 参数只有站点id
+            cmsSiteQuery.setSiteId(Long.parseLong(siteId));
+            //1.1 查询站点树
+            List<CmsSiteColumnTreeVo> siteTreeList = cmsSiteService.getLimitListBySite(cmsSiteQuery);
+            //排除顶级站点
+            if (!siteId.equals("0")) {
+                //1.2 查询站点树节点对应的栏目树
+                List<CmsSiteColumnTreeVo> columnTreeList = cmsColumnService.getLimitListBySite(Long.valueOf(siteId), null);
+                siteTreeList.addAll(columnTreeList);
+            }
+            return siteTreeList;
+        }
+        //2. 参数包含站点id+栏目id
+        //下属栏目树
+        String columnId = ids[1];
+        List<CmsSiteColumnTreeVo> columnTreeList = cmsColumnService.getLimitListBySite(Long.valueOf(siteId), Long.valueOf(columnId));;
         return columnTreeList;
     }
 }

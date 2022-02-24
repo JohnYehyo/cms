@@ -32,6 +32,7 @@ public interface CmsSiteMapper extends BaseMapper<CmsSite> {
 
     /**
      * 查询该节点下的所有节点
+     *
      * @param siteId 站点id
      * @return 该节点下的所有节点
      */
@@ -39,6 +40,7 @@ public interface CmsSiteMapper extends BaseMapper<CmsSite> {
 
     /**
      * 更新该节点下所有节点的Ancestors
+     *
      * @param list 该节点下所有节点
      * @return 更新结果
      */
@@ -46,6 +48,7 @@ public interface CmsSiteMapper extends BaseMapper<CmsSite> {
 
     /**
      * 删除站点
+     *
      * @param siteId 站点id
      * @return 删除结果
      */
@@ -53,6 +56,7 @@ public interface CmsSiteMapper extends BaseMapper<CmsSite> {
 
     /**
      * 查询站点节点
+     *
      * @param siteId 顶级站点id
      * @return 站点节点信息
      */
@@ -60,8 +64,17 @@ public interface CmsSiteMapper extends BaseMapper<CmsSite> {
 
     /**
      * 通过栏目获取站点
+     *
      * @param columnId 栏目id
      * @return 站点列表
      */
     List<CmsSiteTreeVo> getSitesByColumn(Long columnId);
+
+    /**
+     * 通过父parentIds获取站点信息
+     *
+     * @param parentIds 父节点
+     * @return 站点信息集合
+     */
+    List<CmsSite> selectSiteByParents(@Param("list") List<Long> parentIds);
 }

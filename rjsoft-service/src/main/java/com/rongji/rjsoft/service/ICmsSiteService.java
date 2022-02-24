@@ -79,4 +79,19 @@ public interface ICmsSiteService extends IService<CmsSite> {
      * @return 栏目异步树
      */
     List<CmsSiteColumnTreeVo> getListBySite(CmsSiteQuery cmsSiteQuery);
+
+    /**
+     * 通过站点及栏目获取有权限栏目异步树
+     * @param cmsSiteQuery 查询条件
+     * @return 栏目异步树
+     */
+    List<CmsSiteColumnTreeVo> getLimitListBySite(CmsSiteQuery cmsSiteQuery);
+
+    /**
+     * 已授权的站点树(异步实现)
+     *
+     * @param cmsSiteQuery 查询条件
+     * @return 站点树
+     */
+    List<CmsSiteTreeVo> limitTree(CmsSiteQuery cmsSiteQuery);
 }

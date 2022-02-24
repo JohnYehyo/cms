@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rongji.rjsoft.mapper.CmsAuthorityMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.rongji.rjsoft.entity.content.CmsAuthority">
+        <id column="site_id" property="siteId" />
+        <result column="column_id" property="columnId" />
+        <result column="dept_id" property="deptId" />
+    </resultMap>
+
+    <insert id="batchInsert">
+        insert into ${prefix}cms_authority (site_id, column_id, dept_id) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.siteId}, #{item.columnId}, #{item.deptId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteRelations">
+        delete from ${prefix}cms_authority where
+        <foreach collection="records" index="index" item="item" separator="or">
+            (site_id = #{item.siteId} and column_id = #{item.columnId} and dept_id = #{item.deptId})
+        </foreach>
+    </delete>
+
+    <delete id="deleteRelation">
+        delete from ${prefix}cms_authority where site_id = #{siteId} and column_id = #{columnId} and dept_id in
+        <foreach collection="deptIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="getPageByColumnIds" resultType="com.rongji.rjsoft.vo.content.CmsAuthorityVo">
+        select t1.dept_id as deptId, t2.dept_name as deptName from ${prefix}cms_authority as t1 inner join ${prefix}sys_dept as t2 on t1.dept_id = t2.dept_id where t1.site_id = #{siteId} and t1.column_id in
+        <foreach collection="columns" item="item" index="index" open="(" separator="," close=")">
+            #{item.columnId}
+        </foreach>
+    </select>
+
+    <select id="getPageByColumnId" resultType="com.rongji.rjsoft.vo.content.CmsAuthorityVo">
+        select t1.dept_id as deptId, t2.dept_name as deptName from ${prefix}cms_authority as t1 inner join ${prefix}sys_dept as t2 on t1.dept_id = t2.dept_id where t1.site_id = #{param.siteId} and t1.column_id = #{param.columnId}
+    </select>
+
+</mapper>

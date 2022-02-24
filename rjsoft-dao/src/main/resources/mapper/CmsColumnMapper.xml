@@ -104,6 +104,15 @@
         order by t1.parent_id, t1.order_num
     </select>
 
+    <select id="selectColumnByParents" resultType="com.rongji.rjsoft.entity.content.CmsColumn">
+        select column_id, column_name, parent_id
+        from ${prefix}cms_column
+        where parent_id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
     <delete id="deleteBySiteId">
         update ${prefix}cms_column set del_flag = 1 where site_id in
         <foreach collection="array" item="item" index="index" open="(" separator="," close=")">

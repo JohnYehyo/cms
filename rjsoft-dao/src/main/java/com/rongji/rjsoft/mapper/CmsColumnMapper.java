@@ -70,4 +70,12 @@ public interface CmsColumnMapper extends BaseMapper<CmsColumn> {
      * @return 删除结果
      */
     int deleteBySiteId(Long[] siteId);
+
+    /**
+     * 通过父parentIds获取栏目信息
+     *
+     * @param parentIds 父节点
+     * @return 栏目信息集合
+     */
+    List<CmsColumn> selectColumnByParents(@Param("param") List<Long> parentIds);
 }

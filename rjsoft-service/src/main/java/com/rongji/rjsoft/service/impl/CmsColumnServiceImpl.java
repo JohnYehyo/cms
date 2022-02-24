@@ -9,20 +9,25 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.rongji.rjsoft.ao.content.CmsColumnAo;
+import com.rongji.rjsoft.common.security.util.SecurityUtils;
 import com.rongji.rjsoft.common.util.CommonPageUtils;
 import com.rongji.rjsoft.common.util.RedisCache;
 import com.rongji.rjsoft.constants.Constants;
+import com.rongji.rjsoft.entity.content.CmsAuthority;
 import com.rongji.rjsoft.entity.content.CmsColumn;
+import com.rongji.rjsoft.entity.content.CmsSite;
 import com.rongji.rjsoft.entity.content.CmsTemplate;
 import com.rongji.rjsoft.enums.DelFlagEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.enums.TableTypeEnum;
 import com.rongji.rjsoft.exception.BusinessException;
+import com.rongji.rjsoft.mapper.CmsAuthorityMapper;
 import com.rongji.rjsoft.mapper.CmsColumnMapper;
 import com.rongji.rjsoft.mapper.CmsTemplateMapper;
 import com.rongji.rjsoft.mapper.SysDeptMapper;
 import com.rongji.rjsoft.query.common.SysCommonFileQuery;
 import com.rongji.rjsoft.query.content.CmsColumnQuery;
+import com.rongji.rjsoft.service.ICmsAuthorityService;
 import com.rongji.rjsoft.service.ICmsColumnService;
 import com.rongji.rjsoft.service.ISysCommonFileService;
 import com.rongji.rjsoft.vo.CommonPage;
@@ -60,6 +65,8 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
     private final ISysCommonFileService sysCommonFileService;
 
     private final RedisCache redisCache;
+
+    private final CmsAuthorityMapper cmsAuthorityMapper;
 
     /**
      * 添加栏目信息
@@ -346,6 +353,88 @@ public class CmsColumnServiceImpl extends ServiceImpl<CmsColumnMapper, CmsColumn
             treeList.add(cmsSiteColumnTreeVo);
         }
         return treeList;
+    }
+
+    /**
+     * 通过站点及栏目获取已授权栏目异步树
+     *
+     * @param siteId 站点id
+     * @param columnId 栏目id
+     * @return 栏目异步树
+     */
+    @Override
+    public List<CmsSiteColumnTreeVo> getLimitListBySite(Long siteId, Long columnId) {
+
+        //获取当前用户所有授权的栏目节点
+        List<Long> limitColumnIds = getLimitSiteIds();
+
+        LambdaQueryWrapper<CmsColumn> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(CmsColumn::getSiteId, siteId);
+        wrapper.eq(CmsColumn::getParentId, columnId == null ? 0 : columnId);
+        wrapper.eq(CmsColumn::getDelFlag, DelFlagEnum.EXIST.getCode());
+        List<CmsColumn> list = cmsColumnMapper.selectList(wrapper);
+        list = getLimitNode(limitColumnIds, list);
+
+        List<CmsSiteColumnTreeVo> treeList = new ArrayList<>();
+        CmsSiteColumnTreeVo cmsSiteColumnTreeVo;
+        for (CmsColumn cmsColumn : list) {
+            cmsSiteColumnTreeVo = new CmsSiteColumnTreeVo();
+            cmsSiteColumnTreeVo.setId(siteId + "_" + cmsColumn.getColumnId());
+            cmsSiteColumnTreeVo.setParentId(siteId + "_" + cmsColumn.getParentId());
+            cmsSiteColumnTreeVo.setName(cmsColumn.getColumnName());
+            cmsSiteColumnTreeVo.setParentNode(!isLeaf(cmsColumn.getColumnId()));
+            cmsSiteColumnTreeVo.setType(1);
+            treeList.add(cmsSiteColumnTreeVo);
+        }
+        return treeList;
+    }
+
+    /**
+     * 获取当前用户所有授权的栏目节点
+     * @return
+     */
+    private List<Long> getLimitSiteIds() {
+        Long deptId = SecurityUtils.getLoginUser().getSysDept().getDeptId();
+        LambdaQueryWrapper<CmsAuthority> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(CmsAuthority::getDeptId, deptId);
+        List<CmsAuthority> limits = cmsAuthorityMapper.selectList(queryWrapper);
+        List<Long> limitSiteIds = limits.stream().map(k -> k.getColumnId()).collect(Collectors.toList());
+        return limitSiteIds;
+    }
+
+    private List<CmsColumn> getLimitNode(List<Long> limitColumnIds, List<CmsColumn> list) {
+        List<CmsColumn> allowList = new ArrayList<>();
+        for (CmsColumn cmsColumn: list) {
+            if(limitColumnIds.contains(cmsColumn.getColumnId())){
+                allowList.add(cmsColumn);
+            }
+        }
+        //本次是否含有权的站点
+        if(CollectionUtil.isEmpty(allowList)){
+            allowList = recursion(limitColumnIds, list);
+        }
+        return allowList;
+    }
+
+    /**
+     * 递归每次查询直到含有有权的站点
+     * @param limitSiteIds
+     * @param list
+     * @return
+     */
+    private List<CmsColumn> recursion(List<Long> limitSiteIds, List<CmsColumn> list) {
+        List<Long> unAllowIds = list.stream().map(k -> k.getSiteId()).collect(Collectors.toList());
+        List<CmsColumn> allowList = new ArrayList<>();
+        list = cmsColumnMapper.selectColumnByParents(unAllowIds);
+        for (CmsColumn cmsColumn: list) {
+            if(limitSiteIds.contains(cmsColumn.getColumnId())){
+                allowList.add(cmsColumn);
+            }
+        }
+        if(CollectionUtil.isEmpty(allowList)){
+            return recursion(limitSiteIds, list);
+        }
+        return allowList;
     }
 
 }

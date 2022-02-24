@@ -1,35 +1,24 @@
 package com.rongji.rjsoft.web.controller.content;
 
 
-import cn.hutool.core.bean.BeanUtil;
 import com.rongji.rjsoft.common.annotation.LogAction;
-import com.rongji.rjsoft.entity.content.CmsColumn;
-import com.rongji.rjsoft.entity.content.CmsSite;
-import com.rongji.rjsoft.entity.system.SysUser;
 import com.rongji.rjsoft.enums.LogTypeEnum;
 import com.rongji.rjsoft.enums.OperatorTypeEnum;
 import com.rongji.rjsoft.enums.ResponseEnum;
 import com.rongji.rjsoft.query.content.*;
 import com.rongji.rjsoft.service.ICmsArticleService;
-import com.rongji.rjsoft.service.ICmsColumnService;
 import com.rongji.rjsoft.service.ICmsFinalArticleService;
-import com.rongji.rjsoft.service.ICmsSiteService;
 import com.rongji.rjsoft.vo.CommonPage;
 import com.rongji.rjsoft.vo.ResponseVo;
 import com.rongji.rjsoft.vo.content.CmsArticlePortalVo;
-import com.rongji.rjsoft.vo.system.dept.SysDeptVo;
-import com.rongji.rjsoft.vo.system.user.SysUserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.List;
 
 /**
  * <p>

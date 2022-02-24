@@ -132,4 +132,15 @@ public class CmsSiteController {
         return ResponseVo.response(ResponseEnum.SUCCESS, cmsSiteService.getDetails(siteId));
     }
 
+    /**
+     * 已授权站点树
+     * @param cmsSiteQuery 查询条件
+     * @return 站点树
+     */
+    @ApiOperation(value = "已授权站点树")
+    @GetMapping(value = "limitTree")
+    public Object limitTree(CmsSiteQuery cmsSiteQuery){
+        return ResponseVo.response(ResponseEnum.SUCCESS, cmsSiteService.limitTree(cmsSiteQuery));
+    }
+
 }
